@@ -1,9 +1,11 @@
 let config =
 {
     type: Phaser.WEBGL,
-    width: 1024,
-    height: 768,
+    width: 640,
+    height: 360,
+    zoom: 2,
     antialias: false,
+    pixelArt: true,
     scene: [Menu, Play],
     
 }
