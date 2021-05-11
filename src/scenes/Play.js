@@ -2,7 +2,7 @@ class Play extends Phaser.Scene
 {
     constructor()
     {
-       super("playScene"); 
+       super("Play"); 
     }
 
     preload()
@@ -12,7 +12,7 @@ class Play extends Phaser.Scene
 
     create()
     {
-
+        console.log("entered the Play scene");
     }
 
     update(time, delta)

@@ -2,7 +2,7 @@ class Menu extends Phaser.Scene
 {
     constructor()
     {
-       super("menuScene"); 
+       super("Menu"); 
     }
 
     preload()
@@ -12,7 +12,8 @@ class Menu extends Phaser.Scene
 
     create()
     {
-        this.menuText = this.add.text(game.config.width/2, game.config.height/2, 'Left/Right arrow to play scene');
+        console.log("entered the Menu scene");
+        this.menuText = this.add.text(game.config.width/2, game.config.height/2, 'Left arrow to play scene');
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
     }
 
@@ -27,7 +28,7 @@ class Menu extends Phaser.Scene
         if(Phaser.Input.Keyboard.JustDown(keyLEFT))
         {
             //easyMode
-            this.scene.start('playScene');
+            this.scene.start('Play');
 
         }
     }
