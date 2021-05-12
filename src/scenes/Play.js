@@ -14,6 +14,7 @@ class Play extends Phaser.Scene
     create()
     {
         console.log("entered the Play scene");
+        this.camera = new MainCamera(this, 0, 0, game.config.width, game.config.height);
         this.player = new Player(this, game.config.width/2, game.config.height/2, "PinkSquareSprite");
         this.env = this.add.group();
 
