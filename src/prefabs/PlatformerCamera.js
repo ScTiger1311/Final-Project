@@ -9,11 +9,12 @@ class PlatformerCamera extends Phaser.Cameras.Scene2D.BaseCamera
         this.camera.startFollow(objectToFollow);
         this.camera.setFollowOffset(0, 50);
         this.camera.setDeadzone(30, 30);
+        this.camera.setZoom(.5)
     }
 
     update(time, delta)
     {
-        console.log("update camera");
+        //console.log("update camera");
         let deltaMultiplier = (delta/16.66667); //for refresh rate indepence.
 
         //just used the below things to test the scrolling.

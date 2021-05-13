@@ -17,6 +17,8 @@ class Play extends Phaser.Scene
         this.player = new Player(this, game.config.width/2, game.config.height/2, "PinkSquareSprite");
         this.env = this.add.group();
 
+        this.env.add(new Ground(this, game.config.width/2, game.config.height, "OrangeRectSprite", 50))
+
         this.physics.add.collider(this.player, this.env);
         for(let i = 0; i < 5; ++i) {
             let obj = new Ground(this, (Math.random() * game.config.width) , (Math.random() * game.config.height), "OrangeRectSprite");
@@ -25,6 +27,7 @@ class Play extends Phaser.Scene
         this.cameraMain = this.cameras.main;
         this.platformerCamera = new PlatformerCamera(this, this.player, this.cameraMain);
 
+        //Setup keys for whole game
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);

@@ -1,11 +1,13 @@
 class Ground extends Phaser.Physics.Arcade.Sprite
 {
-    constructor(scene, x, y, texture)
+    constructor(scene, x, y, texture, sizeX = 1, sizeY = 1)
     {
         //Add object to scenes
         super(scene, x, y, texture);
         scene.add.existing(this);
         scene.physics.add.existing(this);
+
+        this.setScale(sizeX, sizeY);
 
         //Setup physics config
         this.body.immovable = true;
