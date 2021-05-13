@@ -14,7 +14,6 @@ class Play extends Phaser.Scene
     create()
     {
         console.log("entered the Play scene");
-        this.camera = new MainCamera(this, 0, 0, game.config.width, game.config.height);
         this.player = new Player(this, game.config.width/2, game.config.height/2, "PinkSquareSprite");
         this.env = this.add.group();
 
@@ -23,7 +22,8 @@ class Play extends Phaser.Scene
             let obj = new Ground(this, (Math.random() * game.config.width) , (Math.random() * game.config.height), "OrangeRectSprite");
             this.env.add(obj);
         }
-        
+        this.cameraMain = this.cameras.main;
+        this.platformerCamera = new PlatformerCamera(this, this.player, this.cameraMain);
 
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
@@ -40,7 +40,7 @@ class Play extends Phaser.Scene
         That way they don't speed up on high refresh rate displays. Ask Ethan for more help/info
         if you are unsure.
         */
-
+        this.platformerCamera.update();
         this.player.update();
 
     }
