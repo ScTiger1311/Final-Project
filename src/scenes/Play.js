@@ -9,12 +9,16 @@ class Play extends Phaser.Scene
     {
         this.load.image("PinkSquareSprite", "./assets/single_sprites/pink_square.png");
         this.load.image("OrangeRectSprite", "./assets/single_sprites/orange_rect.png");
+        this.load.audio("jumpFx", "./assets/sounds/fx/Jump.wav")
+        this.load.audio("landFx", "./assets/sounds/fx/Land.wav")
     }
 
     create()
     {
         console.log("entered the Play scene");
         this.player = new Player(this, game.config.width/2, game.config.height/2, "PinkSquareSprite");
+
+
         this.env = this.add.group();
 
         this.env.add(new Ground(this, game.config.width/2, game.config.height, "OrangeRectSprite", 50))

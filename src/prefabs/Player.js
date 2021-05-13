@@ -29,6 +29,13 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.justDown = false;
         this.wallInVelocity = 0;
 
+        //Player fx
+        this.playerJump = scene.sound.add("jumpFx", {
+            volume: .8,
+        })
+        this.playerLand = scene.sound.add("landFx", {
+            volume: .8,
+        })
     }
     update(time, delta) 
     {
@@ -50,10 +57,19 @@ class Player extends Phaser.Physics.Arcade.Sprite
         if(this.body.touching.down) {
             if(this.canJump == false) { //This if catches the first frame player touches down         
                 this.body.setVelocityX(this.body.velocity.x *.5);
+                if(!this.playerLand.isPlaying)
+                    this.playerLand.play();
                 //console.log(this.body.velocity.x);
             }
 
             this.canJump = true;   
+        }
+
+        //First frame jump
+        if(this.canJump && Phaser.Input.Keyboard.JustDown(keyUP)){
+            if(!this.playerJump.isPlaying)
+                this.playerJump.play();
+            //console.log("Up");
         }
 
         //Held down jump
@@ -76,6 +92,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
             if(Phaser.Input.Keyboard.JustDown(keyUP)){
                 this.body.setVelocityX(-this.wallInVelocity);
                 this.body.setVelocityY(-500);
+                if(!this.playerJump.isPlaying)
+                    this.playerJump.play();
                 this.wallInVelocity = 0;
             }
         }
