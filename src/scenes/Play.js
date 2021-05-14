@@ -40,7 +40,7 @@ class Play extends Phaser.Scene
         That way they don't speed up on high refresh rate displays. Ask Ethan for more help/info
         if you are unsure.
         */
-        this.platformerCamera.update();
+        this.platformerCamera.update(time, delta);
         this.player.update();
 
     }
