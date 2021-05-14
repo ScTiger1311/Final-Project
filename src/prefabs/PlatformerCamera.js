@@ -46,7 +46,6 @@ class PlatformerCamera extends Phaser.Cameras.Scene2D.BaseCamera
         // for moving the camera to show more in the direction you are travelling
         if(this.objectToFollow.body.velocity.x > 20 && this.scrollXOffsetCurr + this.scrollSpeed*deltaMultiplier < this.scrollXOffsetMax)
         {
-            //console.log("asdf");
             this.scrollXOffsetCurr += this.scrollSpeed * deltaMultiplier;
         }
         else if(this.objectToFollow.body.velocity.x > 20 && this.scrollXOffsetCurr + this.scrollSpeed*deltaMultiplier > this.scrollXOffsetMax)
@@ -55,7 +54,6 @@ class PlatformerCamera extends Phaser.Cameras.Scene2D.BaseCamera
         }
         else if(this.objectToFollow.body.velocity.x < -20 && this.scrollXOffsetCurr - this.scrollSpeed*deltaMultiplier > -this.scrollXOffsetMax)
         {
-            console.log("asdf");
             this.scrollXOffsetCurr -= this.scrollSpeed * deltaMultiplier;
         }
         else if(this.objectToFollow.body.velocity.x < -20 && this.scrollXOffsetCurr - this.scrollSpeed*deltaMultiplier < -this.scrollXOffsetMax)
