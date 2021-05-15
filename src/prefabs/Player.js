@@ -9,6 +9,13 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
         //Setup physics config
         this.body.gravity = new Phaser.Math.Vector2(0, 800)
+        // not sure if the following 3 lines are needed, kept just in case during merge
+        this.body.collideWorldBounds = true;
+        //this.body.useDamping = true;
+        this.AccelerationDecay = .0025;
+
+        this.isBoosting = false;
+      
         this.body.maxVelocity = new Phaser.Math.Vector2(600, 1400)
         this.body.useDrag;
         this.body.setDragX(1200); //This is used as the damping value
@@ -40,6 +47,12 @@ class Player extends Phaser.Physics.Arcade.Sprite
     update(time, delta) 
     {
         let deltaMultiplier = (delta/16.66667); //for refresh rate indepence.
+
+        // this section left just in case? unsure if needed
+        //if(Phaser.Input.Keyboard.JustDown(keyUP)){
+        //    this.body.setVelocityY(-500);
+        //    console.log("Up");
+        //}
 
         //Calculate deltaY
         this.deltaY = this.y - this.lastY;
@@ -108,7 +121,23 @@ class Player extends Phaser.Physics.Arcade.Sprite
         else {
             this.body.setAccelerationX(0);
         }
-
+    }
+    speedChange(increase = false){
+        if(increase && !this.isBoosting){
+            this.MoveAcceleration *= BOOST;
+            // this.body.setVelocityY(-500*BOOST);  // experimenting
+            console.log("increase:" + this.MoveAcceleration);
+            this.isBoosting = true;
+        }
+        else{
+            this.MoveAcceleration /= BOOST;
+            console.log(this.MoveAcceleration);
+            this.isBoosting = false;
+        }
+    }
+    bounce(){
+        this.body.setVelocityY(-250);
+        console.log("bounce");
         //Track values last frame for delta uses
         this.lastY = this.y;
         this.lastXVelocity = this.body.velocity.x;

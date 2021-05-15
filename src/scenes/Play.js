@@ -17,17 +17,29 @@ class Play extends Phaser.Scene
     {
         console.log("entered the Play scene");
         this.player = new Player(this, game.config.width/2, game.config.height/2, "PinkSquareSprite");
-
-
+      
         this.env = this.add.group();
 
         this.env.add(new Ground(this, game.config.width/2, game.config.height, "OrangeRectSprite", 50))
-
         this.physics.add.collider(this.player, this.env);
         for(let i = 0; i < 5; ++i) {
             let obj = new Ground(this, (Math.random() * game.config.width) , (Math.random() * game.config.height), "OrangeRectSprite");
             this.env.add(obj);
         }
+
+        this.testObj = new Obstacle(this, game.config.width/3, game.config.height*.8, "OrangeRectSprite");
+        this.physics.add.overlap(this.player, this.testObj, ()=>{
+            this.player.speedChange(true);
+            this.speedEvent = this.time.addEvent(2500, () =>{
+                this.player.speedChange(false);
+            });
+        });
+        this.testbounce = new Obstacle(this, game.config.width *.1, game.config.height*.9, "OrangeRectSprite");
+        this.physics.add.collider(this.player, this.testbounce, ()=>{
+            if(this.player.body.touching.down && this.testbounce.body.touching.up)
+                this.player.bounce();
+        });
+        
         this.cameraMain = this.cameras.main;
         this.platformerCamera = new PlatformerCamera(this, this.player, this.cameraMain);
 

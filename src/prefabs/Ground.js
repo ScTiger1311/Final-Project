@@ -8,7 +8,6 @@ class Ground extends Phaser.Physics.Arcade.Sprite
         scene.physics.add.existing(this);
 
         this.setScale(sizeX, sizeY);
-
         //Setup physics config
         this.body.immovable = true;
         this.body.allowGravity = false;
