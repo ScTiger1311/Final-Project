@@ -18,6 +18,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
         //Setup control values
         this.MoveAcceleration = 1000;
         this.AccelerationDecay = .0025;
+
+        this.isBoosting = false;
     }
     update(time, delta) 
     {
@@ -37,5 +39,22 @@ class Player extends Phaser.Physics.Arcade.Sprite
         else {
             this.body.setAccelerationX(0);
         }
+    }
+    speedChange(increase = false){
+        if(increase && !this.isBoosting){
+            this.MoveAcceleration *= BOOST;
+            // this.body.setVelocityY(-500*BOOST);
+            console.log("increase:" + this.MoveAcceleration);
+            this.isBoosting = true;
+        }
+        else{
+            this.MoveAcceleration /= BOOST;
+            console.log(this.MoveAcceleration);
+            this.isBoosting = false;
+        }
+    }
+    bounce(){
+        this.body.setVelocityY(-250);
+        console.log("bounce");
     }
 }

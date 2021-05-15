@@ -22,6 +22,19 @@ class Play extends Phaser.Scene
             let obj = new Ground(this, (Math.random() * game.config.width) , (Math.random() * game.config.height), "OrangeRectSprite");
             this.env.add(obj);
         }
+
+        this.testObj = new Obstacle(this, game.config.width/3, game.config.height*.8, "OrangeRectSprite");
+        this.physics.add.overlap(this.player, this.testObj, ()=>{
+            this.player.speedChange(true);
+            this.speedEvent = this.time.addEvent(2500, () =>{
+                this.player.speedChange(false);
+            });
+        });
+        this.testbounce = new Obstacle(this, game.config.width *.1, game.config.height*.9, "OrangeRectSprite");
+        this.physics.add.collider(this.player, this.testbounce, ()=>{
+            if(this.player.body.touching.down && this.testbounce.body.touching.up)
+                this.player.bounce();
+        });
         
 
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
@@ -29,6 +42,7 @@ class Play extends Phaser.Scene
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
     }
 
     update(time, delta)
@@ -39,7 +53,6 @@ class Play extends Phaser.Scene
         That way they don't speed up on high refresh rate displays. Ask Ethan for more help/info
         if you are unsure.
         */
-
         this.player.update();
 
     }
