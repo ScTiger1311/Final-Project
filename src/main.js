@@ -21,6 +21,7 @@ let config =
 }
 
 let game = new Phaser.Game(config);
+let BOOST = 5;
 
 //set UI sizes
 
