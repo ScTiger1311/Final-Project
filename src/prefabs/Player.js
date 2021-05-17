@@ -101,7 +101,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             if(this.lastXVelocity != 0)
                 this.wallInVelocity = this.lastXVelocity;
 
-            console.log(this.wallInVelocity);
+            //console.log(this.wallInVelocity);
             if(Phaser.Input.Keyboard.JustDown(keyUP)){
                 this.body.setVelocityX(-this.wallInVelocity);
                 this.body.setVelocityY(-500);
@@ -126,18 +126,18 @@ class Player extends Phaser.Physics.Arcade.Sprite
         if(increase && !this.isBoosting){
             this.MoveAcceleration *= BOOST;
             // this.body.setVelocityY(-500*BOOST);  // experimenting
-            console.log("increase:" + this.MoveAcceleration);
+            //console.log("increase:" + this.MoveAcceleration);
             this.isBoosting = true;
         }
         else{
             this.MoveAcceleration /= BOOST;
-            console.log(this.MoveAcceleration);
+            //console.log(this.MoveAcceleration);
             this.isBoosting = false;
         }
     }
     bounce(){
         this.body.setVelocityY(-250);
-        console.log("bounce");
+        //console.log("bounce");
         //Track values last frame for delta uses
         this.lastY = this.y;
         this.lastXVelocity = this.body.velocity.x;

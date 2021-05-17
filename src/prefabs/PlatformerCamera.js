@@ -23,8 +23,7 @@ class PlatformerCamera extends Phaser.Cameras.Scene2D.BaseCamera
     //all this garbage because phaser causes the webpage to crash if you call console.log() too fast
     slowUpdate(deltaMultiplier)
     {
-        //console.log(deltaMultiplier);
-        //console.log("scrollXOffsetCurr " + this.scrollXOffsetCurr + this.scrollSpeed*deltaMultiplier);
+        //console.log(this.objectToFollow.body.x + "   " + this.objectToFollow.body);
     }
 
     update(time, delta)
@@ -63,9 +62,6 @@ class PlatformerCamera extends Phaser.Cameras.Scene2D.BaseCamera
     
         //applies the changes to the cameras custom scroll values
         this.camera.centerOn(this.objectToFollow.body.x + this.scrollXOffsetCurr, this.objectToFollow.body.y);
-        //just used the below things to test the scrolling.
-        //this.camera.scrollX = Math.random();
-        //this.camera.scrollY = ccMath.random();
     }
     
 }
