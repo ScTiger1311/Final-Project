@@ -24,7 +24,7 @@ class PlatformerCamera extends Phaser.Cameras.Scene2D.BaseCamera
     //all this garbage because phaser causes the webpage to crash if you call console.log() too fast
     slowUpdate(deltaMultiplier)
     {
-        //console.log(this.objectToFollow.body.x + "   " + this.objectToFollow.body);
+        //console.log(this.objectToFollow.body.x + "   " + this.camera.midPoint.x);
     }
 
     update(time, delta)
@@ -61,8 +61,8 @@ class PlatformerCamera extends Phaser.Cameras.Scene2D.BaseCamera
             this.scrollXOffsetCurr = -this.scrollXOffsetMax;
         }
 
-        //ffor moving the camera to show more in the direction you are travelling, vertical only
-        if(this.objectToFollow.body.velocity.y > this.minSpeedForChange && this.scrollYOffsetCurr + this.scrollSpeed*deltaMultiplier < this.scrollYOffsetMax)
+        //for moving the camera to show more in the direction you are travelling, vertical only
+        /*if(this.objectToFollow.body.velocity.y > this.minSpeedForChange && this.scrollYOffsetCurr + this.scrollSpeed*deltaMultiplier < this.scrollYOffsetMax)
         {
             this.scrollYOffsetCurr += this.scrollSpeed * deltaMultiplier;
         }
@@ -77,10 +77,21 @@ class PlatformerCamera extends Phaser.Cameras.Scene2D.BaseCamera
         else if(this.objectToFollow.body.velocity.y < -this.minSpeedForChange && this.scrollYOffsetCurr - this.scrollSpeed*deltaMultiplier < -this.scrollYOffsetMax)
         {
             this.scrollYOffsetCurr = -this.scrollYOffsetMax;
+        }*/
+
+
+
+        if(this.objectToFollow.body.y < this.camera.midPoint.y - this.scrollYOffsetMax)
+        {
+            this.scrollYOffsetCurr = this.objectToFollow.body.y + this.scrollYOffsetMax;
+        }
+        else if(this.objectToFollow.body.y > this.camera.midPoint.y + this.scrollYOffsetMax)
+        {
+            this.scrollYOffsetCurr = this.objectToFollow.body.y - this.scrollYOffsetMax;
         }
     
         //applies the changes to the cameras custom scroll values
-        this.camera.centerOn(this.objectToFollow.body.x + this.scrollXOffsetCurr, this.objectToFollow.body.y + this.scrollYOffsetCurr);
+        this.camera.centerOn(this.objectToFollow.body.x + this.scrollXOffsetCurr, this.scrollYOffsetCurr);
     }
     
 }
