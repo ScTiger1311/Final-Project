@@ -13,11 +13,12 @@ class PlatformerCamera extends Phaser.Cameras.Scene2D.BaseCamera
         this.slowUpdateTick = 0;
 
         //values to change if you want to adjust the behaviour of the camera
-        this.scrollXOffsetMax = 100;
-        this.scrollYOffsetMax = 100;
+        this.minSpeedForChange = 20;
+        this.scrollXOffsetMax = 75;
+        this.scrollYOffsetMax = 50;
         this.scrollXOffsetCurr = 0;
         this.scrollYOffsetCurr = 0;
-        this.scrollSpeed = 3;
+        this.scrollSpeed = 1;
     }
 
     //all this garbage because phaser causes the webpage to crash if you call console.log() too fast
@@ -42,26 +43,44 @@ class PlatformerCamera extends Phaser.Cameras.Scene2D.BaseCamera
         }
         // okay we done with all this garbage
 
-        // for moving the camera to show more in the direction you are travelling
-        if(this.objectToFollow.body.velocity.x > 20 && this.scrollXOffsetCurr + this.scrollSpeed*deltaMultiplier < this.scrollXOffsetMax)
+        // for moving the camera to show more in the direction you are travelling, horizontal only
+        if(this.objectToFollow.body.velocity.x > this.minSpeedForChange && this.scrollXOffsetCurr + this.scrollSpeed*deltaMultiplier < this.scrollXOffsetMax)
         {
             this.scrollXOffsetCurr += this.scrollSpeed * deltaMultiplier;
         }
-        else if(this.objectToFollow.body.velocity.x > 20 && this.scrollXOffsetCurr + this.scrollSpeed*deltaMultiplier > this.scrollXOffsetMax)
+        else if(this.objectToFollow.body.velocity.x > this.minSpeedForChange && this.scrollXOffsetCurr + this.scrollSpeed*deltaMultiplier > this.scrollXOffsetMax)
         {
             this.scrollXOffsetCurr = this.scrollXOffsetMax;
         }
-        else if(this.objectToFollow.body.velocity.x < -20 && this.scrollXOffsetCurr - this.scrollSpeed*deltaMultiplier > -this.scrollXOffsetMax)
+        else if(this.objectToFollow.body.velocity.x < -this.minSpeedForChange && this.scrollXOffsetCurr - this.scrollSpeed*deltaMultiplier > -this.scrollXOffsetMax)
         {
             this.scrollXOffsetCurr -= this.scrollSpeed * deltaMultiplier;
         }
-        else if(this.objectToFollow.body.velocity.x < -20 && this.scrollXOffsetCurr - this.scrollSpeed*deltaMultiplier < -this.scrollXOffsetMax)
+        else if(this.objectToFollow.body.velocity.x < -this.minSpeedForChange && this.scrollXOffsetCurr - this.scrollSpeed*deltaMultiplier < -this.scrollXOffsetMax)
         {
             this.scrollXOffsetCurr = -this.scrollXOffsetMax;
         }
+
+        //ffor moving the camera to show more in the direction you are travelling, vertical only
+        if(this.objectToFollow.body.velocity.y > this.minSpeedForChange && this.scrollYOffsetCurr + this.scrollSpeed*deltaMultiplier < this.scrollYOffsetMax)
+        {
+            this.scrollYOffsetCurr += this.scrollSpeed * deltaMultiplier;
+        }
+        else if(this.objectToFollow.body.velocity.y > this.minSpeedForChange && this.scrollYOffsetCurr + this.scrollSpeed*deltaMultiplier > this.scrollYOffsetMax)
+        {
+            this.scrollYOffsetCurr = this.scrollYOffsetMax;
+        }
+        else if(this.objectToFollow.body.velocity.y < -this.minSpeedForChange && this.scrollYOffsetCurr - this.scrollSpeed*deltaMultiplier > -this.scrollYOffsetMax)
+        {
+            this.scrollYOffsetCurr -= this.scrollSpeed * deltaMultiplier;
+        }
+        else if(this.objectToFollow.body.velocity.y < -this.minSpeedForChange && this.scrollYOffsetCurr - this.scrollSpeed*deltaMultiplier < -this.scrollYOffsetMax)
+        {
+            this.scrollYOffsetCurr = -this.scrollYOffsetMax;
+        }
     
         //applies the changes to the cameras custom scroll values
-        this.camera.centerOn(this.objectToFollow.body.x + this.scrollXOffsetCurr, this.objectToFollow.body.y);
+        this.camera.centerOn(this.objectToFollow.body.x + this.scrollXOffsetCurr, this.objectToFollow.body.y + this.scrollYOffsetCurr);
     }
     
 }
