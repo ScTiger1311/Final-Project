@@ -17,6 +17,16 @@ class Play extends Phaser.Scene
     {
         console.log("entered the Play scene");
         this.player = new Player(this, game.config.width/2, game.config.height/2, "PinkSquareSprite");
+
+        this.playerFSM = new StateMachine('idle', {
+            idle: new IdleState(),
+            walk: new WalkState(),
+            attack: new AttackState(),
+            boost: new BoostState(),
+            hurt: new HurtState(),
+            wallcling: new WallClingState(),
+            inair: new InAirState(),
+        }, [this, this.player]);
       
         this.env = this.add.group();
 
@@ -27,7 +37,7 @@ class Play extends Phaser.Scene
             this.env.add(obj);
         }
 
-        this.testObj = new Obstacle(this, game.config.width/3, game.config.height*.8, "OrangeRectSprite");
+        /*this.testObj = new Obstacle(this, game.config.width/3, game.config.height*.8, "OrangeRectSprite");
         this.physics.add.overlap(this.player, this.testObj, ()=>{
             this.player.speedChange(true);
             this.speedEvent = this.time.addEvent(2500, () =>{
@@ -39,16 +49,32 @@ class Play extends Phaser.Scene
             if(this.player.body.touching.down && this.testbounce.body.touching.up)
                 this.player.bounce();
         });
-        
+        */
+
         this.cameraMain = this.cameras.main;
         this.platformerCamera = new PlatformerCamera(this, this.player, this.cameraMain);
 
         //Setup keys for whole game
+        this.keys = this.input.keyboard.addKeys({
+            'w':     Phaser.Input.Keyboard.KeyCodes.W,
+            'a':     Phaser.Input.Keyboard.KeyCodes.A,
+            's':     Phaser.Input.Keyboard.KeyCodes.S,
+            'd':     Phaser.Input.Keyboard.KeyCodes.D,
+            'plus':     Phaser.Input.Keyboard.KeyCodes.PLUS,
+            'up':    Phaser.Input.Keyboard.KeyCodes.UP,
+            'left':  Phaser.Input.Keyboard.KeyCodes.LEFT,
+            'down':  Phaser.Input.Keyboard.KeyCodes.DOWN,
+            'right': Phaser.Input.Keyboard.KeyCodes.RIGHT,
+            'space': Phaser.Input.Keyboard.KeyCodes.SPACE,
+        });
+
+        /*
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        */
     }
 
     update(time, delta)
@@ -59,8 +85,12 @@ class Play extends Phaser.Scene
         That way they don't speed up on high refresh rate displays. Ask Ethan for more help/info
         if you are unsure.
         */
+        if(Phaser.Input.Keyboard.JustDown(this.keys.plus)) {
+            this.player.debugOn = !this.player.debugOn;
+            console.log("PlayerDebug = " + this.player.debugOn);
+        }
         this.platformerCamera.update(time, delta);
-        this.player.update();
+        this.playerFSM.step();
 
     }
 }

@@ -14,7 +14,7 @@ class Ground extends Phaser.Physics.Arcade.Sprite
 
 
     }
-    update(time, delta) 
+    update(time, delta)
     {
         let deltaMultiplier = (delta/16.66667); //for refresh rate indepence.
     }
