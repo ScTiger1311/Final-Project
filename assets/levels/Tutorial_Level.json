@@ -1,5 +1,13 @@
 { "backgroundcolor":"#696a79",
  "compressionlevel":0,
+ "editorsettings":
+    {
+     "export":
+        {
+         "format":"json",
+         "target":"Tutorial_Level.json"
+        }
+    },
  "height":23,
  "infinite":false,
  "layers":[
@@ -10,7 +18,7 @@
          "name":"IntGrid_values",
          "opacity":1,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":40,
          "x":0,
          "y":0
@@ -21,6 +29,12 @@
          "id":2,
          "name":"IntGrid",
          "opacity":1,
+         "properties":[
+                {
+                 "name":"collides",
+                 "type":"bool",
+                 "value":true
+                }],
          "type":"tilelayer",
          "visible":true,
          "width":40,
