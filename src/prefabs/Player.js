@@ -22,14 +22,35 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.upGravity = 1600;
         this.downGravity = 1800;
 
+        //Debug items
+        this.debugOn = true;
+        this.debugGraphics = scene.add.graphics();
+
         //Temp values
         this.setScale(.5)
+
+        //Detection 
+        this.topLeftRay = new Phaser.Geom.Line(
+            this.x - this.body.width/2, this.y - this.body.height/2,
+            this.x - this.body.width/2 - 1, this.y - this.body.height/2
+        );
+        this.topRightRay = new Phaser.Geom.Line(
+            this.x + this.body.width/2, this.y - this.body.height/2,
+            this.x + this.body.width/2 + 1, this.y - this.body.height/2
+        );
+        this.bottomLeftRay = new Phaser.Geom.Line(
+            this.x - this.body.width/2, this.y + this.body.height/2,
+            this.x - this.body.width/2 - 1, this.y + this.body.height/2
+        );
+        this.bottomRightRay = new Phaser.Geom.Line(
+            this.x + this.body.width/2, this.y + this.body.height/2,
+            this.x + this.body.width/2 + 1, this.y + this.body.height/2
+        );
 
         //Tracking values
         this.deltaY = 0;
         this.lastY = this.y;
         this.wallInVelocity = 0;
-        this.debugOn = true;
         this.comingOffWall = false;
 
 
@@ -67,28 +88,44 @@ class Player extends Phaser.Physics.Arcade.Sprite
         if(this.debugOn) console.log(msg);
     }
 
+    drawDebug() {
+        if(this.debugOn) {
+            this.debugGraphics.clear();
+            this.debugGraphics.lineStyle(1, 0x00ff00);
+            this.debugGraphics.strokeLineShape(this.topLeftRay);
+            this.debugGraphics.strokeLineShape(this.bottomLeftRay);
+            this.debugGraphics.strokeLineShape(this.topRightRay);
+            this.debugGraphics.strokeLineShape(this.bottomRightRay);
+        }
+    }
+
     update(time, delta) 
     {
         let deltaMultiplier = (delta/16.66667); //for refresh rate indepence.
-
-
-
-        //Left right movement
-        if(keyRIGHT.isDown) {
-            this.body.setAccelerationX(this.MoveAcceleration);
-        }
-        else if(keyLEFT.isDown) {
-            this.body.setAccelerationX(-this.MoveAcceleration);
-        }
-        else {
-            this.body.setAccelerationX(0);
-        }
+        this.topLeftRay = new Phaser.Geom.Line(
+            this.x - this.body.width/2, this.y - this.body.height/2,
+            this.x - this.body.width/2 - 1, this.y - this.body.height/2
+        );
+        this.topRightRay = new Phaser.Geom.Line(
+            this.x + this.body.width/2, this.y - this.body.height/2,
+            this.x + this.body.width/2 + 1, this.y - this.body.height/2
+        );
+        this.bottomLeftRay = new Phaser.Geom.Line(
+            this.x - this.body.width/2, this.y + this.body.height/2-1,
+            this.x - this.body.width/2 - 1, this.y + this.body.height/2-1
+        );
+        this.bottomRightRay = new Phaser.Geom.Line(
+            this.x + this.body.width/2, this.y + this.body.height/2-1,
+            this.x + this.body.width/2 + 1, this.y + this.body.height/2-1
+        );
+        
     }
 }
 
     class IdleState extends State {
         enter(scene, player) {
             player.playerDebug("Enter IdleState");
+            player.playerDebug("Origin: " + player.originX + ", " + player.originY);
             //player.anims.play(`walk-${player.direction}`);
             //player.anims.stop();
         }
@@ -213,34 +250,46 @@ class Player extends Phaser.Physics.Arcade.Sprite
             // use destructuring to make a local copy of the keyboard object
             const { left, right, a, d, space } = scene.keys;
 
-            //Allow directional dismount of the wall
-            if(left.isDown || a.isDown) {
-                player.body.setAccelerationX(-player.MoveAcceleration * .2);
-            } else if(right.isDown || d.isDown) {
-                player.body.setAccelerationX(player.MoveAcceleration * .2);
-            }
-            else if(!player.comingOffWall){ //Slightly press the player into the wall so that a collision is registered
+            //This doesn't totally work, but it is the best i've been able
+            //To figure out so far
+            //Problems when jumping from one wall to another
+            if(!player.comingOffWall){ //Slightly press the player into the wall so that a collision is registered
                 player.setVelocityX(100 * this.direction)
             }
 
-            //Handle wall jump input
-            if(Phaser.Input.Keyboard.JustDown(space)){
-                player.body.setVelocityX(450 * -this.direction);
-                player.body.setVelocityY(-425);
-                player.comingOffWall = true;
-                this.stateMachine.transition('inair')
-                return;
+            //Allow directional dismount of the wall
+            if(Phaser.Input.Keyboard.JustDown(left) || Phaser.Input.Keyboard.JustDown(a)) {
+                
+            } else if(Phaser.Input.Keyboard.JustDown(right) || Phaser.Input.Keyboard.JustDown(d)) {
+                
             }
+
 
             if(!player.body.touching.right && !player.body.touching.left && !this.transitionStarted) {
                 this.transitionStarted = true;
                 player.comingOffWall = true;
+                this.stateMachine.transition('inair');
                 scene.time.delayedCall(200, () => {
                     if(this.stateMachine.state == 'wallcling') {
-                        this.stateMachine.transition('inair');
+                        
                     }
                     return
                 });
+            }
+
+            if(player.body.touching.down) {
+                player.playerLand.play();
+                this.stateMachine.transition('walk')
+                return
+            }
+
+            //Handle wall jump input
+            if(Phaser.Input.Keyboard.JustDown(space)){
+                player.comingOffWall = true;
+                player.body.setVelocityX(450 * -this.direction);
+                player.body.setVelocityY(-425);
+                this.stateMachine.transition('inair')
+                return;
             }
 
         }
@@ -290,26 +339,12 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 player.direction = 'right';
             }
 
-        //Detect and handle wall jumping inputs
-        // if(!this.body.touching.down) {
-
-        //     //console.log(this.wallInVelocity);
-        //     if(Phaser.Input.Keyboard.JustDown(keyUP)){
-        //         this.body.setVelocityX(-this.wallInVelocity);
-        //         this.body.setVelocityY(-500);
-        //         if(!this.playerJump.isPlaying)
-        //             this.playerJump.play();
-        //         this.wallInVelocity = 0;
-        //     }
-        // }
-
             //Handle wall collision
             if(player.body.touching.right || player.body.touching.left) {
                 player.body.setAccelerationX(0);
                 this.stateMachine.transition('wallcling');
                 return;
             }
-
 
             //Handle landing
             if(this.risingJumpInputted && player.body.touching.down) {

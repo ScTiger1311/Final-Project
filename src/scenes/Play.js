@@ -16,6 +16,15 @@ class Play extends Phaser.Scene
     create()
     {
         console.log("entered the Play scene");
+      
+        this.env = this.add.group();
+
+        this.env.add(new Ground(this, game.config.width/2, game.config.height, "OrangeRectSprite", 50))
+        let obj1 = new Ground(this, game.config.width * .35 , game.config.height/2, "OrangeRectSprite", 1, 10);
+        this.env.add(obj1)
+        let obj2 = new Ground(this, game.config.width * .75 , game.config.height/2, "OrangeRectSprite", 1, 1.5);
+        this.env.add(obj2)
+
         this.player = new Player(this, game.config.width/2, game.config.height/2, "PinkSquareSprite");
 
         this.playerFSM = new StateMachine('idle', {
@@ -27,15 +36,13 @@ class Play extends Phaser.Scene
             wallcling: new WallClingState(),
             inair: new InAirState(),
         }, [this, this.player]);
-      
-        this.env = this.add.group();
 
-        this.env.add(new Ground(this, game.config.width/2, game.config.height, "OrangeRectSprite", 50))
         this.physics.add.collider(this.player, this.env);
-        for(let i = 0; i < 5; ++i) {
+
+        /*for(let i = 0; i < 5; ++i) {
             let obj = new Ground(this, (Math.random() * game.config.width) , (Math.random() * game.config.height), "OrangeRectSprite");
             this.env.add(obj);
-        }
+        }*/
 
         /*this.testObj = new Obstacle(this, game.config.width/3, game.config.height*.8, "OrangeRectSprite");
         this.physics.add.overlap(this.player, this.testObj, ()=>{
@@ -85,12 +92,16 @@ class Play extends Phaser.Scene
         That way they don't speed up on high refresh rate displays. Ask Ethan for more help/info
         if you are unsure.
         */
+        
+
         if(Phaser.Input.Keyboard.JustDown(this.keys.plus)) {
             this.player.debugOn = !this.player.debugOn;
             console.log("PlayerDebug = " + this.player.debugOn);
         }
         this.platformerCamera.update(time, delta);
         this.playerFSM.step();
+        this.player.update();
+        this.player.drawDebug();
 
     }
 }
