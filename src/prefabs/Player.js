@@ -1,20 +1,51 @@
 class Player extends Phaser.Physics.Arcade.Sprite
 {
-    constructor(scene, x, y, texture)
+    constructor(scene, x, y)
     {
         //Add object to scenes
-        super(scene, x, y, texture);
+        super(scene, x, y, 'PlayerAtlas');
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
         //Setup physics config
         this.body.gravity = new Phaser.Math.Vector2(0, 800)
 
+        //Setup animations
+        scene.anims.create({
+            key:"run",
+            frames: this.anims.generateFrameNames('PlayerAtlas',
+            {
+                prefix: "Player_Run",
+                start: 1,
+                end: 8,
+                zeroPad: 4
+            }),
+            frameRate: 12,
+            repeat: -1
+
+        });
+        scene.anims.create({
+            key:"idle",
+            frames: this.anims.generateFrameNames('PlayerAtlas',
+            {
+                prefix: "Player_Idle",
+                start: 1,
+                end: 1,
+                zeroPad: 4
+            }),
+            frameRate: 1,
+
+        });
+
+
+        //Debug purposes only
+        this.body.collideWorldBounds = true 
+
         this.isBoosting = false;
       
-        this.body.maxVelocity = new Phaser.Math.Vector2(600, 1100)
+        this.body.maxVelocity = new Phaser.Math.Vector2(400, 1100)
         this.body.useDrag;
-        this.body.setDragX(1400); //This is used as the damping value
+        this.body.setDragX(1800); //This is used as the damping value
         this.body.bounceX = 5000
         
         //Setup control values
@@ -27,7 +58,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.debugGraphics = scene.add.graphics();
 
         //Temp values
-        this.setScale(.5)
+        //this.setScale(.5)
 
         //Detection 
         this.topLeftRay = new Phaser.Geom.Line(
@@ -126,8 +157,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
         enter(scene, player) {
             player.playerDebug("Enter IdleState");
             player.playerDebug("Origin: " + player.originX + ", " + player.originY);
-            //player.anims.play(`walk-${player.direction}`);
-            //player.anims.stop();
+            player.play("idle")
+            player.stop()
         }
     
         execute(scene, player) {
@@ -153,6 +184,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
     class WalkState extends State {
         enter (scene, player) {
             player.playerDebug("Enter WalkState");
+            player.play("run")
         }
 
         execute(scene, player) {
@@ -178,9 +210,11 @@ class Player extends Phaser.Physics.Arcade.Sprite
             //player.body.setVelocity(0);
             if(left.isDown || a.isDown) {
                 player.body.setAccelerationX(-player.MoveAcceleration);
+                player.setFlipX(true)
                 player.direction = 'left';
             } else if(right.isDown || d.isDown) {
                 player.body.setAccelerationX(player.MoveAcceleration);
+                player.setFlipX(false)
                 player.direction = 'right';
             }
         }
@@ -242,7 +276,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
     class WallClingState extends State {
         enter(scene, player) {
             player.playerDebug("Enter WallClingState");
-            this.direction = player.body.touching.right ? 1 : -1
+            this.direction = player.body.blocked.right ? 1 : -1
             this.transitionStarted = false;
         }
 
@@ -265,7 +299,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             }
 
 
-            if(!player.body.touching.right && !player.body.touching.left && !this.transitionStarted) {
+            if(!player.body.blocked.right && !player.body.blocked.left && !this.transitionStarted) {
                 this.transitionStarted = true;
                 player.comingOffWall = true;
                 this.stateMachine.transition('inair');
@@ -277,7 +311,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 });
             }
 
-            if(player.body.touching.down) {
+            if(player.body.blocked.down) {
                 player.playerLand.play();
                 this.stateMachine.transition('walk')
                 return
@@ -340,14 +374,14 @@ class Player extends Phaser.Physics.Arcade.Sprite
             }
 
             //Handle wall collision
-            if(player.body.touching.right || player.body.touching.left) {
+            if(player.body.blocked.right || player.body.blocked.left) {
                 player.body.setAccelerationX(0);
                 this.stateMachine.transition('wallcling');
                 return;
             }
 
             //Handle landing
-            if(this.risingJumpInputted && player.body.touching.down) {
+            if(this.risingJumpInputted && player.body.blocked.down) {
                 player.playerLand.play();
                 player.comingOffWall = false;
                 //Go to walk and if they aren't holding a key go to idle

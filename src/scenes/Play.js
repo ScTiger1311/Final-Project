@@ -7,16 +7,36 @@ class Play extends Phaser.Scene
 
     preload()
     {
+        this.load.atlas("PlayerAtlas", "./assets/Animations/Player_Atlas.png", "./assets/Animations/Player_Atlas.json");
         this.load.image("PinkSquareSprite", "./assets/single_sprites/pink_square.png");
         this.load.image("OrangeRectSprite", "./assets/single_sprites/orange_rect.png");
+        this.load.image("StoneTilesetImage", "./assets/levels/StoneBrick_Tileset.png");
         this.load.audio("jumpFx", "./assets/sounds/fx/Jump.wav")
         this.load.audio("landFx", "./assets/sounds/fx/Land.wav")
+        this.load.tilemapTiledJSON("TestLevel", "./assets/levels/Tutorial_Level.json");
     }
 
     create()
     {
         console.log("entered the Play scene");
       
+        const tutorial_level_map = this.add.tilemap("TestLevel")
+        const stoneTileset = tutorial_level_map.addTilesetImage("StoneBrick", "StoneTilesetImage")
+
+        //const IntGridValues_Layer = tutorial_level_map.createLayer("IntGrid_values", stoneTileset, 0, 0);
+        const IntGrid_Layer = tutorial_level_map.createLayer("IntGrid", stoneTileset, 0, 0);
+
+        // IntGridValues_Layer.setCollisionByProperty({
+        //     collides: true 
+        // });
+
+        IntGrid_Layer.setCollisionByProperty({
+            Collides: true 
+        });
+
+
+        //test obstacles
+        
         this.env = this.add.group();
 
         this.env.add(new Ground(this, game.config.width/2, game.config.height, "OrangeRectSprite", 50))
@@ -25,7 +45,9 @@ class Play extends Phaser.Scene
         let obj2 = new Ground(this, game.config.width * .75 , game.config.height/2, "OrangeRectSprite", 1, 1.5);
         this.env.add(obj2)
 
-        this.player = new Player(this, game.config.width/2, game.config.height/2, "PinkSquareSprite");
+        
+
+        this.player = new Player(this, game.config.width/2, game.config.height * -.1);
 
         this.playerFSM = new StateMachine('idle', {
             idle: new IdleState(),
@@ -37,6 +59,8 @@ class Play extends Phaser.Scene
             inair: new InAirState(),
         }, [this, this.player]);
 
+        //this.physics.add.collider(this.player, IntGridValues_Layer);
+        this.physics.add.collider(this.player, IntGrid_Layer);
         this.physics.add.collider(this.player, this.env);
 
         /*for(let i = 0; i < 5; ++i) {
