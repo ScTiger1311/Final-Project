@@ -37,9 +37,15 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
         });
 
+        //Setup mouse input
+        scene.input.on('pointerdown', (pointer) => {
+            this.playerDebug("Down at [x: " + pointer.x + ", y: " + pointer.y + "]")
+            if(scene.playerFSM.state == 'inair')
+                this.attackQueued = true;
+        })
 
         //Debug purposes only
-        this.body.collideWorldBounds = true 
+        //this.body.collideWorldBounds = true 
 
         this.isBoosting = false;
       
@@ -52,6 +58,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.MoveAcceleration = 1000;
         this.upGravity = 1600;
         this.downGravity = 1800;
+        this.attackVelocity = 1000;
+        this.attackTime = 100;
 
         //Debug items
         this.debugOn = true;
@@ -83,6 +91,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.lastY = this.y;
         this.wallInVelocity = 0;
         this.comingOffWall = false;
+        this.attackQueued = false;
 
 
         //Player fx
@@ -120,8 +129,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
     }
 
     drawDebug() {
+        this.debugGraphics.clear();
         if(this.debugOn) {
-            this.debugGraphics.clear();
             this.debugGraphics.lineStyle(1, 0x00ff00);
             this.debugGraphics.strokeLineShape(this.topLeftRay);
             this.debugGraphics.strokeLineShape(this.bottomLeftRay);
@@ -223,10 +232,40 @@ class Player extends Phaser.Physics.Arcade.Sprite
     class AttackState extends State {
         enter (scene, player) {
             player.playerDebug("Enter AttackState");
+            player.playerDebug("Playerposbef = " + player.body.position.x + ", " + player.body.position.y)
+            player.attackQueued = false;
+
+            // set a short delay before going back to in air
+            let startPoint = player.body.position;
+            player.playerDebug("Startpoint = " + startPoint.x + ", " + startPoint.y)
+            scene.time.delayedCall(player.attackTime, () => {
+                player.body.setAllowGravity(true)
+                player.body.setVelocity(0)
+                player.playerDebug("Playerposaft = " + player.body.position.x + ", " + player.body.position.y)
+                console.log("Start: " + startPoint.x + ", " + startPoint.y + " End: " + player.body.position.x + ", " + player.body.position.y )
+                console.log("Distance: " + Phaser.Math.Distance.BetweenPoints(startPoint, player.body.position))
+                this.stateMachine.transition('inair');
+                return;
+            });
         }
 
         execute(scene, player) {
+            //player.body.setVelocity(0);
+            player.body.setAllowGravity(false)
 
+            //Give velocity towards mouse
+            scene.physics.velocityFromRotation(
+                Phaser.Math.Angle.Between(
+                    player.body.position.x,
+                    player.body.position.y,
+                    scene.input.mousePointer.worldX,
+                    scene.input.mousePointer.worldY
+                    ),
+                player.attackVelocity,
+                player.body.velocity
+            );
+            this.endPoint = player.body.position
+            
         }
     }
     
@@ -386,6 +425,12 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 player.comingOffWall = false;
                 //Go to walk and if they aren't holding a key go to idle
                 this.stateMachine.transition('walk');
+                return;
+            }
+
+            //Handle attack interrupt
+            if(player.attackQueued) {
+                this.stateMachine.transition('attack')
                 return;
             }
 

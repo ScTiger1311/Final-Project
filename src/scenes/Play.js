@@ -24,13 +24,13 @@ class Play extends Phaser.Scene
         const stoneTileset = tutorial_level_map.addTilesetImage("StoneBrick", "StoneTilesetImage")
 
         //const IntGridValues_Layer = tutorial_level_map.createLayer("IntGrid_values", stoneTileset, 0, 0);
-        const IntGrid_Layer = tutorial_level_map.createLayer("IntGrid", stoneTileset, 0, 0);
+        const Platform_Layer = tutorial_level_map.createLayer("Platform", stoneTileset, 0, 0);
 
         // IntGridValues_Layer.setCollisionByProperty({
         //     collides: true 
         // });
 
-        IntGrid_Layer.setCollisionByProperty({
+        Platform_Layer.setCollisionByProperty({
             Collides: true 
         });
 
@@ -40,10 +40,10 @@ class Play extends Phaser.Scene
         this.env = this.add.group();
 
         this.env.add(new Ground(this, game.config.width/2, game.config.height, "OrangeRectSprite", 50))
-        let obj1 = new Ground(this, game.config.width * .35 , game.config.height/2, "OrangeRectSprite", 1, 10);
-        this.env.add(obj1)
-        let obj2 = new Ground(this, game.config.width * .75 , game.config.height/2, "OrangeRectSprite", 1, 1.5);
-        this.env.add(obj2)
+        // let obj1 = new Ground(this, game.config.width * .35 , game.config.height/2, "OrangeRectSprite", 1, 10);
+        // this.env.add(obj1)
+        // let obj2 = new Ground(this, game.config.width * .75 , game.config.height/2, "OrangeRectSprite", 1, 1.5);
+        // this.env.add(obj2)
 
         
 
@@ -60,7 +60,7 @@ class Play extends Phaser.Scene
         }, [this, this.player]);
 
         //this.physics.add.collider(this.player, IntGridValues_Layer);
-        this.physics.add.collider(this.player, IntGrid_Layer);
+        this.physics.add.collider(this.player, Platform_Layer);
         this.physics.add.collider(this.player, this.env);
 
         /*for(let i = 0; i < 5; ++i) {
