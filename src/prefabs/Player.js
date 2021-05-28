@@ -42,7 +42,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             {
                 prefix: "Player_Jump",
                 start: 1,
-                end: 13,
+                end: 14,
                 zeroPad: 4
             }),
             frameRate: 16,
