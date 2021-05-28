@@ -45,7 +45,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 end: 13,
                 zeroPad: 4
             }),
-            frameRate: 12,
+            frameRate: 16,
 
         });
 
