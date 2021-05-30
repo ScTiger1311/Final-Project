@@ -61,13 +61,13 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
         this.isBoosting = false;
       
-        this.body.maxVelocity = new Phaser.Math.Vector2(400, 1100)
+        this.body.maxVelocity = new Phaser.Math.Vector2(300, 1100);
         this.body.useDrag;
         this.body.setDragX(1800); //This is used as the damping value
         this.body.bounceX = 5000
         
         //Setup control values
-        this.MoveAcceleration = 1000;
+        this.MoveAcceleration = 2000;
         this.upGravity = 1200;
         this.downGravity = 1500;
         this.attackVelocity = 1000;
