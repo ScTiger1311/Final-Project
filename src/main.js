@@ -26,5 +26,5 @@ let BOOST = 5;
 //set UI sizes
 
 //reserve keyboard bindings
-let keyF, keyR, keyLEFT, keyRIGHT, keyUP, keyDOWN, keySPACE;
+let keyF, keyR, keyLEFT, keyRIGHT, keyUP, keyDOWN, keySPACE, keyX;
 

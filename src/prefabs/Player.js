@@ -126,12 +126,12 @@ class Player extends Phaser.Physics.Arcade.Sprite
         if(increase && !this.isBoosting){
             this.MoveAcceleration *= BOOST;
             // this.body.setVelocityY(-500*BOOST);  // experimenting
-            //console.log("increase:" + this.MoveAcceleration);
+            console.log("increase:" + this.MoveAcceleration);
             this.isBoosting = true;
         }
         else{
             this.MoveAcceleration /= BOOST;
-            //console.log(this.MoveAcceleration);
+            console.log(this.MoveAcceleration);
             this.isBoosting = false;
         }
     }
