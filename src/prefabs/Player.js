@@ -69,16 +69,18 @@ class Player extends Phaser.Physics.Arcade.Sprite
         //Setup control values
         this.MoveAcceleration = 1000;
         this.upGravity = 1600;
-        this.downGravity = 1800;
-        this.attackVelocity = 1000;
-        this.attackTime = 100;
+        this.downGravity = 1700;
+        this.jumpForce = -500
+        this.attackVelocity = 700;
+        this.attackTime = 50;
+        this.attackDamping = .7
+        this.attackCooldown = 500
 
         //Debug items
         this.debugOn = true;
         this.debugGraphics = scene.add.graphics();
 
         //Temp values
-        //this.setScale(.5)
 
         //Detection 
         this.topLeftRay = new Phaser.Geom.Line(
@@ -97,6 +99,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             this.x + this.body.width/2, this.y + this.body.height/2,
             this.x + this.body.width/2 + 1, this.y + this.body.height/2
         );
+        this.debugCircle = new Phaser.Geom.Circle(this.body.position.x, this.body.position.y, 4)
 
         //Tracking values
         this.deltaY = 0;
@@ -104,6 +107,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.wallInVelocity = 0;
         this.comingOffWall = false;
         this.attackQueued = false;
+        this.canAttack = true;
 
 
         //Player fx
@@ -144,10 +148,12 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.debugGraphics.clear();
         if(this.debugOn) {
             this.debugGraphics.lineStyle(1, 0x00ff00);
+            //this.debugGraphics.circleStyle(1, 0xff0000);
             this.debugGraphics.strokeLineShape(this.topLeftRay);
             this.debugGraphics.strokeLineShape(this.bottomLeftRay);
             this.debugGraphics.strokeLineShape(this.topRightRay);
             this.debugGraphics.strokeLineShape(this.bottomRightRay);
+            this.debugGraphics.strokeCircleShape(this.debugCircle);
         }
     }
 
@@ -170,6 +176,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             this.x + this.body.width/2, this.y + this.body.height/2-1,
             this.x + this.body.width/2 + 1, this.y + this.body.height/2-1
         );
+        this.debugCircle = new Phaser.Geom.Circle(this.body.position.x, this.body.position.y, 8)
         
     }
 }
@@ -179,6 +186,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
             player.playerDebug("Enter IdleState");
             player.playerDebug("Origin: " + player.originX + ", " + player.originY);
             player.play("idle")
+            //Size in pixels of hitbox
+            player.body.setSize(16, 30, 1)
             player.stop()
         }
     
@@ -248,16 +257,19 @@ class Player extends Phaser.Physics.Arcade.Sprite
             player.playerDebug("Enter AttackState");
             player.playerDebug("Playerposbef = " + player.body.position.x + ", " + player.body.position.y)
             player.attackQueued = false;
+            player.canAttack = false;
+            this.inVelocity = player.body.velocity;
 
             // set a short delay before going back to in air
             let startPoint = player.body.position;
             player.playerDebug("Startpoint = " + startPoint.x + ", " + startPoint.y)
             scene.time.delayedCall(player.attackTime, () => {
                 player.body.setAllowGravity(true)
-                //player.body.setVelocity(0)
-                player.playerDebug("Playerposaft = " + player.body.position.x + ", " + player.body.position.y)
-                console.log("Start: " + startPoint.x + ", " + startPoint.y + " End: " + player.body.position.x + ", " + player.body.position.y )
-                console.log("Distance: " + Phaser.Math.Distance.BetweenPoints(startPoint, player.body.position))
+                player.body.setVelocity(this.inVelocity.x * player.attackDamping, this.inVelocity.y * player.attackDamping)
+                // player.playerDebug("Playerposaft = " + player.body.position.x + ", " + player.body.position.y)
+                // console.log("Start: " + startPoint.x + ", " + startPoint.y + " End: " + player.body.position.x + ", " + player.body.position.y )
+                // console.log("Distance: " + Phaser.Math.Distance.BetweenPoints(startPoint, player.body.position))
+                scene.time.delayedCall(player.attackCooldown, () => {player.canAttack = true})
                 this.stateMachine.transition('inair');
                 return;
             });
@@ -375,6 +387,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             //Handle wall jump input
             if(Phaser.Input.Keyboard.JustDown(space)){
                 player.comingOffWall = true;
+                player.setFlipX(!-this.direction)
                 player.body.setVelocityX(450 * -this.direction);
                 player.body.setVelocityY(-425);
                 player.play("jump")
@@ -409,7 +422,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
             //Handle jumping inputs
             if(!this.risingJumpInputted && Phaser.Input.Keyboard.DownDuration(space, 200)){
-                player.body.setVelocityY(-500);
+                player.body.setVelocityY(player.jumpForce);
             }
             else {
                 this.risingJumpInputted = true;
@@ -423,10 +436,10 @@ class Player extends Phaser.Physics.Arcade.Sprite
             //Slightly less control in the air
             if(left.isDown || a.isDown) {
                 player.body.setAccelerationX(-player.MoveAcceleration * .8);
-                player.direction = 'left';
+                player.setFlipX(true)
             } else if(right.isDown || d.isDown) {
                 player.body.setAccelerationX(player.MoveAcceleration * .8);
-                player.direction = 'right';
+                player.setFlipX(false)
             }
 
             //Handle wall collision
@@ -446,7 +459,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             }
 
             //Handle attack interrupt
-            if(player.attackQueued) {
+            if(player.attackQueued && player.canAttack) {
                 this.stateMachine.transition('attack')
                 return;
             }
