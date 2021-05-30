@@ -37,6 +37,7 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
                 scene.player.speedChange(true);
                 scene.speedEvent = this.time.addEvent(2500, () =>{
                 scene.player.speedChange(false);
+                });
             });
             this.dead = true;
         }
