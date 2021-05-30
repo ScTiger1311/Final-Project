@@ -71,8 +71,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.upGravity = 1200;
         this.downGravity = 1500;
         this.jumpForce = -250
-        this.attackVelocity = 700;
-        this.attackTime = 25;
+        this.attackVelocity = 500;
+        this.attackTime = 100;
         this.attackDamping = .7
         this.attackCooldown = 800
 
@@ -155,6 +155,13 @@ class Player extends Phaser.Physics.Arcade.Sprite
             this.debugGraphics.strokeLineShape(this.bottomRightRay);
             this.debugGraphics.strokeCircleShape(this.debugCircle);
         }
+    }
+
+    reset() {
+        this.body.setVelocity(0)
+        this.body.setAcceleration(0)
+        this.y = this.scene.playerSpawn.y;
+        this.x = this.scene.playerSpawn.x;
     }
 
     update(time, delta) 
@@ -258,7 +265,12 @@ class Player extends Phaser.Physics.Arcade.Sprite
             player.playerDebug("Playerposbef = " + player.body.position.x + ", " + player.body.position.y)
             player.attackQueued = false;
             player.canAttack = false;
+
+            player.tint = 0xff0000;
+
             this.inVelocity = player.body.velocity;
+
+            player.playerDebug("inVel: " + this.inVelocity.length() + "\natkVel: " + player.attackVelocity)
 
             // set a short delay before going back to in air
             let startPoint = player.body.position;
@@ -270,6 +282,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 // console.log("Start: " + startPoint.x + ", " + startPoint.y + " End: " + player.body.position.x + ", " + player.body.position.y )
                 // console.log("Distance: " + Phaser.Math.Distance.BetweenPoints(startPoint, player.body.position))
                 scene.time.delayedCall(player.attackCooldown, () => {player.canAttack = true})
+                player.tint = 0xffffff;
                 this.stateMachine.transition('inair');
                 return;
             });
@@ -278,8 +291,10 @@ class Player extends Phaser.Physics.Arcade.Sprite
         execute(scene, player) {
             //player.body.setVelocity(0);
             player.body.setAllowGravity(false)
+            player.setAcceleration(0);
 
             //Give velocity towards mouse
+            // Velocity is whatever is higher, the atatck speed, or the players current speed
             scene.physics.velocityFromRotation(
                 Phaser.Math.Angle.Between(
                     player.body.position.x,
@@ -287,7 +302,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
                     scene.input.mousePointer.worldX,
                     scene.input.mousePointer.worldY
                     ),
-                player.attackVelocity,
+                player.attackVelocity > this.inVelocity.length() ? player.attackVelocity : this.inVelocity.length(),
                 player.body.velocity
             );
             this.endPoint = player.body.position
