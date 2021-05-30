@@ -68,9 +68,9 @@ class Player extends Phaser.Physics.Arcade.Sprite
         
         //Setup control values
         this.MoveAcceleration = 1000;
-        this.upGravity = 1600;
-        this.downGravity = 1700;
-        this.jumpForce = -500
+        this.upGravity = 1200;
+        this.downGravity = 1500;
+        this.jumpForce = -250
         this.attackVelocity = 700;
         this.attackTime = 50;
         this.attackDamping = .7
