@@ -27,18 +27,14 @@ class Play extends Phaser.Scene
             this.env.add(obj);
         }
 
-        this.testObj = new Obstacle(this, game.config.width/3, game.config.height*.8, "OrangeRectSprite");
-        this.physics.add.overlap(this.player, this.testObj, ()=>{
-            this.player.speedChange(true);
-            this.speedEvent = this.time.addEvent(2500, () =>{
-                this.player.speedChange(false);
-            });
-        });
-        this.testbounce = new Obstacle(this, game.config.width *.1, game.config.height*.9, "OrangeRectSprite");
-        this.physics.add.collider(this.player, this.testbounce, ()=>{
-            if(this.player.body.touching.down && this.testbounce.body.touching.up)
-                this.player.bounce();
-        });
+        this.enemy = new Obstacle(this, game.config.width/3, game.config.height*.8, "OrangeRectSprite");
+
+        // var boost = this.physics.add.overlap(this.player, this.enemy, ()=>{
+        //     this.player.speedChange(true);
+        //     this.speedEvent = this.time.addEvent(2500, () =>{
+        //         this.player.speedChange(false);
+        //     });
+        // });
         
         this.cameraMain = this.cameras.main;
         this.platformerCamera = new PlatformerCamera(this, this.player, this.cameraMain);
@@ -49,6 +45,8 @@ class Play extends Phaser.Scene
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+        keyX = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
     }
 
     update(time, delta)
@@ -61,6 +59,6 @@ class Play extends Phaser.Scene
         */
         this.platformerCamera.update(time, delta);
         this.player.update();
-
+        this.enemy.update(this);
     }
 }
