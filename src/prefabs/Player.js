@@ -72,9 +72,9 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.downGravity = 1500;
         this.jumpForce = -250
         this.attackVelocity = 700;
-        this.attackTime = 50;
+        this.attackTime = 25;
         this.attackDamping = .7
-        this.attackCooldown = 500
+        this.attackCooldown = 800
 
         //Debug items
         this.debugOn = true;

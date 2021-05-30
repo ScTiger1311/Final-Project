@@ -47,7 +47,7 @@ class Play extends Phaser.Scene
 
         
 
-        this.player = new Player(this, game.config.width/2, game.config.height * -.1);
+        this.player = new Player(this, game.config.width/2, game.config.height/2);
 
         this.playerFSM = new StateMachine('idle', {
             idle: new IdleState(),
