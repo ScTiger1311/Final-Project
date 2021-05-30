@@ -68,8 +68,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
         
         //Setup control values
         this.MoveAcceleration = 1000;
-        this.upGravity = 1600;
-        this.downGravity = 1800;
+        this.upGravity = 1200;
+        this.downGravity = 1500;
         this.attackVelocity = 1000;
         this.attackTime = 100;
 
@@ -409,7 +409,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
             //Handle jumping inputs
             if(!this.risingJumpInputted && Phaser.Input.Keyboard.DownDuration(space, 200)){
-                player.body.setVelocityY(-500);
+                player.body.setVelocityY(-250);
             }
             else {
                 this.risingJumpInputted = true;
