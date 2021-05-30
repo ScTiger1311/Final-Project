@@ -36,6 +36,18 @@ class Player extends Phaser.Physics.Arcade.Sprite
             frameRate: 1,
 
         });
+        scene.anims.create({
+            key:"jump",
+            frames: this.anims.generateFrameNames('PlayerAtlas',
+            {
+                prefix: "Player_Jump",
+                start: 1,
+                end: 14,
+                zeroPad: 4
+            }),
+            frameRate: 16,
+
+        });
 
         //Setup mouse input
         scene.input.on('pointerdown', (pointer) => {
@@ -177,7 +189,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
     
             // transition to swing if pressing space
             if(Phaser.Input.Keyboard.JustDown(space)) {
-                player.playerJump.play();
+                player.playerJump.play(); //Play jump audio
+                player.play("jump") //Play jump animation
                 this.stateMachine.transition('inair');
                 return;
             }
@@ -202,7 +215,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
     
             // transition to inair if pressing space
             if(Phaser.Input.Keyboard.JustDown(space)) {
-                player.playerJump.play();
+                player.playerJump.play(); //Play jump audio
+                player.play("jump") //Play jump animation
                 player.body.setAccelerationX(0);
                 this.stateMachine.transition('inair');
                 return;
@@ -240,7 +254,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             player.playerDebug("Startpoint = " + startPoint.x + ", " + startPoint.y)
             scene.time.delayedCall(player.attackTime, () => {
                 player.body.setAllowGravity(true)
-                player.body.setVelocity(0)
+                //player.body.setVelocity(0)
                 player.playerDebug("Playerposaft = " + player.body.position.x + ", " + player.body.position.y)
                 console.log("Start: " + startPoint.x + ", " + startPoint.y + " End: " + player.body.position.x + ", " + player.body.position.y )
                 console.log("Distance: " + Phaser.Math.Distance.BetweenPoints(startPoint, player.body.position))
@@ -315,6 +329,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
     class WallClingState extends State {
         enter(scene, player) {
             player.playerDebug("Enter WallClingState");
+            player.play("idle")
             this.direction = player.body.blocked.right ? 1 : -1
             this.transitionStarted = false;
         }
@@ -341,6 +356,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             if(!player.body.blocked.right && !player.body.blocked.left && !this.transitionStarted) {
                 this.transitionStarted = true;
                 player.comingOffWall = true;
+                player.play("jump")
                 this.stateMachine.transition('inair');
                 scene.time.delayedCall(200, () => {
                     if(this.stateMachine.state == 'wallcling') {
@@ -361,7 +377,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 player.comingOffWall = true;
                 player.body.setVelocityX(450 * -this.direction);
                 player.body.setVelocityY(-425);
-                this.stateMachine.transition('inair')
+                player.play("jump")
+                //this.stateMachine.transition('inair')
                 return;
             }
 
