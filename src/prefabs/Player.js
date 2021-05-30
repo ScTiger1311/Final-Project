@@ -52,7 +52,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         //Setup mouse input
         scene.input.on('pointerdown', (pointer) => {
             this.playerDebug("Down at [x: " + pointer.x + ", y: " + pointer.y + "]")
-            if(scene.playerFSM.state == 'inair')
+            if(this.canAttack)
                 this.attackQueued = true;
         })
 
@@ -200,7 +200,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
     
         execute(scene, player) {
             // use destructuring to make a local copy of the keyboard object
-            // Yes thank you nathan doing that now - Avery
+            // Yes thank you nathan doing that now -Avery
             const { left, right, a, d, space } = scene.keys;
     
             // transition to swing if pressing space
@@ -215,6 +215,20 @@ class Player extends Phaser.Physics.Arcade.Sprite
             if(left.isDown || right.isDown || a.isDown || d.isDown) {
                 this.stateMachine.transition('walk');
                 return;
+            }
+
+            //Handle attack interrupt
+            if(player.attackQueued && player.canAttack) {
+                this.stateMachine.transition('attack')
+                return;
+            }
+
+            //Handle dropping off ledges
+            if(!player.body.blocked.down) {
+                player.play("jump") //Play jump animation from middle
+                player.anims.setProgress(.35)
+                this.stateMachine.transition('inair')
+                return
             }
         }
     }
@@ -256,6 +270,20 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 player.setFlipX(false)
                 player.direction = 'right';
             }
+
+            //Handle attack interrupt
+            if(player.attackQueued && player.canAttack) {
+                this.stateMachine.transition('attack')
+                return;
+            }
+
+            //Handle dropping off ledges
+            if(!player.body.blocked.down) {
+                player.play("jump") //Play jump animation from middle
+                player.anims.setProgress(.35)
+                this.stateMachine.transition('inair')
+                return
+            }
         }
     }
     
@@ -277,7 +305,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             player.playerDebug("Startpoint = " + startPoint.x + ", " + startPoint.y)
             scene.time.delayedCall(player.attackTime, () => {
                 player.body.setAllowGravity(true)
-                player.body.setVelocity(this.inVelocity.x * player.attackDamping, this.inVelocity.y * player.attackDamping)
+                player.body.setVelocity(player.body.velocity.x * player.attackDamping, player.body.velocity.y * player.attackDamping)
                 // player.playerDebug("Playerposaft = " + player.body.position.x + ", " + player.body.position.y)
                 // console.log("Start: " + startPoint.x + ", " + startPoint.y + " End: " + player.body.position.x + ", " + player.body.position.y )
                 // console.log("Distance: " + Phaser.Math.Distance.BetweenPoints(startPoint, player.body.position))
@@ -410,6 +438,12 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 return;
             }
 
+            //Handle attack interrupt
+            if(player.attackQueued && player.canAttack) {
+                this.stateMachine.transition('attack')
+                return;
+            }
+
         }
         
     }
@@ -468,8 +502,14 @@ class Player extends Phaser.Physics.Arcade.Sprite
             if(this.risingJumpInputted && player.body.blocked.down) {
                 player.playerLand.play();
                 player.comingOffWall = false;
-                //Go to walk and if they aren't holding a key go to idle
-                this.stateMachine.transition('walk');
+                //if holding a key go to walk otherwise go to idle
+                if (left.isDown || a.isDown || right.isDown || d.isDown) {
+                    this.stateMachine.transition('walk');
+                }
+                else {
+                    this.stateMachine.transition('idle');
+                }
+
                 return;
             }
 
