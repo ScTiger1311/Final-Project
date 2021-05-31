@@ -46,6 +46,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 zeroPad: 4
             }),
             frameRate: 16,
+            frameRate: 21,
 
         });
 
@@ -62,12 +63,15 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.isBoosting = false;
       
         this.body.maxVelocity = new Phaser.Math.Vector2(400, 1100)
+        this.body.maxVelocity = new Phaser.Math.Vector2(185, 1100);
         this.body.useDrag;
         this.body.setDragX(1800); //This is used as the damping value
+        this.body.setDragX(2500); //This is used as the damping value
         this.body.bounceX = 5000
         
         //Setup control values
         this.MoveAcceleration = 1000;
+        this.MoveAcceleration = 3000;
         this.upGravity = 1200;
         this.downGravity = 1500;
         this.jumpForce = -250
@@ -452,11 +456,19 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
             //Slightly less control in the air
             if(left.isDown || a.isDown) {
+<<<<<<< HEAD
                 player.body.setAccelerationX(-player.MoveAcceleration * .8);
                 player.setFlipX(true)
             } else if(right.isDown || d.isDown) {
                 player.body.setAccelerationX(player.MoveAcceleration * .8);
                 player.setFlipX(false)
+=======
+                player.body.setAccelerationX(-player.MoveAcceleration * .4);
+                player.direction = 'left';
+            } else if(right.isDown || d.isDown) {
+                player.body.setAccelerationX(player.MoveAcceleration * .4);
+                player.direction = 'right';
+>>>>>>> cameron-dev
             }
 
             //Handle wall collision
