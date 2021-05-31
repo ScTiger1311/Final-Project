@@ -452,10 +452,10 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
             //Slightly less control in the air
             if(left.isDown || a.isDown) {
-                player.body.setAccelerationX(-player.MoveAcceleration * .4);
+                player.body.setAccelerationX(-player.MoveAcceleration * .3);
                 player.setFlipX(true)
             } else if(right.isDown || d.isDown) {
-                player.body.setAccelerationX(player.MoveAcceleration * .4);
+                player.body.setAccelerationX(player.MoveAcceleration * .3);
                 player.setFlipX(false)
             }
 
