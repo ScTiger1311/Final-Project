@@ -39,15 +39,16 @@ class Play extends Phaser.Scene
         
         this.env = this.add.group();
 
-        this.env.add(new Ground(this, game.config.width/2, game.config.height, "OrangeRectSprite", 50))
+        //this.env.add(new Ground(this, game.config.width/2, game.config.height, "OrangeRectSprite", 50))
         // let obj1 = new Ground(this, game.config.width * .35 , game.config.height/2, "OrangeRectSprite", 1, 10);
         // this.env.add(obj1)
         // let obj2 = new Ground(this, game.config.width * .75 , game.config.height/2, "OrangeRectSprite", 1, 1.5);
         // this.env.add(obj2)
 
         
-
-        this.player = new Player(this, game.config.width/2, game.config.height * -.1);
+        this.playerSpawn = tutorial_level_map.findObject("Object", obj => obj.name === "Player_Spawn")
+        this.player = new Player(this, this.playerSpawn.x, this.playerSpawn.y);
+        //this.player = new Player(this, game.config.width/2, game.config.height);
 
         this.playerFSM = new StateMachine('idle', {
             idle: new IdleState(),
@@ -98,6 +99,12 @@ class Play extends Phaser.Scene
         That way they don't speed up on high refresh rate displays. Ask Ethan for more help/info
         if you are unsure.
         */
+
+        //Failsafe code
+       if(this.player.y > game.config.width * 1.5) {
+            this.player.reset();
+       }
+        
 
         if(Phaser.Input.Keyboard.JustDown(this.keys.plus)) {
             this.player.debugOn = !this.player.debugOn;

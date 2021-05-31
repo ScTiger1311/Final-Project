@@ -52,7 +52,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         //Setup mouse input
         scene.input.on('pointerdown', (pointer) => {
             this.playerDebug("Down at [x: " + pointer.x + ", y: " + pointer.y + "]")
-            if(scene.playerFSM.state == 'inair')
+            if(this.canAttack)
                 this.attackQueued = true;
         })
 
@@ -68,17 +68,19 @@ class Player extends Phaser.Physics.Arcade.Sprite
         
         //Setup control values
         this.MoveAcceleration = 1000;
-        this.upGravity = 1600;
-        this.downGravity = 1800;
-        this.attackVelocity = 1000;
+        this.upGravity = 1200;
+        this.downGravity = 1500;
+        this.jumpForce = -250
+        this.attackVelocity = 500;
         this.attackTime = 100;
+        this.attackDamping = .7
+        this.attackCooldown = 800
 
         //Debug items
         this.debugOn = true;
         this.debugGraphics = scene.add.graphics();
 
         //Temp values
-        //this.setScale(.5)
 
         //Detection 
         this.topLeftRay = new Phaser.Geom.Line(
@@ -97,6 +99,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             this.x + this.body.width/2, this.y + this.body.height/2,
             this.x + this.body.width/2 + 1, this.y + this.body.height/2
         );
+        this.debugCircle = new Phaser.Geom.Circle(this.body.position.x, this.body.position.y, 4)
 
         //Tracking values
         this.deltaY = 0;
@@ -104,6 +107,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.wallInVelocity = 0;
         this.comingOffWall = false;
         this.attackQueued = false;
+        this.canAttack = true;
 
 
         //Player fx
@@ -123,11 +127,20 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.debugGraphics.clear();
         if(this.debugOn) {
             this.debugGraphics.lineStyle(1, 0x00ff00);
+            //this.debugGraphics.circleStyle(1, 0xff0000);
             this.debugGraphics.strokeLineShape(this.topLeftRay);
             this.debugGraphics.strokeLineShape(this.bottomLeftRay);
             this.debugGraphics.strokeLineShape(this.topRightRay);
             this.debugGraphics.strokeLineShape(this.bottomRightRay);
+            this.debugGraphics.strokeCircleShape(this.debugCircle);
         }
+    }
+
+    reset() {
+        this.body.setVelocity(0)
+        this.body.setAcceleration(0)
+        this.y = this.scene.playerSpawn.y;
+        this.x = this.scene.playerSpawn.x;
     }
 
     update(time, delta) 
@@ -149,6 +162,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             this.x + this.body.width/2, this.y + this.body.height/2-1,
             this.x + this.body.width/2 + 1, this.y + this.body.height/2-1
         );
+        this.debugCircle = new Phaser.Geom.Circle(this.body.position.x, this.body.position.y, 8)
         
     }
 }
@@ -158,12 +172,14 @@ class Player extends Phaser.Physics.Arcade.Sprite
             player.playerDebug("Enter IdleState");
             player.playerDebug("Origin: " + player.originX + ", " + player.originY);
             player.play("idle")
+            //Size in pixels of hitbox
+            player.body.setSize(16, 30, 1)
             player.stop()
         }
     
         execute(scene, player) {
             // use destructuring to make a local copy of the keyboard object
-            // Yes thank you nathan doing that now - Avery
+            // Yes thank you nathan doing that now -Avery
             const { left, right, a, d, space } = scene.keys;
     
             // transition to swing if pressing space
@@ -178,6 +194,20 @@ class Player extends Phaser.Physics.Arcade.Sprite
             if(left.isDown || right.isDown || a.isDown || d.isDown) {
                 this.stateMachine.transition('walk');
                 return;
+            }
+
+            //Handle attack interrupt
+            if(player.attackQueued && player.canAttack) {
+                this.stateMachine.transition('attack')
+                return;
+            }
+
+            //Handle dropping off ledges
+            if(!player.body.blocked.down) {
+                player.play("jump") //Play jump animation from middle
+                player.anims.setProgress(.35)
+                this.stateMachine.transition('inair')
+                return
             }
         }
     }
@@ -219,6 +249,20 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 player.setFlipX(false)
                 player.direction = 'right';
             }
+
+            //Handle attack interrupt
+            if(player.attackQueued && player.canAttack) {
+                this.stateMachine.transition('attack')
+                return;
+            }
+
+            //Handle dropping off ledges
+            if(!player.body.blocked.down) {
+                player.play("jump") //Play jump animation from middle
+                player.anims.setProgress(.35)
+                this.stateMachine.transition('inair')
+                return
+            }
         }
     }
     
@@ -227,16 +271,25 @@ class Player extends Phaser.Physics.Arcade.Sprite
             player.playerDebug("Enter AttackState");
             player.playerDebug("Playerposbef = " + player.body.position.x + ", " + player.body.position.y)
             player.attackQueued = false;
+            player.canAttack = false;
+
+            player.tint = 0xff0000;
+
+            this.inVelocity = player.body.velocity;
+
+            player.playerDebug("inVel: " + this.inVelocity.length() + "\natkVel: " + player.attackVelocity)
 
             // set a short delay before going back to in air
             let startPoint = player.body.position;
             player.playerDebug("Startpoint = " + startPoint.x + ", " + startPoint.y)
             scene.time.delayedCall(player.attackTime, () => {
                 player.body.setAllowGravity(true)
-                //player.body.setVelocity(0)
-                player.playerDebug("Playerposaft = " + player.body.position.x + ", " + player.body.position.y)
-                console.log("Start: " + startPoint.x + ", " + startPoint.y + " End: " + player.body.position.x + ", " + player.body.position.y )
-                console.log("Distance: " + Phaser.Math.Distance.BetweenPoints(startPoint, player.body.position))
+                player.body.setVelocity(player.body.velocity.x * player.attackDamping, player.body.velocity.y * player.attackDamping)
+                // player.playerDebug("Playerposaft = " + player.body.position.x + ", " + player.body.position.y)
+                // console.log("Start: " + startPoint.x + ", " + startPoint.y + " End: " + player.body.position.x + ", " + player.body.position.y )
+                // console.log("Distance: " + Phaser.Math.Distance.BetweenPoints(startPoint, player.body.position))
+                scene.time.delayedCall(player.attackCooldown, () => {player.canAttack = true})
+                player.tint = 0xffffff;
                 this.stateMachine.transition('inair');
                 return;
             });
@@ -245,8 +298,10 @@ class Player extends Phaser.Physics.Arcade.Sprite
         execute(scene, player) {
             //player.body.setVelocity(0);
             player.body.setAllowGravity(false)
+            player.setAcceleration(0);
 
             //Give velocity towards mouse
+            // Velocity is whatever is higher, the atatck speed, or the players current speed
             scene.physics.velocityFromRotation(
                 Phaser.Math.Angle.Between(
                     player.body.position.x,
@@ -254,7 +309,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
                     scene.input.mousePointer.worldX,
                     scene.input.mousePointer.worldY
                     ),
-                player.attackVelocity,
+                player.attackVelocity > this.inVelocity.length() ? player.attackVelocity : this.inVelocity.length(),
                 player.body.velocity
             );
             this.endPoint = player.body.position
@@ -354,10 +409,17 @@ class Player extends Phaser.Physics.Arcade.Sprite
             //Handle wall jump input
             if(Phaser.Input.Keyboard.JustDown(space)){
                 player.comingOffWall = true;
+                player.setFlipX(!-this.direction)
                 player.body.setVelocityX(450 * -this.direction);
                 player.body.setVelocityY(-425);
                 player.play("jump")
                 //this.stateMachine.transition('inair')
+                return;
+            }
+
+            //Handle attack interrupt
+            if(player.attackQueued && player.canAttack) {
+                this.stateMachine.transition('attack')
                 return;
             }
 
@@ -388,7 +450,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
             //Handle jumping inputs
             if(!this.risingJumpInputted && Phaser.Input.Keyboard.DownDuration(space, 200)){
-                player.body.setVelocityY(-500);
+                player.body.setVelocityY(player.jumpForce);
             }
             else {
                 this.risingJumpInputted = true;
@@ -402,10 +464,10 @@ class Player extends Phaser.Physics.Arcade.Sprite
             //Slightly less control in the air
             if(left.isDown || a.isDown) {
                 player.body.setAccelerationX(-player.MoveAcceleration * .8);
-                player.direction = 'left';
+                player.setFlipX(true)
             } else if(right.isDown || d.isDown) {
                 player.body.setAccelerationX(player.MoveAcceleration * .8);
-                player.direction = 'right';
+                player.setFlipX(false)
             }
 
             //Handle wall collision
@@ -419,13 +481,19 @@ class Player extends Phaser.Physics.Arcade.Sprite
             if(this.risingJumpInputted && player.body.blocked.down) {
                 player.playerLand.play();
                 player.comingOffWall = false;
-                //Go to walk and if they aren't holding a key go to idle
-                this.stateMachine.transition('walk');
+                //if holding a key go to walk otherwise go to idle
+                if (left.isDown || a.isDown || right.isDown || d.isDown) {
+                    this.stateMachine.transition('walk');
+                }
+                else {
+                    this.stateMachine.transition('idle');
+                }
+
                 return;
             }
 
             //Handle attack interrupt
-            if(player.attackQueued) {
+            if(player.attackQueued && player.canAttack) {
                 this.stateMachine.transition('attack')
                 return;
             }
