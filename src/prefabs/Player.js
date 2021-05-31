@@ -115,27 +115,6 @@ class Player extends Phaser.Physics.Arcade.Sprite
         })
     }
 
-    speedChange(increase = false){
-        if(increase && !this.isBoosting){
-            this.MoveAcceleration *= BOOST;
-            // this.body.setVelocityY(-500*BOOST);  // experimenting
-            //console.log("increase:" + this.MoveAcceleration);
-            this.isBoosting = true;
-        }
-        else{
-            this.MoveAcceleration /= BOOST;
-            //console.log(this.MoveAcceleration);
-            this.isBoosting = false;
-        }
-    }
-    bounce(){
-        this.body.setVelocityY(-250);
-        //console.log("bounce");
-        //Track values last frame for delta uses
-        this.lastY = this.y;
-        this.lastXVelocity = this.body.velocity.x;
-    }
-
     playerDebug(msg) {
         if(this.debugOn) console.log(msg);
     }
@@ -287,19 +266,19 @@ class Player extends Phaser.Physics.Arcade.Sprite
         enter(scene, player) {
             player.playerDebug("Enter BoostState");
             player.body.setVelocity(0);
-            player.anims.play(`swing-${player.direction}`);
+            // player.anims.play(`swing-${player.direction}`);
             switch(player.direction) {
                 case 'up':
-                    player.body.setVelocityY(-player.heroVelocity * 3);
+                    // player.body.setVelocityY(-player.heroVelocity* 3);
                     break;
                 case 'down':
-                    player.body.setVelocityY(player.heroVelocity * 3);
+                    // player.body.setVelocityY(player.heroVelocity * 3);
                     break;
                 case 'left':
-                    player.body.setVelocityX(-player.heroVelocity * 3);
+                    // player.body.setVelocityX(-player.heroVelocity * 3);
                     break;
                 case 'right':
-                    player.body.setVelocityX(player.heroVelocity * 3);
+                    // player.body.setVelocityX(player.heroVelocity * 3);
                     break;
             }
     

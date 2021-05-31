@@ -69,14 +69,8 @@ class Play extends Phaser.Scene
         }*/
 
         this.enemy = new Obstacle(this, game.config.width/3, game.config.height*.8, "OrangeRectSprite");
+        this.enemy.setScale(.75);
 
-        // var boost = this.physics.add.overlap(this.player, this.enemy, ()=>{
-        //     this.player.speedChange(true);
-        //     this.speedEvent = this.time.addEvent(2500, () =>{
-        //         this.player.speedChange(false);
-        //     });
-        // });
-        
         this.cameraMain = this.cameras.main;
         this.platformerCamera = new PlatformerCamera(this, this.player, this.cameraMain);
 
@@ -92,16 +86,8 @@ class Play extends Phaser.Scene
             'down':  Phaser.Input.Keyboard.KeyCodes.DOWN,
             'right': Phaser.Input.Keyboard.KeyCodes.RIGHT,
             'space': Phaser.Input.Keyboard.KeyCodes.SPACE,
+            'x': Phaser.Input.Keyboard. KeyCodes.X,
         });
-
-        /*
-        keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
-        keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
-        keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-        keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-        keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-
-        keyX = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
     }
 
     update(time, delta)
@@ -112,7 +98,6 @@ class Play extends Phaser.Scene
         That way they don't speed up on high refresh rate displays. Ask Ethan for more help/info
         if you are unsure.
         */
-        
 
         if(Phaser.Input.Keyboard.JustDown(this.keys.plus)) {
             this.player.debugOn = !this.player.debugOn;
@@ -123,6 +108,5 @@ class Play extends Phaser.Scene
         this.player.update();
         this.enemy.update(this);
         this.player.drawDebug();
-
     }
 }

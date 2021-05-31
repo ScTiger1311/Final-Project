@@ -6,40 +6,44 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
-        this.tint = 0xFF0000 *Math.random();
+        this.tint = 0x0b1f34;
         this.dead = false;
+        this.overlapping = false;
+        this.touching = false;
 
         // phys settings
         this.body.immovable = true;
         this.body.allowGravity = false;
         // alive collider
         scene.physics.add.collider(scene.player, this, ()=>{
-            // if(Phaser.Input.Keyboard.JustDown(keyX) && ((scene.player.body.touching.left && this.body.touching.right) ||
-            // scene.player.body.touching.right && this.body.touching.left)){
-            //     this section used for killing obstacle after proper keypress is switched out
-            // }
             if((scene.player.body.touching.left && this.body.touching.right) ||
                 scene.player.body.touching.right && this.body.touching.left){
-                console.log("Killed player");    
-                // kill player here
+                if(!this.touching){
+                    console.log("Hurt player");    
+                    scene.playerFSM.transition('hurt');
+                    this.touching = true;
+                }
             }
         }).name = 'aliveCollider';
     }
 
     update(scene){
-        if(Phaser.Input.Keyboard.JustDown(keyX) && !this.dead){
+        if(Phaser.Input.Keyboard.JustDown(scene.keys.x) && !this.dead){
             scene.physics.world.colliders.getActive().find(function(i){
                 return i.name == 'aliveCollider';
             }).destroy();
             scene.physics.add.overlap(scene.player, this, ()=>{
+                if(!this.overlapping){
+                this.overlapping = true;               
                 console.log("Boosted player");
-                // boost here
-                scene.player.speedChange(true);
-                scene.speedEvent = this.time.addEvent(2500, () =>{
-                scene.player.speedChange(false);
-                });
-            });
+                scene.playerFSM.transition('boost');
+                }
+            }).name = 'boostCollide';
             this.dead = true;
+        }
+        if(this.body.touching.none){
+            this.overlapping = false;
+            this.touching = false;
         }
     }
 }
