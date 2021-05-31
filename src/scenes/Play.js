@@ -69,7 +69,8 @@ class Play extends Phaser.Scene
             this.env.add(obj);
         }*/
 
-        this.enemy = new Obstacle(this, game.config.width/3, game.config.height*.8, "OrangeRectSprite");
+        // temp singular enemy object
+        this.enemy = new Obstacle(this, game.config.width/3, game.config.height*.82, "OrangeRectSprite");
         this.enemy.setScale(.75);
 
         this.cameraMain = this.cameras.main;

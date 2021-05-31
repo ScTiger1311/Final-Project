@@ -75,6 +75,9 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.attackTime = 100;
         this.attackDamping = .7
         this.attackCooldown = 800
+        // need boost cooldown & boost velocity
+        this.boostCooldown = 200;
+        this.boostModifier = 2.3;
 
         //Debug items
         this.debugOn = true;
@@ -320,25 +323,11 @@ class Player extends Phaser.Physics.Arcade.Sprite
     class BoostState extends State {
         enter(scene, player) {
             player.playerDebug("Enter BoostState");
-            player.body.setVelocity(0);
             // player.anims.play(`swing-${player.direction}`);
-            switch(player.direction) {
-                case 'up':
-                    // player.body.setVelocityY(-player.heroVelocity* 3);
-                    break;
-                case 'down':
-                    // player.body.setVelocityY(player.heroVelocity * 3);
-                    break;
-                case 'left':
-                    // player.body.setVelocityX(-player.heroVelocity * 3);
-                    break;
-                case 'right':
-                    // player.body.setVelocityX(player.heroVelocity * 3);
-                    break;
-            }
+            player.body.setVelocity(player.body.velocity.x *player.boostModifier, player.body.velocity.y *player.boostModifier);
     
             // set a short delay before going back to idle
-            scene.time.delayedCall(player.dashCooldown, () => {
+            scene.time.delayedCall(player.boostCooldown, () => {
                 this.stateMachine.transition('idle');
             });
         }
