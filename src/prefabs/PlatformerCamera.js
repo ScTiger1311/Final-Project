@@ -19,6 +19,7 @@ class PlatformerCamera extends Phaser.Cameras.Scene2D.BaseCamera
         this.scrollXOffsetCurr = 0;
         this.scrollYOffsetCurr = 0;
         this.scrollSpeed = 1;
+        //console.log("camera says: " + tutorial_level_map);
     }
 
     //all this garbage because phaser causes the webpage to crash if you call console.log() too fast
