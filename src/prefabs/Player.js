@@ -269,7 +269,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             if(Phaser.Input.Keyboard.JustDown(space)) {
                 player.playerJump.play(); //Play jump audio
                 player.play("jump") //Play jump animation
-                player.body.setAccelerationX(0);
+                //player.body.setAccelerationX(0);
                 this.stateMachine.transition('inair');
                 return;
             }
@@ -408,7 +408,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
             player.playerDebug("Enter WallClingState");
             player.play("idle")
             this.direction = player.body.blocked.right ? 1 : -1
-            this.transitionStarted = false;
+            //this.transitionStarted = false;
+            player.comingOffWall = false;
         }
 
         execute(scene, player) {
@@ -419,7 +420,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             //To figure out so far
             //Problems when jumping from one wall to another
             if(!player.comingOffWall){ //Slightly press the player into the wall so that a collision is registered
-                player.setVelocityX(100 * this.direction)
+                player.setVelocityX(300 * this.direction)
             }
 
             //Allow directional dismount of the wall
@@ -430,23 +431,17 @@ class Player extends Phaser.Physics.Arcade.Sprite
             }
 
 
-            if(!player.body.blocked.right && !player.body.blocked.left && !this.transitionStarted) {
-                this.transitionStarted = true;
+            if(!player.body.blocked.right && !player.body.blocked.left) {
+                //this.transitionStarted = true;
                 player.comingOffWall = true;
                 player.play("jump")
-                this.stateMachine.transition('inair');
-                scene.time.delayedCall(200, () => {
-                    if(this.stateMachine.state == 'wallcling') {
+                this.stateMachine.transition('inair')
+                // scene.time.delayedCall(10, () => {
+                //     if(this.stateMachine.state == 'wallcling') {
                         
-                    }
-                    return
-                });
-            }
-
-            if(player.body.blocked.down) {
-                player.playerLand.play();
-                this.stateMachine.transition('walk')
-                return
+                //     }
+                //     return
+                // });
             }
 
             //Handle wall jump input
@@ -464,6 +459,13 @@ class Player extends Phaser.Physics.Arcade.Sprite
             if(player.attackQueued && player.canAttack) {
                 this.stateMachine.transition('attack')
                 return;
+            }
+
+            //Handles player hitting the ground
+            if(player.body.blocked.down) {
+                player.playerLand.play();
+                this.stateMachine.transition('walk')
+                return
             }
 
         }
