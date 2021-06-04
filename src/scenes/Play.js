@@ -102,7 +102,8 @@ class Play extends Phaser.Scene
             'a':     Phaser.Input.Keyboard.KeyCodes.A,
             's':     Phaser.Input.Keyboard.KeyCodes.S,
             'd':     Phaser.Input.Keyboard.KeyCodes.D,
-            'plus':     Phaser.Input.Keyboard.KeyCodes.PLUS,
+            'plus':  Phaser.Input.Keyboard.KeyCodes.PLUS,
+            'minus': Phaser.Input.Keyboard.KeyCodes.MINUS,
             'up':    Phaser.Input.Keyboard.KeyCodes.UP,
             'left':  Phaser.Input.Keyboard.KeyCodes.LEFT,
             'down':  Phaser.Input.Keyboard.KeyCodes.DOWN,
@@ -130,6 +131,11 @@ class Play extends Phaser.Scene
         if(Phaser.Input.Keyboard.JustDown(this.keys.plus)) {
             this.player.debugOn = !this.player.debugOn;
             console.log("PlayerDebug = " + this.player.debugOn);
+        }
+        //This doesn't work
+        if(Phaser.Input.Keyboard.JustDown(this.keys.minus)) {
+            config.physics.arcade.debug = !config.physics.arcade.debug
+            console.log("physicsDebug = " + config.physics.arcade.debug);
         }
         this.platformerCamera.update(time, delta);
         this.playerFSM.step();

@@ -26,6 +26,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.body.setDragX(1800); //This is used as the damping value
         this.body.bounceX = 5000        
         this.body.setSize(16, 30, true) //Size in pixels of hitbox  
+        this.body.setOffset(this.body.width/2, 0)
 
         //Setup animations
         scene.anims.create({
@@ -63,6 +64,18 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 zeroPad: 4
             }),
             frameRate: 21,
+
+        });
+        scene.anims.create({
+            key:"wallcling",
+            frames: this.anims.generateFrameNames('PlayerAtlas',
+            {
+                prefix: "Wall_Slide",
+                start: 1,
+                end: 1,
+                zeroPad: 4
+            }),
+            frameRate: 1,
 
         });
 
@@ -170,22 +183,22 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
         //Position debugging geometry
         this.topLeftRay = new Phaser.Geom.Line(
-            this.x - this.body.width/2, this.y - this.body.height/2,
-            this.x - this.body.width/2 - 1, this.y - this.body.height/2
+            this.x - this.width/2, this.y - this.height/2,
+            this.x - this.width/2 - 1, this.y - this.height/2
         );
         this.topRightRay = new Phaser.Geom.Line(
-            this.x + this.body.width/2, this.y - this.body.height/2,
-            this.x + this.body.width/2 + 1, this.y - this.body.height/2
+            this.x + this.width/2, this.y - this.height/2,
+            this.x + this.width/2 + 1, this.y - this.height/2
         );
         this.bottomLeftRay = new Phaser.Geom.Line(
-            this.x - this.body.width/2, this.y + this.body.height/2-1,
-            this.x - this.body.width/2 - 1, this.y + this.body.height/2-1
+            this.x - this.width/2, this.y + this.height/2-1,
+            this.x - this.width/2 - 1, this.y + this.height/2-1
         );
         this.bottomRightRay = new Phaser.Geom.Line(
-            this.x + this.body.width/2, this.y + this.body.height/2-1,
-            this.x + this.body.width/2 + 1, this.y + this.body.height/2-1
+            this.x + this.width/2, this.y + this.height/2-1,
+            this.x + this.width/2 + 1, this.y + this.height/2-1
         );
-        this.debugCircle = new Phaser.Geom.Circle(this.x, this.y, 8)
+        this.debugCircle = new Phaser.Geom.Circle(this.body.x, this.body.y, 8)
 
         //Position wall detectors
         this.leftDetector.body.position.set(this.body.x - 1, this.body.y + this.body.height*(1-this.wDHeightScaler)/2)
@@ -381,8 +394,9 @@ class Player extends Phaser.Physics.Arcade.Sprite
     class WallClingState extends State {
         enter(scene, player) {
             player.playerDebug("Enter WallClingState");
-            player.play("idle")
+            player.play("wallcling")
             this.direction = player.body.blocked.right ? 1 : -1
+            player.setFlipX(this.direction > 0 ? 1 : 0)
             //this.transitionStarted = false;
             player.comingOffWall = false;
         }
@@ -422,7 +436,6 @@ class Player extends Phaser.Physics.Arcade.Sprite
             //Handle wall jump input
             if(Phaser.Input.Keyboard.JustDown(space)){
                 player.comingOffWall = true;
-                player.setFlipX(!-this.direction)
                 player.body.setVelocityX(450 * -this.direction);
                 player.body.setVelocityY(-425);
                 player.play("jump")
