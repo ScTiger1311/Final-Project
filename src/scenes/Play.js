@@ -11,15 +11,35 @@ class Play extends Phaser.Scene
         this.load.image("PinkSquareSprite", "./assets/single_sprites/pink_square.png");
         this.load.image("OrangeRectSprite", "./assets/single_sprites/orange_rect.png");
         this.load.image("StoneTilesetImage", "./assets/levels/StoneBrick_Tileset.png");
-        this.load.audio("jumpFx", "./assets/sounds/fx/Jump.wav")
-        this.load.audio("landFx", "./assets/sounds/fx/Land.wav")
+        this.load.audio("jumpFx", "./assets/sounds/fx/Jump.wav");
+        this.load.audio("landFx", "./assets/sounds/fx/Land.wav");
+        this.load.audio("music_majorTheme", "./assets/music/Spirit Flow Music_Major.mp3");
+        this.load.audio("music_minorTheme", "./assets/music/Spirit Flow Music_Minor.mp3");
         this.load.tilemapTiledJSON("TestLevel", "./assets/levels/Tutorial_Level.json");
     }
 
     create()
     {
         console.log("entered the Play scene");
-      
+        
+        /*
+        this.music = this.sound.add("music_majorTheme", 
+        {
+            loop:true,
+            volume: 0.15,
+        });
+        this.music.play();
+        */
+
+        
+        this.music = this.sound.add("music_minorTheme", 
+        {
+            loop:true,
+            volume: 0.06,
+        });
+        this.music.play();
+        
+
         const tutorial_level_map = this.add.tilemap("TestLevel")
         const stoneTileset = tutorial_level_map.addTilesetImage("StoneBrick", "StoneTilesetImage")
 
@@ -69,19 +89,9 @@ class Play extends Phaser.Scene
             this.env.add(obj);
         }*/
 
-        /*this.testObj = new Obstacle(this, game.config.width/3, game.config.height*.8, "OrangeRectSprite");
-        this.physics.add.overlap(this.player, this.testObj, ()=>{
-            this.player.speedChange(true);
-            this.speedEvent = this.time.addEvent(2500, () =>{
-                this.player.speedChange(false);
-            });
-        });
-        this.testbounce = new Obstacle(this, game.config.width *.1, game.config.height*.9, "OrangeRectSprite");
-        this.physics.add.collider(this.player, this.testbounce, ()=>{
-            if(this.player.body.touching.down && this.testbounce.body.touching.up)
-                this.player.bounce();
-        });
-        */
+        // temp singular enemy object
+        this.enemy = new Obstacle(this, game.config.width/3, game.config.height*.82, "OrangeRectSprite");
+        this.enemy.setScale(.75);
 
         this.cameraMain = this.cameras.main;
         this.platformerCamera = new PlatformerCamera(this, this.player, this.cameraMain);
@@ -98,8 +108,8 @@ class Play extends Phaser.Scene
             'down':  Phaser.Input.Keyboard.KeyCodes.DOWN,
             'right': Phaser.Input.Keyboard.KeyCodes.RIGHT,
             'space': Phaser.Input.Keyboard.KeyCodes.SPACE,
+            'x': Phaser.Input.Keyboard. KeyCodes.X,
         });
-
     }
 
     update(time, delta)
@@ -124,7 +134,7 @@ class Play extends Phaser.Scene
         this.platformerCamera.update(time, delta);
         this.playerFSM.step();
         this.player.update();
+        this.enemy.update(this);
         this.player.drawDebug();
-
     }
 }

@@ -62,7 +62,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 end: 14,
                 zeroPad: 4
             }),
-            frameRate: 16,
+            frameRate: 21,
 
         });
 
@@ -75,9 +75,16 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
         //Debug purposes only
         //this.body.collideWorldBounds = true 
+
+        this.isBoosting = false;
+      
+        this.body.maxVelocity = new Phaser.Math.Vector2(185, 1100);
+        this.body.useDrag;
+        this.body.setDragX(2500); //This is used as the damping value
+        this.body.bounceX = 5000
         
         //Setup control values
-        this.MoveAcceleration = 1000;
+        this.MoveAcceleration = 3000;
         this.upGravity = 1200;
         this.downGravity = 1500;
         this.jumpForce = -250
@@ -85,6 +92,9 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.attackTime = 100;
         this.attackDamping = .7
         this.attackCooldown = 800
+        // need boost cooldown & boost velocity
+        this.boostCooldown = 200;
+        this.boostModifier = 2.3;
 
         //Debug items
         this.debugOn = true;
@@ -128,27 +138,6 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.playerLand = scene.sound.add("landFx", {
             volume: .8,
         })
-    }
-
-    speedChange(increase = false){
-        if(increase && !this.isBoosting){
-            this.MoveAcceleration *= BOOST;
-            // this.body.setVelocityY(-500*BOOST);  // experimenting
-            //console.log("increase:" + this.MoveAcceleration);
-            this.isBoosting = true;
-        }
-        else{
-            this.MoveAcceleration /= BOOST;
-            //console.log(this.MoveAcceleration);
-            this.isBoosting = false;
-        }
-    }
-    bounce(){
-        this.body.setVelocityY(-250);
-        //console.log("bounce");
-        //Track values last frame for delta uses
-        this.lastY = this.y;
-        this.lastXVelocity = this.body.velocity.x;
     }
 
     playerDebug(msg) {
@@ -363,25 +352,11 @@ class Player extends Phaser.Physics.Arcade.Sprite
     class BoostState extends State {
         enter(scene, player) {
             player.playerDebug("Enter BoostState");
-            player.body.setVelocity(0);
-            player.anims.play(`swing-${player.direction}`);
-            switch(player.direction) {
-                case 'up':
-                    player.body.setVelocityY(-player.heroVelocity * 3);
-                    break;
-                case 'down':
-                    player.body.setVelocityY(player.heroVelocity * 3);
-                    break;
-                case 'left':
-                    player.body.setVelocityX(-player.heroVelocity * 3);
-                    break;
-                case 'right':
-                    player.body.setVelocityX(player.heroVelocity * 3);
-                    break;
-            }
+            // player.anims.play(`swing-${player.direction}`);
+            player.body.setVelocity(player.body.velocity.x *player.boostModifier, player.body.velocity.y *player.boostModifier);
     
             // set a short delay before going back to idle
-            scene.time.delayedCall(player.dashCooldown, () => {
+            scene.time.delayedCall(player.boostCooldown, () => {
                 this.stateMachine.transition('idle');
             });
         }
@@ -508,10 +483,10 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
             //Slightly less control in the air
             if(left.isDown || a.isDown) {
-                player.body.setAccelerationX(-player.MoveAcceleration * .8);
+                player.body.setAccelerationX(-player.MoveAcceleration * .3);
                 player.setFlipX(true)
             } else if(right.isDown || d.isDown) {
-                player.body.setAccelerationX(player.MoveAcceleration * .8);
+                player.body.setAccelerationX(player.MoveAcceleration * .3);
                 player.setFlipX(false)
             }
 
