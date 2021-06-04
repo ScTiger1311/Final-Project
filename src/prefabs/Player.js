@@ -7,8 +7,25 @@ class Player extends Phaser.Physics.Arcade.Sprite
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
+        //Add wall detection triggers
+        this.wDHeightScaler = .7;
+
+        this.leftDetector = scene.physics.add.sprite();
+        this.leftDetector.body.setSize(30, this.height * this.wDHeightScaler);
+        this.leftDetector.onOverlap = true;
+        this.leftDetector.setDebugBodyColor(0xffff00)
+
+        scene.physics.world.on('overlap', (obj1, obj2, body1, body2)=>{
+            console.log("fuck");
+        })
+
         //Setup physics config
         this.body.gravity = new Phaser.Math.Vector2(0, 800)
+        this.body.maxVelocity = new Phaser.Math.Vector2(400, 1100)
+        this.body.useDrag;
+        this.body.setDragX(1800); //This is used as the damping value
+        this.body.bounceX = 5000        
+        this.body.setSize(16, 30, true) //Size in pixels of hitbox  
 
         //Setup animations
         scene.anims.create({
@@ -58,13 +75,6 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
         //Debug purposes only
         //this.body.collideWorldBounds = true 
-
-        this.isBoosting = false;
-      
-        this.body.maxVelocity = new Phaser.Math.Vector2(400, 1100)
-        this.body.useDrag;
-        this.body.setDragX(1800); //This is used as the damping value
-        this.body.bounceX = 5000
         
         //Setup control values
         this.MoveAcceleration = 1000;
@@ -108,7 +118,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.comingOffWall = false;
         this.attackQueued = false;
         this.canAttack = true;
-
+        this.overlapLeft = false;
+        this.overlapRight = false;
 
         //Player fx
         this.playerJump = scene.sound.add("jumpFx", {
@@ -164,9 +175,11 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.x = this.scene.playerSpawn.x;
     }
 
-    update(time, delta) 
+    update(time, delta)
     {
         let deltaMultiplier = (delta/16.66667); //for refresh rate indepence.
+
+        //Position debugging geometry
         this.topLeftRay = new Phaser.Geom.Line(
             this.x - this.body.width/2, this.y - this.body.height/2,
             this.x - this.body.width/2 - 1, this.y - this.body.height/2
@@ -183,18 +196,27 @@ class Player extends Phaser.Physics.Arcade.Sprite
             this.x + this.body.width/2, this.y + this.body.height/2-1,
             this.x + this.body.width/2 + 1, this.y + this.body.height/2-1
         );
-        this.debugCircle = new Phaser.Geom.Circle(this.body.position.x, this.body.position.y, 8)
+        this.debugCircle = new Phaser.Geom.Circle(this.x, this.y, 8)
+
+        //Position wall detectors
+        this.leftDetector.body.position.set(this.body.x - 1, this.body.y + this.body.height*(1-this.wDHeightScaler)/2)
+
+        //Handle overlap
+        //this.tint = 0xffffff
+        //this.scene.physics.overlap(this.leftDetector, this.scene.Platform_Layer, null, this.LogLeft(), this.scene);
         
     }
+
+    //LogLeft() {this.tint = 0xffff00}
 }
+
+
 
     class IdleState extends State {
         enter(scene, player) {
             player.playerDebug("Enter IdleState");
             player.playerDebug("Origin: " + player.originX + ", " + player.originY);
             player.play("idle")
-            //Size in pixels of hitbox
-            player.body.setSize(16, 30, 1)
             player.stop()
         }
     
