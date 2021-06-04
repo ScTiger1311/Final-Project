@@ -11,15 +11,35 @@ class Play extends Phaser.Scene
         this.load.image("PinkSquareSprite", "./assets/single_sprites/pink_square.png");
         this.load.image("OrangeRectSprite", "./assets/single_sprites/orange_rect.png");
         this.load.image("StoneTilesetImage", "./assets/levels/StoneBrick_Tileset.png");
-        this.load.audio("jumpFx", "./assets/sounds/fx/Jump.wav")
-        this.load.audio("landFx", "./assets/sounds/fx/Land.wav")
+        this.load.audio("jumpFx", "./assets/sounds/fx/Jump.wav");
+        this.load.audio("landFx", "./assets/sounds/fx/Land.wav");
+        this.load.audio("music_majorTheme", "./assets/music/Spirit Flow Music_Major.mp3");
+        this.load.audio("music_minorTheme", "./assets/music/Spirit Flow Music_Minor.mp3");
         this.load.tilemapTiledJSON("TestLevel", "./assets/levels/Tutorial_Level.json");
     }
 
     create()
     {
         console.log("entered the Play scene");
-      
+        
+        /*
+        this.music = this.sound.add("music_majorTheme", 
+        {
+            loop:true,
+            volume: 0.15,
+        });
+        this.music.play();
+        */
+
+        
+        this.music = this.sound.add("music_minorTheme", 
+        {
+            loop:true,
+            volume: 0.06,
+        });
+        this.music.play();
+        
+
         const tutorial_level_map = this.add.tilemap("TestLevel")
         const stoneTileset = tutorial_level_map.addTilesetImage("StoneBrick", "StoneTilesetImage")
 
