@@ -9,7 +9,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
         //Setup physics config
         this.body.gravity = new Phaser.Math.Vector2(0, 800)
-        this.body.maxVelocity = new Phaser.Math.Vector2(400, 1100)
+        this.body.maxVelocity = new Phaser.Math.Vector2(400, 800)
         this.body.useDrag;
         this.body.setDragX(1800); //This is used as the damping value
         this.body.bounceX = 5000        
@@ -114,18 +114,30 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.body.bounceX = 5000
         
         //Setup control values
+        //Walk/Jump movement values
         this.MoveAcceleration = 3000;
         this.upGravity = 1200;
         this.downGravity = 1500;
-        this.wallClingCoeff = .35; //35% normal gravity on a wall
         this.jumpForce = -250
+
+        //Attack control values
         this.attackVelocity = 500;
         this.attackTime = 100;
         this.attackDamping = .7
         this.attackCooldown = 800 //800 default
+
+        //Boost control values
         // need boost cooldown & boost velocity
         this.boostCooldown = 200;
         this.boostModifier = 2.3;
+
+        //wall cling/jump values
+        this.wallDismountDelay = 175
+        this.wallDismountVelocity = 150;
+        this.wallClingCoeff = .35; //35% normal gravity on a wall
+        this.wallJumpTime = 150;
+        this.wallJumpVelocityX = 2050;
+        this.wallJumpVelocityY = -200;
 
         //Debug items
         this.debugOn = true;
@@ -435,13 +447,13 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
             //Allow directional dismount of the wall
             if( (Phaser.Input.Keyboard.JustDown(left) || Phaser.Input.Keyboard.JustDown(a)) && player.overlapRight) {
-                scene.time.delayedCall(175, () => {
-                    player.body.setVelocityX(150 * -this.direction);
+                scene.time.delayedCall(player.wallDismountDelay, () => {
+                    player.body.setVelocityX(player.wallDismountVelocity * -this.direction);
                 });
             } 
             else if(Phaser.Input.Keyboard.JustDown(right) || Phaser.Input.Keyboard.JustDown(d) && player.overlapLeft) {
-                scene.time.delayedCall(175, () => {
-                    player.body.setVelocityX(150 * -this.direction);
+                scene.time.delayedCall(player.wallDismountDelay, () => {
+                    player.body.setVelocityX(player.wallDismountVelocity * -this.direction);
                 });
             }
 
@@ -463,10 +475,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             //Handle wall jump input
             if(Phaser.Input.Keyboard.JustDown(space)){
                 player.comingOffWall = true;
-                player.body.setVelocityX(450 * -this.direction);
-                player.body.setVelocityY(-425);
-                player.play("jump")
-                //this.stateMachine.transition('inair')
+                this.stateMachine.transition('walljump')
                 return;
             }
 
@@ -487,6 +496,34 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
         }
         
+    }
+
+    class WallJumpState extends State {
+        enter (scene, player) {
+            player.playerDebug("Enter WallJumpState");
+            this.direction = player.overlapRight ? 1 : -1
+
+            // set a short delay before going back to in air
+            scene.time.delayedCall(player.wallJumpTime, () => {
+                player.body.setAllowGravity(true)
+                //player.body.setVelocity(player.body.velocity.x * player.attackDamping, player.body.velocity.y * player.attackDamping)
+                player.play("jump") //Play jump animation from middle
+                player.anims.setProgress(.35)
+                this.stateMachine.transition('inair');
+                return;
+            });
+        }
+
+        execute(scene, player) {
+            //player.body.setVelocity(0);
+            player.body.setAllowGravity(false)
+            player.setAcceleration(0);
+
+            //Give velocity towards mouse
+            // Velocity is whatever is higher, the atatck speed, or the players current speed
+            player.body.velocity.set(player.wallJumpVelocityX * -this.direction, player.wallJumpVelocityY);
+            
+        }
     }
 
     class InAirState extends State {

@@ -108,13 +108,11 @@ class Play extends Phaser.Scene
         this.env = this.add.group();
 
         //tilemap debugging
-        let i = 0
         this.currentLevel.forEachTile(
         (tile)=>
         {
             let obj = new Ground(this, this.currentLevel.tileToWorldX(tile.x, this.cameraMain), this.currentLevel.tileToWorldY(tile.y, this.cameraMain), "PinkSquareSprite", .25, .25);
             this.env.add(obj)
-            ++i
         }, 
         this, 0, 0, this.currentLevel.width, this.currentLevel.height, 
         {
@@ -122,7 +120,6 @@ class Play extends Phaser.Scene
             //isColliding: true
         },
          "Platform")
-        console.log(i + " tiles")
 
         this.Platform_Layer.setCollisionByProperty({
             Collides: true 
@@ -136,6 +133,7 @@ class Play extends Phaser.Scene
             hurt: new HurtState(),
             wallcling: new WallClingState(),
             inair: new InAirState(),
+            walljump: new WallJumpState(),
         }, [this, this.player]);
 
         this.physics.add.collider(this.player, this.Platform_Layer);
