@@ -3,19 +3,20 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
     constructor(scene, x, y, texture, number)
     {
         super(scene, x, y, texture);
-        scene.add.existing(this);
-        scene.physics.add.existing(this);
-
+        scene.add.existing(this);           // add to scene
+        scene.physics.add.existing(this);   // add to physics world
+        
         this.tint = 0x0b1f34;
+        this.num = number;                  // obstacles are numbered to sort alive/dead colliders
         this.dead = false;
-        this.overlapping = false;
-        this.touching = false;
-        this.num = number;
+        this.overlapping = false;           // helps control dead collision checks
+        this.touching = false;              // helps control alive collision checks
 
         // phys settings
         this.body.immovable = true;
         this.body.allowGravity = false;
-        // alive collider
+        
+        // Handling when enemy is alive
         scene.physics.add.collider(scene.player, this, ()=>{
             if((scene.player.body.touching.left && this.body.touching.right) ||
                 scene.player.body.touching.right && this.body.touching.left){
@@ -25,14 +26,15 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
                     this.touching = true;
                 }
             }
+            // current temp head bounce killing of enemies, remove later
             if(scene.player.body.touching.down && this.body.touching.up){
                 this.destroy(scene);
             }
         }).name = `aliveCollider${this.num}`;
     }
     
+    // Function kills the enemy, changes the collider to overlap
     destroy(scene){
-        // look into making it so each collider has a number in the name
         scene.physics.world.colliders.getActive().find(function(i){
             return i.name == `aliveCollider${this.num}`;
         }, this).destroy();
