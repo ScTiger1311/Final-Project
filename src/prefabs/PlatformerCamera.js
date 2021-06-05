@@ -25,6 +25,8 @@ class PlatformerCamera extends Phaser.Cameras.Scene2D.BaseCamera
     slowUpdate(deltaMultiplier)
     {
         //console.log(this.objectToFollow.body.x + "   " + this.camera.midPoint.x);
+        //console.log(this.objectToFollow.body.x);
+        console.log(this.tilemapWidth)
     }
 
     update(time, delta)
@@ -93,25 +95,25 @@ class PlatformerCamera extends Phaser.Cameras.Scene2D.BaseCamera
         //handles keeping the camera in the level bounds
         if(this.objectToFollow.body.x + this.scrollXOffsetCurr < 0 + this.camera.width/2)
         {
-            console.log("1");
+            //console.log("1");
             this.scrollXOffsetCurr = this.camera.width/2 - this.objectToFollow.body.x;
         }
         else if(this.objectToFollow.body.x + this.scrollXOffsetCurr > this.tilemapWidth - this.camera.width/2)
         {
-            console.log("2");
-            this.scrollXOffsetCurr = this.camera.width/2 - this.objectToFollow.body.x;
+            //console.log("2");
+            this.scrollXOffsetCurr = this.tilemapWidth - this.camera.width/2 - this.objectToFollow.body.x;
         }
 
         //this next if statement is cursed. I don't know why I needed these random values and I don't have time to figure it out.
-        if(this.objectToFollow.body.y + 53 + this.scrollYOffsetCurr < 0 + this.camera.height)
+        if(this.objectToFollow.body.y + this.scrollYOffsetCurr < 0 + this.camera.height/2)
         {
             console.log("3");
-            this.scrollYOffsetCurr = this.camera.height/2 - 2;
+            this.scrollYOffsetCurr = this.camera.height/2 - this.objectToFollow.body.y;
         }
-        if(this.objectToFollow.body.y + 53 + this.scrollYOffsetCurr < this.tileMapHeight + this.camera.height)
+        else if(this.objectToFollow.body.y + this.scrollYOffsetCurr > this.tilemapHeight - this.camera.height/2)
         {
-            console.log("3");
-            this.scrollYOffsetCurr = this.camera.height/2 - 2;
+            console.log("4");
+            this.scrollYOffsetCurr = this.tilemapHeight - this.camera.height/2 - this.objectToFollow.body.y;
         }
     
         //applies the changes to the cameras custom scroll values

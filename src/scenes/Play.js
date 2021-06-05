@@ -16,6 +16,7 @@ class Play extends Phaser.Scene
         this.load.audio("music_majorTheme", "./assets/music/Spirit Flow Music_Major.mp3");
         this.load.audio("music_minorTheme", "./assets/music/Spirit Flow Music_Minor.mp3");
         this.load.tilemapTiledJSON("TestLevel", "./assets/levels/Tutorial_Level.json");
+        this.load.tilemapTiledJSON("Level1", "./assets/levels/Level_1.json");
     }
 
     create()
@@ -38,62 +39,11 @@ class Play extends Phaser.Scene
         this.music.play();
 
         this.tutorial_level_map = this.add.tilemap("TestLevel")
-
-        this.playerSpawn = this.tutorial_level_map.findObject("Object", obj => obj.name === "Player_Spawn")
-        this.player = new Player(this, this.playerSpawn.x, this.playerSpawn.y);
-        //this.player = new Player(this, game.config.width/2, game.config.height);
-
-        this.playerFSM = new StateMachine('idle', {
-            idle: new IdleState(),
-            walk: new WalkState(),
-            attack: new AttackState(),
-            boost: new BoostState(),
-            hurt: new HurtState(),
-            wallcling: new WallClingState(),
-            inair: new InAirState(),
-        }, [this, this.player]);
+        this.level1_map = this.add.tilemap("Level1");
+        //use this variable if you are checking map related things.
+        this.currentLevel = this.level1_map;
 
         this.cameraMain = this.cameras.main;
-        this.platformerCamera = new PlatformerCamera(this, this.player, this.cameraMain);
-        
-        const stoneTileset = this.tutorial_level_map.addTilesetImage("StoneBrick", "StoneTilesetImage")
-
-        
-        this.Platform_Layer = this.tutorial_level_map.createLayer("Platform", stoneTileset, 0, 0);
-
-        this.env = this.add.group();
-
-        //tilemap debugging
-        let i = 0
-        this.tutorial_level_map.forEachTile(
-        (tile)=>
-        {
-            let obj = new Ground(this, this.tutorial_level_map.tileToWorldX(tile.x, this.cameraMain), this.tutorial_level_map.tileToWorldY(tile.y, this.cameraMain), "PinkSquareSprite", .25, .25);
-            this.env.add(obj)
-            ++i
-        }, 
-        this, 0, 0, 40, 23, 
-        {
-            isNotEmpty: true,
-            //isColliding: true
-        },
-         "Platform")
-        console.log(i + " tiles")
-
-        this.Platform_Layer.setCollisionByProperty({
-            Collides: true 
-        });
-           
-
-
-        this.physics.add.collider(this.player, this.Platform_Layer);
-        //this.physics.add.collider(this.player, this.Test_Layer);
-
-        // temp singular enemy object
-        this.enemy = new Obstacle(this, game.config.width/3, game.config.height*.82, "OrangeRectSprite");
-        this.enemy.setScale(.75);
-
-
 
         //Setup keys for whole game
         this.keys = this.input.keyboard.addKeys({
@@ -110,6 +60,8 @@ class Play extends Phaser.Scene
             'space': Phaser.Input.Keyboard.KeyCodes.SPACE,
             'x': Phaser.Input.Keyboard. KeyCodes.X,
         });
+
+        this.loadLevel(this.curentLevel);
     }
 
     update(time, delta)
@@ -133,12 +85,64 @@ class Play extends Phaser.Scene
         }
         //This doesn't work
         if(Phaser.Input.Keyboard.JustDown(this.keys.minus)) {
-            this.tutorial_level_map.setLayer
+            this.currentLevel.setLayer
         }
         this.platformerCamera.update(time, delta);
         this.playerFSM.step();
         this.player.update();
         this.enemy.update(this);
         this.player.drawDebug();
+    }
+
+    loadLevel( levelName )
+    {
+        this.playerSpawn = this.currentLevel.findObject("Object", obj => obj.name === "Player_Spawn")
+        this.player = new Player(this, this.playerSpawn.x, this.playerSpawn.y);
+        this.platformerCamera = new PlatformerCamera(this, this.player, this.cameraMain);
+
+        const stoneTileset = this.currentLevel.addTilesetImage("StoneBrick", "StoneTilesetImage")
+
+        
+        this.Platform_Layer = this.currentLevel.createLayer("Platform", stoneTileset, 0, 0);
+        
+        this.env = this.add.group();
+
+        //tilemap debugging
+        let i = 0
+        this.currentLevel.forEachTile(
+        (tile)=>
+        {
+            let obj = new Ground(this, this.currentLevel.tileToWorldX(tile.x, this.cameraMain), this.currentLevel.tileToWorldY(tile.y, this.cameraMain), "PinkSquareSprite", .25, .25);
+            this.env.add(obj)
+            ++i
+        }, 
+        this, 0, 0, 40, 23, 
+        {
+            isNotEmpty: true,
+            //isColliding: true
+        },
+         "Platform")
+        console.log(i + " tiles")
+
+        this.Platform_Layer.setCollisionByProperty({
+            Collides: true 
+        });
+           
+        this.playerFSM = new StateMachine('idle', {
+            idle: new IdleState(),
+            walk: new WalkState(),
+            attack: new AttackState(),
+            boost: new BoostState(),
+            hurt: new HurtState(),
+            wallcling: new WallClingState(),
+            inair: new InAirState(),
+        }, [this, this.player]);
+
+        this.physics.add.collider(this.player, this.Platform_Layer);
+        //this.physics.add.collider(this.player, this.Test_Layer);
+
+        // temp singular enemy object
+        this.enemy = new Obstacle(this, game.config.width/3, game.config.height*.82, "OrangeRectSprite");
+        this.enemy.setScale(.75);
     }
 }
