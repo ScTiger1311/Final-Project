@@ -2,7 +2,7 @@ let config =
 {
     type: Phaser.WEBGL,
     width: 640,
-    height: 360,
+    height: 368,
     zoom: 2,
     antialias: false,
     pixelArt: true,
@@ -15,7 +15,7 @@ let config =
                 x: 0,
                 y: 0
             },
-            debug: false
+            debug: true
         }
     },
     

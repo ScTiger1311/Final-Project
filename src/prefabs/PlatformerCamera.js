@@ -19,19 +19,22 @@ class PlatformerCamera extends Phaser.Cameras.Scene2D.BaseCamera
         this.scrollXOffsetCurr = 0;
         this.scrollYOffsetCurr = 0;
         this.scrollSpeed = 1;
-        //console.log("camera says: " + tutorial_level_map);
     }
 
     //all this garbage because phaser causes the webpage to crash if you call console.log() too fast
     slowUpdate(deltaMultiplier)
     {
         //console.log(this.objectToFollow.body.x + "   " + this.camera.midPoint.x);
+        //console.log(this.objectToFollow.body.x);
+        //console.log(this.tilemapWidth)
+        //console.log("this.scrollYOffsetCurr: " + this.scrollYOffsetCurr + "this.tilemapHeight - this.camera.height/2: " + this.tilemapHeight - this.camera.height/2);
     }
 
     update(time, delta)
     {
+        this.tilemapWidth = this.scene.currentLevel.width * this.scene.currentLevel.tileWidth;
+        this.tilemapHeight = this.scene.currentLevel.height * this.scene.currentLevel.tileHeight;
         let deltaMultiplier = (delta/16.66667); //for refresh rate indepence.
-
         //all this garbage because phaser causes the webpage to crash if you call console.log() too fast
         if(this.slowUpdateTick < 20)
         {
@@ -61,7 +64,6 @@ class PlatformerCamera extends Phaser.Cameras.Scene2D.BaseCamera
         {
             this.scrollXOffsetCurr = -this.scrollXOffsetMax;
         }
-
         //for moving the camera to show more in the direction you are travelling, vertical only
         /*if(this.objectToFollow.body.velocity.y > this.minSpeedForChange && this.scrollYOffsetCurr + this.scrollSpeed*deltaMultiplier < this.scrollYOffsetMax)
         {
@@ -81,7 +83,7 @@ class PlatformerCamera extends Phaser.Cameras.Scene2D.BaseCamera
         }*/
 
 
-
+        //handles horizontal deadzone based scrolling
         if(this.objectToFollow.body.y < this.camera.midPoint.y - this.scrollYOffsetMax)
         {
             this.scrollYOffsetCurr = this.objectToFollow.body.y + this.scrollYOffsetMax;
@@ -89,6 +91,29 @@ class PlatformerCamera extends Phaser.Cameras.Scene2D.BaseCamera
         else if(this.objectToFollow.body.y > this.camera.midPoint.y + this.scrollYOffsetMax)
         {
             this.scrollYOffsetCurr = this.objectToFollow.body.y - this.scrollYOffsetMax;
+        }
+
+        //handles keeping the camera in the level bounds
+        if(this.objectToFollow.body.x + this.scrollXOffsetCurr < 0 + this.camera.width/2)
+        {
+            //console.log("1");
+            this.scrollXOffsetCurr = this.camera.width/2 - this.objectToFollow.body.x;
+        }
+        else if(this.objectToFollow.body.x + this.scrollXOffsetCurr > this.tilemapWidth - this.camera.width/2)
+        {
+            //console.log("2");
+            this.scrollXOffsetCurr = this.tilemapWidth - this.camera.width/2 - this.objectToFollow.body.x;
+        }
+
+        if(this.scrollYOffsetCurr < 0 + this.camera.height/2)
+        {
+            console.log("3");
+            this.scrollYOffsetCurr = this.camera.height/2;
+        }
+        else if(this.scrollYOffsetCurr > this.tilemapHeight - this.camera.height/2)
+        {
+            console.log("4");
+            this.scrollYOffsetCurr = this.tilemapHeight - this.camera.height/2;
         }
     
         //applies the changes to the cameras custom scroll values

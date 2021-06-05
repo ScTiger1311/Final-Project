@@ -122,7 +122,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.attackVelocity = 500;
         this.attackTime = 100;
         this.attackDamping = .7
-        this.attackCooldown = 800
+        this.attackCooldown = 800 //800 default
         // need boost cooldown & boost velocity
         this.boostCooldown = 200;
         this.boostModifier = 2.3;
