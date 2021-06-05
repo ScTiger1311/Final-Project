@@ -55,7 +55,39 @@
          "draworder":"topdown",
          "id":5,
          "name":"Object",
-         "objects":[],
+         "objects":[
+                {
+                 "height":16,
+                 "id":1,
+                 "name":"Player_Spawn",
+                 "properties":[
+                        {
+                         "name":"__anchorX",
+                         "type":"int",
+                         "value":908
+                        }, 
+                        {
+                         "name":"__anchorY",
+                         "type":"int",
+                         "value":590
+                        }, 
+                        {
+                         "name":"__cx",
+                         "type":"int",
+                         "value":56
+                        }, 
+                        {
+                         "name":"__cy",
+                         "type":"int",
+                         "value":36
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":900,
+                 "y":582
+                }],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -63,7 +95,7 @@
          "y":0
         }],
  "nextlayerid":6,
- "nextobjectid":1,
+ "nextobjectid":2,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.6.0",
