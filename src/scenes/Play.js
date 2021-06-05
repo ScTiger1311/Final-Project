@@ -116,7 +116,7 @@ class Play extends Phaser.Scene
             this.env.add(obj)
             ++i
         }, 
-        this, 0, 0, 40, 23, 
+        this, 0, 0, this.currentLevel.width, this.currentLevel.height, 
         {
             isNotEmpty: true,
             //isColliding: true
