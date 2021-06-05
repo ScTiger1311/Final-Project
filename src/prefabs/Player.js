@@ -222,10 +222,20 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.rightDetector.body.position.set(this.body.x + this.body.width - 1, this.body.y + this.body.height*(1-this.wDHeightScaler)/2)
 
         //Handle overlap
-
-        this.scene.physics.overlap(this.leftDetector, this.scene.env, ()=>{console.log("left")});
-        this.scene.physics.overlap(this.rightDetector, this.scene.env, ()=>{console.log("right")});
-        //this.scene.physics.overlapTiles(this.leftDetector, this.filteredTiles);
+        this.overlapLeft = this.overlapRight = false
+        this.leftDetector.setDebugBodyColor(0xffff00)
+        this.rightDetector.setDebugBodyColor(0xffff00)
+        this.scene.physics.overlap(this.leftDetector, this.scene.env, ()=>
+        {
+            this.overlapLeft = true
+            this.leftDetector.setDebugBodyColor(0xff0000)
+        });
+        
+        this.scene.physics.overlap(this.rightDetector, this.scene.env, ()=>
+        {
+            this.overlapRight = true
+            this.rightDetector.setDebugBodyColor(0xff0000)
+        });
         
     }
 }
@@ -411,7 +421,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         enter(scene, player) {
             player.playerDebug("Enter WallClingState");
             player.play("wallcling")
-            this.direction = player.body.blocked.right ? 1 : -1
+            this.direction = player.overlapRight ? 1 : -1
             player.setFlipX(this.direction > 0 ? 1 : 0)
             //this.transitionStarted = false;
             player.comingOffWall = false;
@@ -424,9 +434,9 @@ class Player extends Phaser.Physics.Arcade.Sprite
             //This doesn't totally work, but it is the best i've been able
             //To figure out so far
             //Problems when jumping from one wall to another
-            if(!player.comingOffWall){ //Slightly press the player into the wall so that a collision is registered
-                player.setVelocityX(300 * this.direction)
-            }
+            // if(!player.comingOffWall){ //Slightly press the player into the wall so that a collision is registered
+            //     player.setVelocityX(300 * this.direction)
+            // }
 
             //Allow directional dismount of the wall
             if(Phaser.Input.Keyboard.JustDown(left) || Phaser.Input.Keyboard.JustDown(a)) {
@@ -436,7 +446,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             }
 
 
-            if(!player.body.blocked.right && !player.body.blocked.left) {
+            if(!player.overlapRight && !player.overlapLeft) {
                 //this.transitionStarted = true;
                 player.comingOffWall = true;
                 player.play("jump")
@@ -520,7 +530,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             }
 
             //Handle wall collision
-            if(player.body.blocked.right || player.body.blocked.left) {
+            if(player.overlapRight || player.overlapLeft) {
                 player.body.setAccelerationX(0);
                 this.stateMachine.transition('wallcling');
                 return;

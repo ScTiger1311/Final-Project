@@ -63,11 +63,6 @@ class Play extends Phaser.Scene
 
         this.env = this.add.group();
 
-        //this.env.add(new Ground(this, game.config.width/2, game.config.height, "OrangeRectSprite", 50))
-        // this.env.add(obj1)
-        // let obj2 = new Ground(this, game.config.width * .75 , game.config.height/2, "OrangeRectSprite", 1, 1.5);
-        // this.env.add(obj2)
-
         //tilemap debugging
         let i = 0
         this.tutorial_level_map.forEachTile(
