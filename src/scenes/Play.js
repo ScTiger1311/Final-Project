@@ -39,8 +39,9 @@ class Play extends Phaser.Scene
         });
         this.music.play();
         
-
         const tutorial_level_map = this.add.tilemap("TestLevel")
+        //use this variable to store the current tile map that is loaded
+        this.currentLevel = tutorial_level_map;
         const stoneTileset = tutorial_level_map.addTilesetImage("StoneBrick", "StoneTilesetImage")
 
         //const IntGridValues_Layer = tutorial_level_map.createLayer("IntGrid_values", stoneTileset, 0, 0);
