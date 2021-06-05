@@ -6,7 +6,10 @@ class Ground extends Phaser.Physics.Arcade.Sprite
         super(scene, x, y, texture);
         scene.add.existing(this);
         scene.physics.add.existing(this);
+        this.setDebugBodyColor(0x00ff00)
 
+        this.setOrigin(0)
+        this.setVisible(false)
         this.setScale(sizeX, sizeY);
         //Setup physics config
         this.body.immovable = true;
