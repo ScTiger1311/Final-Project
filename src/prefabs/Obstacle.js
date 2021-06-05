@@ -1,6 +1,6 @@
 class Obstacle extends Phaser.Physics.Arcade.Sprite
 {
-    constructor(scene, x, y, texture)
+    constructor(scene, x, y, texture, number)
     {
         super(scene, x, y, texture);
         scene.add.existing(this);
@@ -10,6 +10,7 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
         this.dead = false;
         this.overlapping = false;
         this.touching = false;
+        this.num = number;
 
         // phys settings
         this.body.immovable = true;
@@ -24,26 +25,34 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
                     this.touching = true;
                 }
             }
-        }).name = 'aliveCollider';
+            if(scene.player.body.touching.down && this.body.touching.up){
+                this.destroy(scene);
+            }
+        }).name = `aliveCollider${this.num}`;
+    }
+    
+    destroy(scene){
+        // look into making it so each collider has a number in the name
+        scene.physics.world.colliders.getActive().find(function(i){
+            return i.name == `aliveCollider${this.num}`;
+        }, this).destroy();
+        scene.physics.add.overlap(scene.player, this, ()=>{
+            if(!this.overlapping){
+            this.overlapping = true;               
+            console.log("Boosted player");
+            scene.playerFSM.transition('boost');
+            }
+        }).name = 'boostCollide';
+        this.dead = true;
     }
 
     update(scene){
-        if(Phaser.Input.Keyboard.JustDown(scene.keys.x) && !this.dead){
-            scene.physics.world.colliders.getActive().find(function(i){
-                return i.name == 'aliveCollider';
-            }).destroy();
-            scene.physics.add.overlap(scene.player, this, ()=>{
-                if(!this.overlapping){
-                this.overlapping = true;               
-                console.log("Boosted player");
-                scene.playerFSM.transition('boost');
-                }
-            }).name = 'boostCollide';
-            this.dead = true;
-        }
+        // if(Phaser.Input.Keyboard.JustDown(scene.keys.x) && !this.dead){
+        //     this.destroy(scene);   
+        // }
         if(this.body.touching.none){
-            this.overlapping = false;
             this.touching = false;
+            this.overlapping = false;
         }
     }
 }

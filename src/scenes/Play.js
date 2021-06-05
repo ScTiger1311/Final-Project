@@ -83,15 +83,22 @@ class Play extends Phaser.Scene
         this.Platform_Layer.setCollisionByProperty({
             Collides: true 
         });
-           
-
 
         this.physics.add.collider(this.player, this.Platform_Layer);
         //this.physics.add.collider(this.player, this.Test_Layer);
 
-        // temp singular enemy object
-        this.enemy = new Obstacle(this, game.config.width/3, game.config.height*.82, "OrangeRectSprite");
-        this.enemy.setScale(.75);
+        // Setting up enemies
+        this.enemynumber = 1;
+        this.enemyGroup = this.add.group({
+            runChildUpdate: true
+        });
+        for(let i = 0; i < 2; i++){
+            let obj = new Obstacle(this, game.config.width/5 +(i*50), game.config.height*.82, "OrangeRectSprite", this.enemynumber).setScale(.75);
+            this.enemyGroup.add(obj);
+            this.enemynumber++;
+        }
+        // this.enemy = new Obstacle(this, game.config.width/3, game.config.height*.82, "OrangeRectSprite", this.enemynumber);
+        // this.enemy.setScale(.75);
 
 
 
@@ -138,7 +145,7 @@ class Play extends Phaser.Scene
         this.platformerCamera.update(time, delta);
         this.playerFSM.step();
         this.player.update();
-        this.enemy.update(this);
         this.player.drawDebug();
+        // this.enemy.update();
     }
 }
