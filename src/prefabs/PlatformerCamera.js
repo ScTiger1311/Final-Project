@@ -94,26 +94,25 @@ class PlatformerCamera extends Phaser.Cameras.Scene2D.BaseCamera
         }
 
         //handles keeping the camera in the level bounds
-        if(this.objectToFollow.body.x + this.scrollXOffsetCurr < 0 + this.camera.width/2)
+        if(this.objectToFollow.body.x + this.scrollXOffsetCurr < 0 + this.camera.width/2 + this.scene.currentLevel.tileWidth) //left
         {
             //console.log("1");
-            this.scrollXOffsetCurr = this.camera.width/2 - this.objectToFollow.body.x;
+            this.scrollXOffsetCurr = this.camera.width/2 - this.objectToFollow.body.x + this.scene.currentLevel.tileWidth;
         }
-        else if(this.objectToFollow.body.x + this.scrollXOffsetCurr > this.tilemapWidth - this.camera.width/2)
+        else if(this.objectToFollow.body.x + this.scrollXOffsetCurr > this.tilemapWidth - this.camera.width/2 - this.scene.currentLevel.tileWidth)//right
         {
             //console.log("2");
-            this.scrollXOffsetCurr = this.tilemapWidth - this.camera.width/2 - this.objectToFollow.body.x;
+            this.scrollXOffsetCurr = this.tilemapWidth - this.camera.width/2 - this.objectToFollow.body.x - this.scene.currentLevel.tileWidth;
         }
-
-        if(this.scrollYOffsetCurr < 0 + this.camera.height/2)
+        if(this.scrollYOffsetCurr < 0 + this.camera.height/2 + this.scene.currentLevel.tileHeight)//top
         {
             console.log("3");
-            this.scrollYOffsetCurr = this.camera.height/2;
+            this.scrollYOffsetCurr = this.camera.height/2 + this.scene.currentLevel.tileHeight;
         }
-        else if(this.scrollYOffsetCurr > this.tilemapHeight - this.camera.height/2)
+        else if(this.scrollYOffsetCurr > this.tilemapHeight - this.camera.height/2 - this.scene.currentLevel.tileHeight)//bottom
         {
             console.log("4");
-            this.scrollYOffsetCurr = this.tilemapHeight - this.camera.height/2;
+            this.scrollYOffsetCurr = this.tilemapHeight - this.camera.height/2 - this.scene.currentLevel.tileHeight;
         }
     
         //applies the changes to the cameras custom scroll values
