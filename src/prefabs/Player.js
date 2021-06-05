@@ -117,6 +117,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.MoveAcceleration = 3000;
         this.upGravity = 1200;
         this.downGravity = 1500;
+        this.wallClingCoeff = .35; //35% normal gravity on a wall
         this.jumpForce = -250
         this.attackVelocity = 500;
         this.attackTime = 100;
@@ -425,24 +426,23 @@ class Player extends Phaser.Physics.Arcade.Sprite
             player.setFlipX(this.direction > 0 ? 1 : 0)
             //this.transitionStarted = false;
             player.comingOffWall = false;
+            player.setGravityY(player.downGravity * player.wallClingCoeff)
         }
 
         execute(scene, player) {
             // use destructuring to make a local copy of the keyboard object
             const { left, right, a, d, space } = scene.keys;
 
-            //This doesn't totally work, but it is the best i've been able
-            //To figure out so far
-            //Problems when jumping from one wall to another
-            // if(!player.comingOffWall){ //Slightly press the player into the wall so that a collision is registered
-            //     player.setVelocityX(300 * this.direction)
-            // }
-
             //Allow directional dismount of the wall
-            if(Phaser.Input.Keyboard.JustDown(left) || Phaser.Input.Keyboard.JustDown(a)) {
-                
-            } else if(Phaser.Input.Keyboard.JustDown(right) || Phaser.Input.Keyboard.JustDown(d)) {
-                
+            if( (Phaser.Input.Keyboard.JustDown(left) || Phaser.Input.Keyboard.JustDown(a)) && player.overlapRight) {
+                scene.time.delayedCall(175, () => {
+                    player.body.setVelocityX(150 * -this.direction);
+                });
+            } 
+            else if(Phaser.Input.Keyboard.JustDown(right) || Phaser.Input.Keyboard.JustDown(d) && player.overlapLeft) {
+                scene.time.delayedCall(175, () => {
+                    player.body.setVelocityX(150 * -this.direction);
+                });
             }
 
 
@@ -450,6 +450,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 //this.transitionStarted = true;
                 player.comingOffWall = true;
                 player.play("jump")
+                player.setGravityY(player.downGravity)
                 this.stateMachine.transition('inair')
                 // scene.time.delayedCall(10, () => {
                 //     if(this.stateMachine.state == 'wallcling') {
@@ -471,6 +472,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
             //Handle attack interrupt
             if(player.attackQueued && player.canAttack) {
+                player.setGravityY(player.downGravity)
                 this.stateMachine.transition('attack')
                 return;
             }
@@ -478,6 +480,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             //Handles player hitting the ground
             if(player.body.blocked.down) {
                 player.playerLand.play();
+                player.setGravityY(player.downGravity)
                 this.stateMachine.transition('walk')
                 return
             }
@@ -521,20 +524,27 @@ class Player extends Phaser.Physics.Arcade.Sprite
             }
 
             //Slightly less control in the air
+            //Transition to wall cling if pressed against wall
             if(left.isDown || a.isDown) {
                 player.body.setAccelerationX(-player.MoveAcceleration * .3);
                 player.setFlipX(true)
-            } else if(right.isDown || d.isDown) {
+                if(player.overlapLeft) {
+                    player.body.setAccelerationX(0);
+                    this.stateMachine.transition('wallcling');
+                    return;
+                }
+            }
+            else if(right.isDown || d.isDown) {
                 player.body.setAccelerationX(player.MoveAcceleration * .3);
-                player.setFlipX(false)
+                player.setFlipX(false)                 
+                if(player.overlapRight) {
+                    player.body.setAccelerationX(0);
+                    this.stateMachine.transition('wallcling');
+                    return;
+                }
             }
 
-            //Handle wall collision
-            if(player.overlapRight || player.overlapLeft) {
-                player.body.setAccelerationX(0);
-                this.stateMachine.transition('wallcling');
-                return;
-            }
+
 
             //Handle landing
             if(this.risingJumpInputted && player.body.blocked.down) {
