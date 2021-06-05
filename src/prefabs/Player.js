@@ -7,18 +7,6 @@ class Player extends Phaser.Physics.Arcade.Sprite
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
-        //Add wall detection triggers
-        this.wDHeightScaler = .7;
-
-        this.leftDetector = scene.physics.add.sprite();
-        this.leftDetector.body.setSize(30, this.height * this.wDHeightScaler);
-        this.leftDetector.onOverlap = true;
-        this.leftDetector.setDebugBodyColor(0xffff00)
-
-        scene.physics.world.on('overlap', (obj1, obj2, body1, body2)=>{
-            console.log("fuck");
-        })
-
         //Setup physics config
         this.body.gravity = new Phaser.Math.Vector2(0, 800)
         this.body.maxVelocity = new Phaser.Math.Vector2(400, 1100)
@@ -26,7 +14,24 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.body.setDragX(1800); //This is used as the damping value
         this.body.bounceX = 5000        
         this.body.setSize(16, 30, true) //Size in pixels of hitbox  
-        this.body.setOffset(this.body.width/2, 0)
+        this.body.setOffset(this.width/2 - this.body.width/2, this.body.height/2)
+
+        //Add wall detection triggers
+        this.wDHeightScaler = .7;
+
+        this.leftDetector = scene.physics.add.sprite();
+        this.leftDetector.body.setSize(3, this.body.height * this.wDHeightScaler);
+        this.leftDetector.body.onOverlap = true;
+        this.leftDetector.setDebugBodyColor(0xffff00)
+
+        this.rightDetector = scene.physics.add.sprite();
+        this.rightDetector.body.setSize(3, this.body.height * this.wDHeightScaler);
+        this.rightDetector.body.onOverlap = true;
+        this.rightDetector.setDebugBodyColor(0xff0000)
+
+        // for(tile in this.colliderFilter) {
+        //     console.log(tile.name + ", " + tile.name)
+        // }
 
         //Setup animations
         scene.anims.create({
@@ -76,6 +81,18 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 zeroPad: 4
             }),
             frameRate: 1,
+
+        });
+        scene.anims.create({
+            key:"attack",
+            frames: this.anims.generateFrameNames('PlayerAtlas',
+            {
+                prefix: "Dash_Loop",
+                start: 1,
+                end: 4,
+                zeroPad: 4
+            }),
+            frameRate: 12,
 
         });
 
@@ -202,14 +219,15 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
         //Position wall detectors
         this.leftDetector.body.position.set(this.body.x - 1, this.body.y + this.body.height*(1-this.wDHeightScaler)/2)
+        this.rightDetector.body.position.set(this.body.x + this.body.width - 1, this.body.y + this.body.height*(1-this.wDHeightScaler)/2)
 
         //Handle overlap
-        //this.tint = 0xffffff
-        //this.scene.physics.overlap(this.leftDetector, this.scene.Platform_Layer, null, this.LogLeft(), this.scene);
+
+        this.scene.physics.overlap(this.leftDetector, this.scene.env, ()=>{console.log("left")});
+        this.scene.physics.overlap(this.rightDetector, this.scene.env, ()=>{console.log("right")});
+        //this.scene.physics.overlapTiles(this.leftDetector, this.filteredTiles);
         
     }
-
-    //LogLeft() {this.tint = 0xffff00}
 }
 
 
@@ -314,11 +332,10 @@ class Player extends Phaser.Physics.Arcade.Sprite
     class AttackState extends State {
         enter (scene, player) {
             player.playerDebug("Enter AttackState");
+            player.play("attack")
             player.playerDebug("Playerposbef = " + player.body.position.x + ", " + player.body.position.y)
             player.attackQueued = false;
             player.canAttack = false;
-
-            player.tint = 0xff0000;
 
             this.inVelocity = player.body.velocity;
 
@@ -334,7 +351,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 // console.log("Start: " + startPoint.x + ", " + startPoint.y + " End: " + player.body.position.x + ", " + player.body.position.y )
                 // console.log("Distance: " + Phaser.Math.Distance.BetweenPoints(startPoint, player.body.position))
                 scene.time.delayedCall(player.attackCooldown, () => {player.canAttack = true})
-                player.tint = 0xffffff;
+                player.play("jump") //Play jump animation from middle
+                player.anims.setProgress(.35)
                 this.stateMachine.transition('inair');
                 return;
             });
@@ -381,11 +399,9 @@ class Player extends Phaser.Physics.Arcade.Sprite
             player.body.setVelocity(0);
             player.anims.play(`walk-${player.direction}`);
             player.anims.stop();
-            player.setTint(0xFF0000);     // turn red
     
             // set recovery timer
             scene.time.delayedCall(player.hurtTimer, () => {
-                player.clearTint();
                 this.stateMachine.transition('idle');
             });
         }
