@@ -28,13 +28,13 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
             }
             // current temp head bounce killing of enemies, remove later
             if(scene.player.body.touching.down && this.body.touching.up){
-                this.destroy(scene);
+                this.kill(scene);
             }
         }).name = `aliveCollider${this.num}`;
     }
     
     // Function kills the enemy, changes the collider to overlap
-    destroy(scene){
+    kill(scene){
         scene.physics.world.colliders.getActive().find(function(i){
             return i.name == `aliveCollider${this.num}`;
         }, this).destroy();
@@ -50,7 +50,7 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
 
     update(scene){
         // if(Phaser.Input.Keyboard.JustDown(scene.keys.x) && !this.dead){
-        //     this.destroy(scene);   
+        //     this.kill(scene);   
         // }
         if(this.body.touching.none){
             this.touching = false;

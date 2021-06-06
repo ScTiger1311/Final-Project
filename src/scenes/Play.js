@@ -58,7 +58,7 @@ class Play extends Phaser.Scene
             'down':  Phaser.Input.Keyboard.KeyCodes.DOWN,
             'right': Phaser.Input.Keyboard.KeyCodes.RIGHT,
             'space': Phaser.Input.Keyboard.KeyCodes.SPACE,
-            'x': Phaser.Input.Keyboard. KeyCodes.X,
+            'r': Phaser.Input.Keyboard. KeyCodes.R,
         });
 
         this.loadLevel(this.curentLevel);
@@ -72,12 +72,15 @@ class Play extends Phaser.Scene
         That way they don't speed up on high refresh rate displays. Ask Ethan for more help/info
         if you are unsure.
         */
-
+        // reset level function
+        if(Phaser.Input.Keyboard.JustDown(this.keys.r)){
+            this.scene.restart();
+            // need to pass data in this^
+        }
         //Failsafe code
-       if(this.player.y > game.config.width * 1.5) {
+        if(this.player.y > game.config.width * 1.5) {
             this.player.reset();
-       }
-        
+        }
 
         if(Phaser.Input.Keyboard.JustDown(this.keys.plus)) {
             this.player.debugOn = !this.player.debugOn;
@@ -94,7 +97,7 @@ class Play extends Phaser.Scene
         // this.enemy.update();
     }
 
-    loadLevel( levelName )
+    loadLevel(levelName)
     {
         this.playerSpawn = this.currentLevel.findObject("Object", obj => obj.name === "Player_Spawn")
         this.player = new Player(this, this.playerSpawn.x, this.playerSpawn.y);
@@ -141,15 +144,20 @@ class Play extends Phaser.Scene
 
         // Setting up enemies
         this.enemynumber = 1;
+        let enemyObjects = this.currentLevel.filterObjects("Object", obj => obj.name == 'Enemy');
         this.enemyGroup = this.add.group({
             runChildUpdate: true
         });
-        for(let i = 0; i < 2; i++){
-            let obj = new Obstacle(this, game.config.width/5 +(i*50), game.config.height*.82, "OrangeRectSprite", this.enemynumber).setScale(.75);
+        // // set up group here
+        enemyObjects.map((element) =>{
+            let obj = new Obstacle(this, element.x, element.y, "OrangeRectSprite", this.enemynumber).setScale(.75);
             this.enemyGroup.add(obj);
             this.enemynumber++;
-        }
+        });
         // this.enemy = new Obstacle(this, game.config.width/3, game.config.height*.82, "OrangeRectSprite", this.enemynumber);
         // this.enemy.setScale(.75);
+
+        // creating transition object
+        // this.transitionObj = ;
     }
 }
