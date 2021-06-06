@@ -43,7 +43,7 @@ class Play extends Phaser.Scene
         this.level1_map = this.add.tilemap("Level1");
         //use this variable if you are checking map related things.
 
-        this.currentLevel = this.tutorial_level_map;
+        this.currentLevel = this.level1_map;
 
         this.cameraMain = this.cameras.main;
 
@@ -81,7 +81,7 @@ class Play extends Phaser.Scene
             // need to pass data in this^
         }
         //Failsafe code
-        if(this.player.y > game.config.height + 48) {
+        if(this.player.y > this.currentLevel.heightInPixels + 48) {
             this.music.stop();
             this.scene.restart();
         }
