@@ -119,7 +119,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.body.maxVelocity = new Phaser.Math.Vector2(this.maxMovementVelocity.x, this.maxMovementVelocity.y);
 
         //Attack control values
-        this.maxAttackVelocity = new Phaser.Math.Vector2(this.maxMovementVelocity.x*4.25, this.maxMovementVelocity.y/1.5);
+        this.maxAttackVelocity = new Phaser.Math.Vector2(this.maxMovementVelocity.x*4.25, this.maxMovementVelocity.y*1.5725);
         this.baseAttackSpeed = 350
         this.attackTime = 100;
         this.attackDamping = .45

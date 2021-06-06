@@ -96,13 +96,10 @@ class Play extends Phaser.Scene
 
     loadLevel( levelName )
     {
-        this.playerSpawn = this.currentLevel.findObject("Object", obj => obj.name === "Player_Spawn")
-        this.player = new Player(this, this.playerSpawn.x, this.playerSpawn.y);
-        this.platformerCamera = new PlatformerCamera(this, this.player, this.cameraMain);
-
         const stoneTileset = this.currentLevel.addTilesetImage("StoneBrick", "StoneTilesetImage")
 
-        
+
+        this.Platform_Layer = this.currentLevel.createLayer("Background", stoneTileset, 0, 0);
         this.Platform_Layer = this.currentLevel.createLayer("Platform", stoneTileset, 0, 0);
         
         this.env = this.add.group();
@@ -124,6 +121,10 @@ class Play extends Phaser.Scene
         this.Platform_Layer.setCollisionByProperty({
             Collides: true 
         });
+
+        this.playerSpawn = this.currentLevel.findObject("Object", obj => obj.name === "Player_Spawn")
+        this.player = new Player(this, this.playerSpawn.x, this.playerSpawn.y);
+        this.platformerCamera = new PlatformerCamera(this, this.player, this.cameraMain);
            
         this.playerFSM = new StateMachine('idle', {
             idle: new IdleState(),
