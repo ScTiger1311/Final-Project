@@ -1,3 +1,8 @@
+// Team Buddy:
+// Avery Weibel
+// Cameron Beattie
+// Ethan Rafael
+// Sky Peterson
 let config =
 {
     type: Phaser.WEBGL,
@@ -22,8 +27,6 @@ let config =
 }
 
 let game = new Phaser.Game(config);
-
-//set UI sizes
 
 //reserve keyboard bindings
 let keyF, keyR, keyLEFT, keyRIGHT, keyUP, keyDOWN, keySPACE, keyX;
