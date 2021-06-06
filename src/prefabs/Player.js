@@ -79,7 +79,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         //Setup mouse input
         scene.input.on('pointerdown', (pointer) => {
             this.playerDebug("Down at [x: " + pointer.x + ", y: " + pointer.y + "]")
-            if(this.canAttack)
+            if(this.canAttack && !this.attackTimerActive)
                 this.attackQueued = true;
         })
 
@@ -123,7 +123,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.baseAttackSpeed = 350
         this.attackTime = 100;
         this.attackDamping = .45
-        this.attackCooldown = 800 //800 default
+        this.attackCooldown = 100 //800 default
         this.attackCoeff = 2.3;
 
         //Boost control values
@@ -387,8 +387,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
             scene.time.delayedCall(player.attackTime, () => {
                 player.body.setAllowGravity(true)
                 player.body.setVelocity(player.body.velocity.x * player.attackDamping, player.body.velocity.y * player.attackDamping)
-                //player.attackTimerActive = true
-                //scene.time.delayedCall(player.attackCooldown, () => {player.attackTimerActive = false})
+                player.attackTimerActive = true
+                scene.time.delayedCall(player.attackCooldown, () => {player.attackTimerActive = false})
                 player.play("jump") //Play jump animation from middle
                 player.anims.setProgress(.35)
                 this.stateMachine.transition('inair');
@@ -494,6 +494,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
             //Handles player hitting the ground
             if(player.body.blocked.down) {
+                player.canAttack = true;
                 player.playerLand.play();
                 player.setGravityY(player.downGravity)
                 this.stateMachine.transition('walk')
