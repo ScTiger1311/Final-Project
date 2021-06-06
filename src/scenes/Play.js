@@ -5,6 +5,10 @@ class Play extends Phaser.Scene
        super("Play"); 
     }
 
+    init(data){
+        this.levelName = data;
+    }
+
     preload()
     {
         this.load.atlas("PlayerAtlas", "./assets/Animations/Player_Atlas.png", "./assets/Animations/Player_Atlas.json");
@@ -39,10 +43,19 @@ class Play extends Phaser.Scene
         });
         this.music.play();
 
+        // setting up level maps
         this.tutorial_level_map = this.add.tilemap("TestLevel")
         this.level1_map = this.add.tilemap("Level1");
+        
         //use this variable if you are checking map related things.
-        this.currentLevel = this.tutorial_level_map;
+        switch(this.levelName){
+            case 'one':
+                this.currentLevel = this.level1_map;
+                break;
+            default:
+                this.currentLevel = this.tutorial_level_map;
+                break;
+        }
 
         this.cameraMain = this.cameras.main;
 
@@ -76,7 +89,6 @@ class Play extends Phaser.Scene
         // reset level function
         if(Phaser.Input.Keyboard.JustDown(this.keys.r)){
             this.scene.restart();
-            // need to pass data in this^
         }
         //Failsafe code
         if(this.player.y > game.config.width * 1.5) {
@@ -97,11 +109,9 @@ class Play extends Phaser.Scene
         this.player.drawDebug();
     }
 
-    loadLevel(levelName)
+    loadLevel()
     {
         const stoneTileset = this.currentLevel.addTilesetImage("StoneBrick", "StoneTilesetImage")
-
-
         this.Platform_Layer = this.currentLevel.createLayer("Background", stoneTileset, 0, 0);
         this.Platform_Layer = this.currentLevel.createLayer("Platform", stoneTileset, 0, 0);
         
@@ -163,7 +173,8 @@ class Play extends Phaser.Scene
         this.physics.world.enable(this.levelend, Phaser.Physics.Arcade.STATIC_BODY);
         this.endGroup = this.add.group(this.levelend);
         this.physics.add.overlap(this.player, this.endGroup, () =>{
-            // this.scene.start('Play');
+            // this.scene.start('Play', );
+            // get level transition property from tilemap
         });
     }
 }

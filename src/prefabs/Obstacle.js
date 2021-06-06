@@ -66,9 +66,6 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
     }
 
     update(scene){
-        // if(Phaser.Input.Keyboard.JustDown(scene.keys.x) && !this.dead){
-        //     this.kill(scene);   
-        // }
         if(this.body.touching.none){
             this.touching = false;
             this.overlapping = false;
