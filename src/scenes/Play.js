@@ -8,6 +8,7 @@ class Play extends Phaser.Scene
     preload()
     {
         this.load.atlas("PlayerAtlas", "./assets/Animations/Player_Atlas.png", "./assets/Animations/Player_Atlas.json");
+        this.load.atlas("EnvironmentAtlas", "./assets/Animations/Environment_Atlas.png","./assets/Animations/Environment_Atlas.json");
         this.load.image("PinkSquareSprite", "./assets/single_sprites/pink_square.png");
         this.load.image("OrangeRectSprite", "./assets/single_sprites/orange_rect.png");
         this.load.image("StoneTilesetImage", "./assets/levels/StoneBrick_Tileset.png");
@@ -41,7 +42,7 @@ class Play extends Phaser.Scene
         this.tutorial_level_map = this.add.tilemap("TestLevel")
         this.level1_map = this.add.tilemap("Level1");
         //use this variable if you are checking map related things.
-        this.currentLevel = this.level1_map;
+        this.currentLevel = this.tutorial_level_map;
 
         this.cameraMain = this.cameras.main;
 
@@ -94,7 +95,6 @@ class Play extends Phaser.Scene
         this.playerFSM.step();
         this.player.update();
         this.player.drawDebug();
-        // this.enemy.update();
     }
 
     loadLevel(levelName)
@@ -150,14 +150,19 @@ class Play extends Phaser.Scene
         });
         // // set up group here
         enemyObjects.map((element) =>{
-            let obj = new Obstacle(this, element.x, element.y, "OrangeRectSprite", this.enemynumber).setScale(.75);
+            let obj = new Obstacle(this, element.x, element.y, this.enemynumber);
             this.enemyGroup.add(obj);
             this.enemynumber++;
         });
-        // this.enemy = new Obstacle(this, game.config.width/3, game.config.height*.82, "OrangeRectSprite", this.enemynumber);
-        // this.enemy.setScale(.75);
 
         // creating transition object
-        // this.transitionObj = ;
+        this.levelend = this.currentLevel.createFromObjects("Object", {
+            name: "Level_Transition",
+        });
+        this.physics.world.enable(this.levelend, Phaser.Physics.Arcade.STATIC_BODY);
+        this.endGroup = this.add.group(this.levelend);
+        this.physics.add.overlap(this.player, this.endGroup, () =>{
+            // this.scene.start('Play');
+        });
     }
 }

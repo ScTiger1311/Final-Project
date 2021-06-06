@@ -1,16 +1,32 @@
 class Obstacle extends Phaser.Physics.Arcade.Sprite
 {
-    constructor(scene, x, y, texture, number)
+    constructor(scene, x, y, number)
     {
-        super(scene, x, y, texture);
+        super(scene, x, y, 'EnvironmentAtlas');
         scene.add.existing(this);           // add to scene
         scene.physics.add.existing(this);   // add to physics world
         
-        this.tint = 0x0b1f34;
+        // this.tint = 0x0b1f34;
         this.num = number;                  // obstacles are numbered to sort alive/dead colliders
         this.dead = false;
         this.overlapping = false;           // helps control dead collision checks
         this.touching = false;              // helps control alive collision checks
+
+        // creating animations
+        scene.anims.create({
+            key: 'flight',
+            frames: this.anims.generateFrameNames('EnvironmentAtlas',
+            {
+                prefix: 'Enemy',
+                start: 1,
+                end: 7,
+                zeroPad: 4,
+            }),
+            frameRate: 12,
+            repeat: -1,
+
+        });
+        this.play('flight');
 
         // phys settings
         this.body.immovable = true;
@@ -31,6 +47,7 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
                 this.kill(scene);
             }
         }).name = `aliveCollider${this.num}`;
+
     }
     
     // Function kills the enemy, changes the collider to overlap
