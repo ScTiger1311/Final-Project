@@ -120,18 +120,17 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.body.maxVelocity = new Phaser.Math.Vector2(this.maxMovementVelocity.x, this.maxMovementVelocity.y);
 
         //Attack control values
-        this.maxAttackVelocity = new Phaser.Math.Vector2(this.maxMovementVelocity.x*4.25, this.maxMovementVelocity.y*1.5725);
+        this.maxAttackVelocity = new Phaser.Math.Vector2(500, 500);
         this.baseAttackSpeed = 350
-        this.attackTime = 100;
+        this.attackTime = 150;
         this.attackDamping = .45
         this.attackCooldown = 100 //800 default
         this.attackCoeff = 2.3;
 
         //Boost control values
         // need boost cooldown & boost velocity
-        this.maxBoostVelocity = new Phaser.Math.Vector2(this.maxAttackVelocity.x*1.4, this.maxAttackVelocity.y*1.4);
-        //this.baseBoostSpeed = 650
-        this.boostTime = 600;
+        this.maxBoostVelocity = new Phaser.Math.Vector2(this.maxAttackVelocity.x*1.1, this.maxAttackVelocity.y*1.1);
+        this.boostTime = 250;
         this.boostDamping = .65
         this.boostCooldown = 200 //800 default
         this.boostCoeff = 2.3;
@@ -373,12 +372,11 @@ class Player extends Phaser.Physics.Arcade.Sprite
             this.velocityDir = new Phaser.Math.Vector2(0,0);
             this.attackSpeed = player.baseAttackSpeed > this.inVelocity.length() ? player.baseAttackSpeed : this.inVelocity.length(),
             this.attackAngle = Phaser.Math.Angle.Between(
-                player.body.position.x,
-                player.body.position.y,
+                player.x,
+                player.y,
                 scene.input.mousePointer.worldX,
                 scene.input.mousePointer.worldY
                 )
-            player.playerDebug("Angle: " + this.attackAngle * Phaser.Math.RAD_TO_DEG)
             player.angle = this.attackAngle * Phaser.Math.RAD_TO_DEG
             player.setFlipX(false)
 
@@ -390,7 +388,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             this.velocityDir.x *= player.attackCoeff
             this.velocityDir.y *= player.attackCoeff
 
-            player.playerDebug("inVel: " + this.inVelocity.length() + "\natkVel: " + typeof(this.velocityDir))
+            player.playerDebug("inVel: " + this.inVelocity.length() + "\natkVel: " + this.velocityDir.x + ", " + this.velocityDir.y)
 
             // set a short delay before going back to in air
             scene.time.delayedCall(player.attackTime, () => {
@@ -411,6 +409,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         execute(scene, player) {
             player.body.setAllowGravity(false)
             player.setAcceleration(0);
+            //player.playerDebug("inVel: " + this.inVelocity.length() + "\natkVel: " + this.velocityDir.x + ", " + this.velocityDir.y)
             player.body.velocity.setFromObject(this.velocityDir)
 
             //Handle boost inturrupt
@@ -430,11 +429,12 @@ class Player extends Phaser.Physics.Arcade.Sprite
             player.body.maxVelocity.set(player.maxBoostVelocity.x, player.maxBoostVelocity.y)
             
             this.inVelocity = player.body.velocity;
+            //I'm not sure why this is needed, for some reason the x component
+            //Of inVelocity is getting decremented somewhere
+            this.xVel = this.inVelocity.x;
 
-            this.inVelocity.x *= player.boostCoeff
+            this.xVel *= player.boostCoeff
             this.inVelocity.y *= player.boostCoeff
-
-            player.playerDebug("inVel: " + this.inVelocity.length() + "\nbstVel: " + this.inVelocity.x + ", " + this.inVelocity.y)
 
             // set a short delay before going back to in air
             scene.time.delayedCall(player.boostTime, () => {
@@ -452,8 +452,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
         execute(scene, player) {
             player.body.setAllowGravity(false)
             player.setAcceleration(0);
-            player.body.velocity.setFromObject(this.inVelocity)
-            
+            player.body.velocity.x = this.xVel;
+            player.body.velocity.y = this.inVelocity.y            
         }
     }
     
