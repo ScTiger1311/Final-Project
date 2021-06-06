@@ -8,6 +8,7 @@ class Play extends Phaser.Scene
     preload()
     {
         this.load.atlas("PlayerAtlas", "./assets/Animations/Player_Atlas.png", "./assets/Animations/Player_Atlas.json");
+        this.load.atlas("EnvironmentAtlas", "./assets/Animations/Environment_Atlas.png","./assets/Animations/Environment_Atlas.json");
         this.load.image("PinkSquareSprite", "./assets/single_sprites/pink_square.png");
         this.load.image("OrangeRectSprite", "./assets/single_sprites/orange_rect.png");
         this.load.image("StoneTilesetImage", "./assets/levels/StoneBrick_Tileset.png");
@@ -41,7 +42,7 @@ class Play extends Phaser.Scene
         this.tutorial_level_map = this.add.tilemap("TestLevel")
         this.level1_map = this.add.tilemap("Level1");
         //use this variable if you are checking map related things.
-        this.currentLevel = this.level1_map;
+        this.currentLevel = this.tutorial_level_map;
 
         this.cameraMain = this.cameras.main;
 
@@ -58,7 +59,7 @@ class Play extends Phaser.Scene
             'down':  Phaser.Input.Keyboard.KeyCodes.DOWN,
             'right': Phaser.Input.Keyboard.KeyCodes.RIGHT,
             'space': Phaser.Input.Keyboard.KeyCodes.SPACE,
-            'x': Phaser.Input.Keyboard. KeyCodes.X,
+            'r': Phaser.Input.Keyboard. KeyCodes.R,
         });
 
         this.loadLevel(this.curentLevel);
@@ -72,12 +73,15 @@ class Play extends Phaser.Scene
         That way they don't speed up on high refresh rate displays. Ask Ethan for more help/info
         if you are unsure.
         */
-
+        // reset level function
+        if(Phaser.Input.Keyboard.JustDown(this.keys.r)){
+            this.scene.restart();
+            // need to pass data in this^
+        }
         //Failsafe code
-       if(this.player.y > game.config.width * 1.5) {
+        if(this.player.y > game.config.width * 1.5) {
             this.player.reset();
-       }
-        
+        }
 
         if(Phaser.Input.Keyboard.JustDown(this.keys.plus)) {
             this.player.debugOn = !this.player.debugOn;
@@ -90,11 +94,10 @@ class Play extends Phaser.Scene
         this.platformerCamera.update(time, delta);
         this.playerFSM.step();
         this.player.update();
-        this.enemy.update(this);
         this.player.drawDebug();
     }
 
-    loadLevel( levelName )
+    loadLevel(levelName)
     {
         const stoneTileset = this.currentLevel.addTilesetImage("StoneBrick", "StoneTilesetImage")
 
@@ -140,8 +143,27 @@ class Play extends Phaser.Scene
         this.physics.add.collider(this.player, this.Platform_Layer);
         //this.physics.add.collider(this.player, this.Test_Layer);
 
-        // temp singular enemy object
-        this.enemy = new Obstacle(this, game.config.width/3, game.config.height*.82, "OrangeRectSprite");
-        this.enemy.setScale(.75);
+        // Setting up enemies
+        this.enemynumber = 1;
+        let enemyObjects = this.currentLevel.filterObjects("Object", obj => obj.name == 'Enemy');
+        this.enemyGroup = this.add.group({
+            runChildUpdate: true
+        });
+        // // set up group here
+        enemyObjects.map((element) =>{
+            let obj = new Obstacle(this, element.x, element.y, this.enemynumber);
+            this.enemyGroup.add(obj);
+            this.enemynumber++;
+        });
+
+        // creating transition object
+        this.levelend = this.currentLevel.createFromObjects("Object", {
+            name: "Level_Transition",
+        });
+        this.physics.world.enable(this.levelend, Phaser.Physics.Arcade.STATIC_BODY);
+        this.endGroup = this.add.group(this.levelend);
+        this.physics.add.overlap(this.player, this.endGroup, () =>{
+            // this.scene.start('Play');
+        });
     }
 }
