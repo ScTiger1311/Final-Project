@@ -49,7 +49,7 @@ class Play extends Phaser.Scene
         
         //use this variable if you are checking map related things.
         switch(this.levelName){
-            case 'one':
+            case 'Level1':
                 this.currentLevel = this.level1_map;
                 break;
             default:
@@ -90,12 +90,13 @@ class Play extends Phaser.Scene
         if(Phaser.Input.Keyboard.JustDown(this.keys.r)){
             this.music.stop();
             this.scene.restart();
+            // this.scene.start('Play', "Level1");
         }
         //Failsafe code
-        if(this.player.y > game.config.height + 48) {
-            this.music.stop();
-            this.scene.restart();
-        }
+        // if(this.player.y > game.config.height + 48) {
+        //     this.music.stop();
+        //     this.scene.restart();
+        // }
 
         if(Phaser.Input.Keyboard.JustDown(this.keys.plus)) {
             this.player.debugOn = !this.player.debugOn;
@@ -161,7 +162,7 @@ class Play extends Phaser.Scene
         this.enemyGroup = this.add.group({
             runChildUpdate: true
         });
-        // // set up group here
+        // set up group here
         enemyObjects.map((element) =>{
             let obj = new Obstacle(this, element.x, element.y, this.enemynumber);
             this.enemyGroup.add(obj);
@@ -172,15 +173,15 @@ class Play extends Phaser.Scene
         let obj = new Obstacle(this, 200, 250, this.enemynumber);
         this.enemyGroup.add(obj);
 
-        // creating transition object
-        this.levelend = this.currentLevel.createFromObjects("Object", {
+        // creating transition object(s)
+        this.levelend = this.physics.add.group({immovable: true, moves: false});
+        this.levelend.addMultiple(this.currentLevel.createFromObjects("Object",{
             name: "Level_Transition",
-        });
-        this.physics.world.enable(this.levelend, Phaser.Physics.Arcade.STATIC_BODY);
-        this.endGroup = this.add.group(this.levelend);
-        this.physics.add.overlap(this.player, this.endGroup, () =>{
-            // this.scene.start('Play', );
-            // get level transition property from tilemap
+        }));
+        this.nextLevel = this.levelend.getChildren()[0].data.list.Level;    // geting name of level to switch to
+        this.physics.add.overlap(this.player, this.levelend, () =>{
+            this.music.stop();                  // feel free to remove if need be but prevents music from overlapping
+            this.scene.restart(this.nextLevel);
         });
     }
 }
