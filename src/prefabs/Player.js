@@ -73,6 +73,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 zeroPad: 4
             }),
             frameRate: 12,
+            repeat: -1
 
         });
 
@@ -128,8 +129,12 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
         //Boost control values
         // need boost cooldown & boost velocity
-        this.boostCooldown = 200;
-        this.boostModifier = 2.3;
+        this.maxBoostVelocity = new Phaser.Math.Vector2(this.maxAttackVelocity.x*1.4, this.maxAttackVelocity.y*1.4);
+        //this.baseBoostSpeed = 650
+        this.boostTime = 600;
+        this.boostDamping = .65
+        this.boostCooldown = 200 //800 default
+        this.boostCoeff = 2.3;
 
         //wall cling/jump values
         this.wallDismountDelay = 175
@@ -170,6 +175,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.wallInVelocity = 0;
         this.comingOffWall = false;
         this.attackQueued = false;
+        this.boostQueued = false;
         this.canAttack = true;
         this.attackTimerActive = false;
         this.overlapLeft = false;
@@ -239,7 +245,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.overlapLeft = this.overlapRight = false
         this.leftDetector.setDebugBodyColor(0xffff00)
         this.rightDetector.setDebugBodyColor(0xffff00)
-        
+
         this.scene.physics.overlap(this.leftDetector, this.scene.env, ()=>
         {
             this.overlapLeft = true
@@ -251,10 +257,9 @@ class Player extends Phaser.Physics.Arcade.Sprite
             this.overlapRight = true
             this.rightDetector.setDebugBodyColor(0xff0000)
         });
+
     }
 }
-
-
 
     class IdleState extends State {
         enter(scene, player) {
@@ -367,14 +372,18 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
             this.velocityDir = new Phaser.Math.Vector2(0,0);
             this.attackSpeed = player.baseAttackSpeed > this.inVelocity.length() ? player.baseAttackSpeed : this.inVelocity.length(),
+            this.attackAngle = Phaser.Math.Angle.Between(
+                player.body.position.x,
+                player.body.position.y,
+                scene.input.mousePointer.worldX,
+                scene.input.mousePointer.worldY
+                )
+            player.playerDebug("Angle: " + this.attackAngle * Phaser.Math.RAD_TO_DEG)
+            player.angle = this.attackAngle * Phaser.Math.RAD_TO_DEG
+            player.setFlipX(false)
 
             scene.physics.velocityFromRotation(
-                Phaser.Math.Angle.Between(
-                    player.body.position.x,
-                    player.body.position.y,
-                    scene.input.mousePointer.worldX,
-                    scene.input.mousePointer.worldY
-                    ),
+                    this.attackAngle,
                     this.attackSpeed,
                 this.velocityDir
             );
@@ -385,39 +394,66 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
             // set a short delay before going back to in air
             scene.time.delayedCall(player.attackTime, () => {
+                if(scene.playerFSM.state == "attack") {
+                    player.body.setAllowGravity(true)
+                    player.body.setVelocity(player.body.velocity.x * player.attackDamping, player.body.velocity.y * player.attackDamping)
+                    player.attackTimerActive = true
+                    scene.time.delayedCall(player.attackCooldown, () => {player.attackTimerActive = false})
+                    player.angle = 0;
+                    player.play("jump") //Play jump animation from middle
+                    player.anims.setProgress(.35)
+                    this.stateMachine.transition('inair');
+                }
+                return;
+            });
+        }
+
+        execute(scene, player) {
+            player.body.setAllowGravity(false)
+            player.setAcceleration(0);
+            player.body.velocity.setFromObject(this.velocityDir)
+
+            //Handle boost inturrupt
+            if(player.boostQueued) {
+                this.stateMachine.transition('boost');
+                return
+            }
+            
+        }
+    }
+    
+    class BoostState extends State {
+        enter (scene, player) {
+            player.playerDebug("Enter BoostState");
+            player.play("attack")
+
+            player.body.maxVelocity.set(player.maxBoostVelocity.x, player.maxBoostVelocity.y)
+            
+            this.inVelocity = player.body.velocity;
+
+            this.inVelocity.x *= player.boostCoeff
+            this.inVelocity.y *= player.boostCoeff
+
+            player.playerDebug("inVel: " + this.inVelocity.length() + "\nbstVel: " + this.inVelocity.x + ", " + this.inVelocity.y)
+
+            // set a short delay before going back to in air
+            scene.time.delayedCall(player.boostTime, () => {
                 player.body.setAllowGravity(true)
-                player.body.setVelocity(player.body.velocity.x * player.attackDamping, player.body.velocity.y * player.attackDamping)
-                player.attackTimerActive = true
-                scene.time.delayedCall(player.attackCooldown, () => {player.attackTimerActive = false})
+                player.body.setVelocity(player.body.velocity.x * player.boostDamping, player.body.velocity.y * player.boostDamping)
+                player.angle = 0;
                 player.play("jump") //Play jump animation from middle
                 player.anims.setProgress(.35)
+                player.boostQueued = false
                 this.stateMachine.transition('inair');
                 return;
             });
         }
 
         execute(scene, player) {
-            //player.body.setVelocity(0);
             player.body.setAllowGravity(false)
             player.setAcceleration(0);
-            player.body.velocity.setFromObject(this.velocityDir)
-            //Give velocity towards mouse
-            // Velocity is whatever is higher, the atatck speed, or the players current speed
-
+            player.body.velocity.setFromObject(this.inVelocity)
             
-        }
-    }
-    
-    class BoostState extends State {
-        enter(scene, player) {
-            player.playerDebug("Enter BoostState");
-            // player.anims.play(`swing-${player.direction}`);
-            player.body.setVelocity(player.body.velocity.x *player.boostModifier, player.body.velocity.y *player.boostModifier);
-    
-            // set a short delay before going back to idle
-            scene.time.delayedCall(player.boostCooldown, () => {
-                this.stateMachine.transition('idle');
-            });
         }
     }
     

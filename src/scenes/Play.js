@@ -42,6 +42,7 @@ class Play extends Phaser.Scene
         this.tutorial_level_map = this.add.tilemap("TestLevel")
         this.level1_map = this.add.tilemap("Level1");
         //use this variable if you are checking map related things.
+
         this.currentLevel = this.tutorial_level_map;
 
         this.cameraMain = this.cameras.main;
@@ -155,6 +156,10 @@ class Play extends Phaser.Scene
             this.enemyGroup.add(obj);
             this.enemynumber++;
         });
+
+        //test enemy
+        let obj = new Obstacle(this, 200, 250, this.enemynumber);
+        this.enemyGroup.add(obj);
 
         // creating transition object
         this.levelend = this.currentLevel.createFromObjects("Object", {
