@@ -145,7 +145,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
         //Temp values
 
-        //Detection 
+        //Detection
         this.topLeftRay = new Phaser.Geom.Line(
             this.x - this.body.width/2, this.y - this.body.height/2,
             this.x - this.body.width/2 - 1, this.y - this.body.height/2
@@ -239,6 +239,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.overlapLeft = this.overlapRight = false
         this.leftDetector.setDebugBodyColor(0xffff00)
         this.rightDetector.setDebugBodyColor(0xffff00)
+        
         this.scene.physics.overlap(this.leftDetector, this.scene.env, ()=>
         {
             this.overlapLeft = true
@@ -250,7 +251,6 @@ class Player extends Phaser.Physics.Arcade.Sprite
             this.overlapRight = true
             this.rightDetector.setDebugBodyColor(0xff0000)
         });
-        
     }
 }
 
@@ -481,6 +481,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
             //Handle wall jump input
             if(Phaser.Input.Keyboard.JustDown(space)){
                 player.comingOffWall = true;
+                player.play("jump") //Play jump animation from middle
+                player.anims.setProgress(.35)
                 this.stateMachine.transition('walljump')
                 return;
             }
@@ -515,8 +517,6 @@ class Player extends Phaser.Physics.Arcade.Sprite
             scene.time.delayedCall(player.wallJumpTime, () => {
                 player.body.setAllowGravity(true)
                 //player.body.setVelocity(player.body.velocity.x * player.attackDamping, player.body.velocity.y * player.attackDamping)
-                player.play("jump") //Play jump animation from middle
-                player.anims.setProgress(.35)
                 this.stateMachine.transition('inair');
                 return;
             });
