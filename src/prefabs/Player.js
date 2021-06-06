@@ -79,7 +79,6 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
         //Setup mouse input
         scene.input.on('pointerdown', (pointer) => {
-            this.playerDebug("Down at [x: " + pointer.x + ", y: " + pointer.y + "]")
             if(this.canAttack && !this.attackTimerActive)
                 this.attackQueued = true;
         })
@@ -108,9 +107,14 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.rightDetector.setDebugBodyColor(0xff0000)
         
         //Setup control values
+        //Highest velocity the player can ever attain
+        this.superMaxVelocity = new Phaser.Math.Vector2(300, 300)
+
         //Walk/Jump movement values
-        this.MoveAcceleration = 3000;
+        this.MoveAcceleration = 1850;
         this.maxMovementVelocity = new Phaser.Math.Vector2(185, 500)
+        this.movementVelocityDecay = 1.5; //per second
+        this.inairVelocityDecay = .85;
         this.upGravity = 1200;
         this.downGravity = 1500;
         this.jumpForce = -250
@@ -128,7 +132,6 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.attackCoeff = 2.3;
 
         //Boost control values
-        // need boost cooldown & boost velocity
         this.maxBoostVelocity = new Phaser.Math.Vector2(this.maxAttackVelocity.x*1.1, this.maxAttackVelocity.y*1.1);
         this.boostTime = 250;
         this.boostDamping = .65
@@ -136,11 +139,13 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.boostCoeff = 2.3;
 
         //wall cling/jump values
+        this.maxWallJumpVelocity = new Phaser.Math.Vector2(this.maxMovementVelocity.x*1.5, this.maxMovementVelocity.y*2);
+        this.maxWallClingVelocity = new Phaser.Math.Vector2(this.maxMovementVelocity.x, this.maxMovementVelocity.y/2.75)
+        this.wallJumpVelocityDecay = .005;
         this.wallDismountDelay = 60;
         this.wallDismountVelocity = 150;
         this.wallClingCoeff = .35; //35% normal gravity on a wall
         this.wallJumpTime = 150;
-        this.maxWallJumpVelocity = new Phaser.Math.Vector2(this.maxMovementVelocity.x*1.5, this.maxMovementVelocity.y*2) ;
         this.wallJumpVelocity = new Phaser.Math.Vector2(2050, -225);
 
         //Debug items
@@ -262,7 +267,6 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
     class IdleState extends State {
         enter(scene, player) {
-            player.body.maxVelocity.set(player.maxMovementVelocity.x, player.maxMovementVelocity.y)
             player.playerDebug("Enter IdleState");
             player.play("idle")
             player.stop()
@@ -272,6 +276,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
             // use destructuring to make a local copy of the keyboard object
             // Yes thank you nathan doing that now -Avery
             const { left, right, a, d, space } = scene.keys;
+
+
     
             // transition to swing if pressing space
             if(Phaser.Input.Keyboard.JustDown(space)) {
@@ -305,14 +311,46 @@ class Player extends Phaser.Physics.Arcade.Sprite
     
     class WalkState extends State {
         enter (scene, player) {
-            player.body.maxVelocity.set(player.maxMovementVelocity.x, player.maxMovementVelocity.y)
             player.playerDebug("Enter WalkState");
+            // player.playerDebug("curVel: " + player.body.velocity.x + ", " + player.body.velocity.y +
+            //             "\ncurMax: " + player.body.maxVelocity.x + ", " +  player.body.maxVelocity.y +
+            //             "\nmaxMove: " + player.maxMovementVelocity.x + ", " + player.maxMovementVelocity.y)
+
+            //If velocity is higher than the max for this state,
+            //Set it to the superMaxVelocity
+            //In update, decay it back down to the max for this state over time
+            if(Math.abs(player.body.velocity.x) > player.maxMovementVelocity.x) {
+                player.body.maxVelocity.x = player.superMaxVelocity.x
+                player.playerDebug("Set x to supermax")
+            }
+            else {
+               player.body.maxVelocity.x = player.maxMovementVelocity.x
+                player.playerDebug("Set x to maxMove")
+            }
+
+            if(Math.abs(player.body.velocity.y) > player.maxMovementVelocity.y) {
+                player.body.maxVelocity.y = player.superMaxVelocity.y
+                player.playerDebug("Set y to supermax")
+            }
+            else {
+                player.body.maxVelocity.y = player.maxMovementVelocity.y
+                player.playerDebug("Set y to maxMove")
+            }
             player.play("run")
         }
 
         execute(scene, player) {
             // use destructuring to make a local copy of the keyboard object
             const { left, right, a, d, space } = scene.keys;
+
+            //decay max velocity down to the max for this state
+            if(Math.abs(player.body.maxVelocity.x) > player.maxMovementVelocity.x) {
+                player.body.maxVelocity.x -= player.movementVelocityDecay;
+            }
+            if(Math.abs(player.body.maxVelocity.y) > player.maxMovementVelocity.y) {
+                player.body.maxVelocity.y -= player.movementVelocityDecay;
+            }
+
     
             // transition to inair if pressing space
             if(Phaser.Input.Keyboard.JustDown(space)) {
@@ -388,7 +426,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             this.velocityDir.x *= player.attackCoeff
             this.velocityDir.y *= player.attackCoeff
 
-            player.playerDebug("inVel: " + this.inVelocity.length() + "\natkVel: " + this.velocityDir.x + ", " + this.velocityDir.y)
+            //player.playerDebug("inVel: " + this.inVelocity.length() + "\natkVel: " + this.velocityDir.x + ", " + this.velocityDir.y)
 
             // set a short delay before going back to in air
             scene.time.delayedCall(player.attackTime, () => {
@@ -472,7 +510,22 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
     class WallClingState extends State {
         enter(scene, player) {
-            player.body.maxVelocity.set(player.maxMovementVelocity.x, player.maxMovementVelocity.y/2.75)
+
+            //If velocity is higher than the max for this state,
+            //Set it to the superMaxVelocity
+            //In update, decay it back down to the max for this state over time
+            if(Math.abs(player.body.velocity.x) > player.maxWallClingVelocity.x) {
+                player.body.maxVelocity.x = player.superMaxVelocity.x
+                player.playerDebug("Set x to supermax")
+            }
+            else {
+                player.body.maxVelocity.x = player.maxMovementVelocity.x
+                player.playerDebug("Set x to maxMove")
+            }
+
+            //Take direct control of y velocity for wall sliding
+            player.body.maxVelocity.y = player.maxWallClingVelocity.y
+
             player.playerDebug("Enter WallClingState");
             player.play("wallcling")
             this.direction = player.overlapRight ? 1 : -1
@@ -563,7 +616,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             player.setAcceleration(0);
 
             //Give velocity towards mouse
-            // Velocity is whatever is higher, the atatck speed, or the players current speed
+            // Velocity is whatever is higher, a dthe atatck speed, or the players current speed
             player.body.velocity.set(player.wallJumpVelocity.x * -this.direction, player.wallJumpVelocity.y);
             
         }
@@ -571,8 +624,31 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
     class InAirState extends State {
         enter(scene, player) {
-            player.body.maxVelocity.set(player.maxMovementVelocity.x, player.maxMovementVelocity.y)
             player.playerDebug("Enter InAirState");
+            // player.playerDebug("curVel: " + player.body.velocity.x + ", " + player.body.velocity.y +
+            //             "\ncurMax: " + player.body.maxVelocity.x + ", " +  player.body.maxVelocity.y +
+            //             "\nmaxMove: " + player.maxMovementVelocity.x + ", " + player.maxMovementVelocity.y)
+
+            //If velocity is higher than the max for this state,
+            //Set it to the superMaxVelocity
+            //In update, decay it back down to the max for this state over time
+            if(Math.abs(player.body.velocity.x) > player.maxMovementVelocity.x) {
+                player.body.maxVelocity.x = player.superMaxVelocity.x
+                player.playerDebug("Set x to supermax")
+            }
+            else {
+                player.body.maxVelocity.x = player.maxMovementVelocity.x
+                player.playerDebug("Set x to maxMove")
+            }
+
+            if(Math.abs(player.body.velocity.y) > player.maxMovementVelocity.y) {
+                player.body.maxVelocity.y = player.superMaxVelocity.y
+                player.playerDebug("Set y to supermax")
+            }
+            else {
+                player.body.maxVelocity.y = player.maxMovementVelocity.y
+                player.playerDebug("Set y to maxMove")
+            }
             // if we're coming off a wall cling, the first jump has already happened
             this.risingJumpInputted = player.comingOffWall;
         }
@@ -580,6 +656,15 @@ class Player extends Phaser.Physics.Arcade.Sprite
         execute(scene, player) {
             // use destructuring to make a local copy of the keyboard object
             const { left, right, a, d, space } = scene.keys;
+
+            //decay max velocity down to the max for this state
+            if(Math.abs(player.body.maxVelocity.x) > player.maxMovementVelocity.x) {
+                player.body.maxVelocity.x -= player.inairVelocityDecay;
+            }
+            if(Math.abs(player.body.maxVelocity.y) > player.maxMovementVelocity.y) {
+                player.body.maxVelocity.y -= player.inairVelocityDecay;
+            }
+
 
             //Calculate deltaY
             player.deltaY = player.y - player.lastY;
@@ -634,6 +719,10 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 player.canAttack = true;
                 //if holding a key go to walk otherwise go to idle
                 if (left.isDown || a.isDown || right.isDown || d.isDown) {
+                    player.playerDebug("Exit InAirState");
+                    player.playerDebug("curVel: " + player.body.velocity.x + ", " + player.body.velocity.y +
+                    "\ncurMax: " + player.body.maxVelocity.x + ", " +  player.body.maxVelocity.y +
+                    "\nmaxMove: " + player.maxMovementVelocity.x + ", " + player.maxMovementVelocity.y)
                     this.stateMachine.transition('walk');
                 }
                 else {
