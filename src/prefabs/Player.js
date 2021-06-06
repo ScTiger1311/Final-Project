@@ -7,27 +7,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
-        //Setup physics config
-        this.body.gravity = new Phaser.Math.Vector2(0, 800)
-        this.body.maxVelocity = new Phaser.Math.Vector2(400, 800)
-        this.body.useDrag;
-        this.body.setDragX(1800); //This is used as the damping value
-        this.body.bounceX = 5000        
-        this.body.setSize(16, 30, true) //Size in pixels of hitbox  
-        this.body.setOffset(this.width/2 - this.body.width/2, this.body.height/2)
 
-        //Add wall detection triggers
-        this.wDHeightScaler = .7;
-
-        this.leftDetector = scene.physics.add.sprite();
-        this.leftDetector.body.setSize(3, this.body.height * this.wDHeightScaler);
-        this.leftDetector.body.onOverlap = true;
-        this.leftDetector.setDebugBodyColor(0xffff00)
-
-        this.rightDetector = scene.physics.add.sprite();
-        this.rightDetector.body.setSize(3, this.body.height * this.wDHeightScaler);
-        this.rightDetector.body.onOverlap = true;
-        this.rightDetector.setDebugBodyColor(0xff0000)
 
         // for(tile in this.colliderFilter) {
         //     console.log(tile.name + ", " + tile.name)
@@ -99,32 +79,52 @@ class Player extends Phaser.Physics.Arcade.Sprite
         //Setup mouse input
         scene.input.on('pointerdown', (pointer) => {
             this.playerDebug("Down at [x: " + pointer.x + ", y: " + pointer.y + "]")
-            if(this.canAttack)
+            if(this.canAttack && !this.attackTimerActive)
                 this.attackQueued = true;
         })
 
         //Debug purposes only
         //this.body.collideWorldBounds = true 
-
-        this.isBoosting = false;
       
-        this.body.maxVelocity = new Phaser.Math.Vector2(185, 1100);
+        //Setup physics config
         this.body.useDrag;
+        this.body.setSize(16, 30, true) //Size in pixels of hitbox  
+        this.body.setOffset(this.width/2 - this.body.width/2, this.body.height/2)
         this.body.setDragX(2500); //This is used as the damping value
         this.body.bounceX = 5000
+
+        //Add wall detection triggers
+        this.wDHeightScaler = .7;
+
+        this.leftDetector = scene.physics.add.sprite();
+        this.leftDetector.body.setSize(3, this.body.height * this.wDHeightScaler);
+        this.leftDetector.body.onOverlap = true;
+        this.leftDetector.setDebugBodyColor(0xffff00)
+
+        this.rightDetector = scene.physics.add.sprite();
+        this.rightDetector.body.setSize(3, this.body.height * this.wDHeightScaler);
+        this.rightDetector.body.onOverlap = true;
+        this.rightDetector.setDebugBodyColor(0xff0000)
         
         //Setup control values
         //Walk/Jump movement values
         this.MoveAcceleration = 3000;
+        this.maxMovementVelocity = new Phaser.Math.Vector2(185, 500)
         this.upGravity = 1200;
         this.downGravity = 1500;
         this.jumpForce = -250
 
+        //Actual body physics values
+        this.body.gravity = new Phaser.Math.Vector2(0, this.downGravity)
+        this.body.maxVelocity = new Phaser.Math.Vector2(this.maxMovementVelocity.x, this.maxMovementVelocity.y);
+
         //Attack control values
-        this.attackVelocity = 500;
+        this.maxAttackVelocity = new Phaser.Math.Vector2(this.maxMovementVelocity.x*4.25, this.maxMovementVelocity.y/1.5);
+        this.baseAttackSpeed = 350
         this.attackTime = 100;
-        this.attackDamping = .7
+        this.attackDamping = .45
         this.attackCooldown = 800 //800 default
+        this.attackCoeff = 2.3;
 
         //Boost control values
         // need boost cooldown & boost velocity
@@ -136,8 +136,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.wallDismountVelocity = 150;
         this.wallClingCoeff = .35; //35% normal gravity on a wall
         this.wallJumpTime = 150;
-        this.wallJumpVelocityX = 2050;
-        this.wallJumpVelocityY = -200;
+        this.maxWallJumpVelocity = new Phaser.Math.Vector2(this.maxMovementVelocity.x*1.5, this.maxMovementVelocity.y*2) ;
+        this.wallJumpVelocity = new Phaser.Math.Vector2(2050, -225);
 
         //Debug items
         this.debugOn = true;
@@ -171,6 +171,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.comingOffWall = false;
         this.attackQueued = false;
         this.canAttack = true;
+        this.attackTimerActive = false;
         this.overlapLeft = false;
         this.overlapRight = false;
 
@@ -257,8 +258,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
     class IdleState extends State {
         enter(scene, player) {
+            player.body.maxVelocity.set(player.maxMovementVelocity.x, player.maxMovementVelocity.y)
             player.playerDebug("Enter IdleState");
-            player.playerDebug("Origin: " + player.originX + ", " + player.originY);
             player.play("idle")
             player.stop()
         }
@@ -300,6 +301,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
     
     class WalkState extends State {
         enter (scene, player) {
+            player.body.maxVelocity.set(player.maxMovementVelocity.x, player.maxMovementVelocity.y)
             player.playerDebug("Enter WalkState");
             player.play("run")
         }
@@ -356,24 +358,37 @@ class Player extends Phaser.Physics.Arcade.Sprite
         enter (scene, player) {
             player.playerDebug("Enter AttackState");
             player.play("attack")
-            player.playerDebug("Playerposbef = " + player.body.position.x + ", " + player.body.position.y)
+
+            player.body.maxVelocity.set(player.maxAttackVelocity.x, player.maxAttackVelocity.y)
             player.attackQueued = false;
             player.canAttack = false;
 
             this.inVelocity = player.body.velocity;
 
-            player.playerDebug("inVel: " + this.inVelocity.length() + "\natkVel: " + player.attackVelocity)
+            this.velocityDir = new Phaser.Math.Vector2(0,0);
+            this.attackSpeed = player.baseAttackSpeed > this.inVelocity.length() ? player.baseAttackSpeed : this.inVelocity.length(),
+
+            scene.physics.velocityFromRotation(
+                Phaser.Math.Angle.Between(
+                    player.body.position.x,
+                    player.body.position.y,
+                    scene.input.mousePointer.worldX,
+                    scene.input.mousePointer.worldY
+                    ),
+                    this.attackSpeed,
+                this.velocityDir
+            );
+            this.velocityDir.x *= player.attackCoeff
+            this.velocityDir.y *= player.attackCoeff
+
+            player.playerDebug("inVel: " + this.inVelocity.length() + "\natkVel: " + typeof(this.velocityDir))
 
             // set a short delay before going back to in air
-            let startPoint = player.body.position;
-            player.playerDebug("Startpoint = " + startPoint.x + ", " + startPoint.y)
             scene.time.delayedCall(player.attackTime, () => {
                 player.body.setAllowGravity(true)
                 player.body.setVelocity(player.body.velocity.x * player.attackDamping, player.body.velocity.y * player.attackDamping)
-                // player.playerDebug("Playerposaft = " + player.body.position.x + ", " + player.body.position.y)
-                // console.log("Start: " + startPoint.x + ", " + startPoint.y + " End: " + player.body.position.x + ", " + player.body.position.y )
-                // console.log("Distance: " + Phaser.Math.Distance.BetweenPoints(startPoint, player.body.position))
-                scene.time.delayedCall(player.attackCooldown, () => {player.canAttack = true})
+                player.attackTimerActive = true
+                scene.time.delayedCall(player.attackCooldown, () => {player.attackTimerActive = false})
                 player.play("jump") //Play jump animation from middle
                 player.anims.setProgress(.35)
                 this.stateMachine.transition('inair');
@@ -385,20 +400,10 @@ class Player extends Phaser.Physics.Arcade.Sprite
             //player.body.setVelocity(0);
             player.body.setAllowGravity(false)
             player.setAcceleration(0);
-
+            player.body.velocity.setFromObject(this.velocityDir)
             //Give velocity towards mouse
             // Velocity is whatever is higher, the atatck speed, or the players current speed
-            scene.physics.velocityFromRotation(
-                Phaser.Math.Angle.Between(
-                    player.body.position.x,
-                    player.body.position.y,
-                    scene.input.mousePointer.worldX,
-                    scene.input.mousePointer.worldY
-                    ),
-                player.attackVelocity > this.inVelocity.length() ? player.attackVelocity : this.inVelocity.length(),
-                player.body.velocity
-            );
-            this.endPoint = player.body.position
+
             
         }
     }
@@ -432,6 +437,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
     class WallClingState extends State {
         enter(scene, player) {
+            player.body.maxVelocity.set(player.maxMovementVelocity.x, player.maxMovementVelocity.y/2.75)
             player.playerDebug("Enter WallClingState");
             player.play("wallcling")
             this.direction = player.overlapRight ? 1 : -1
@@ -500,6 +506,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
     class WallJumpState extends State {
         enter (scene, player) {
+            player.body.maxVelocity.set(player.maxWallJumpVelocity.x, player.maxWallJumpVelocity.y)
             player.playerDebug("Enter WallJumpState");
             this.direction = player.overlapRight ? 1 : -1
 
@@ -521,13 +528,14 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
             //Give velocity towards mouse
             // Velocity is whatever is higher, the atatck speed, or the players current speed
-            player.body.velocity.set(player.wallJumpVelocityX * -this.direction, player.wallJumpVelocityY);
+            player.body.velocity.set(player.wallJumpVelocity.x * -this.direction, player.wallJumpVelocity.y);
             
         }
     }
 
     class InAirState extends State {
         enter(scene, player) {
+            player.body.maxVelocity.set(player.maxMovementVelocity.x, player.maxMovementVelocity.y)
             player.playerDebug("Enter InAirState");
             // if we're coming off a wall cling, the first jump has already happened
             this.risingJumpInputted = player.comingOffWall;
@@ -587,6 +595,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             if(this.risingJumpInputted && player.body.blocked.down) {
                 player.playerLand.play();
                 player.comingOffWall = false;
+                player.canAttack = true;
                 //if holding a key go to walk otherwise go to idle
                 if (left.isDown || a.isDown || right.isDown || d.isDown) {
                     this.stateMachine.transition('walk');
