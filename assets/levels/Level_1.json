@@ -1,5 +1,13 @@
 { "backgroundcolor":"#696a79",
  "compressionlevel":0,
+ "editorsettings":
+    {
+     "export":
+        {
+         "format":"json",
+         "target":"Level_1.json"
+        }
+    },
  "height":44,
  "infinite":false,
  "layers":[
@@ -94,6 +102,11 @@
                  "name":"Level_Transition",
                  "properties":[
                         {
+                         "name":"Level",
+                         "type":"string",
+                         "value":"Tutorial_Level"
+                        }, 
+                        {
                          "name":"__anchorX",
                          "type":"int",
                          "value":176
@@ -125,6 +138,11 @@
                  "id":3,
                  "name":"Level_Transition",
                  "properties":[
+                        {
+                         "name":"Level",
+                         "type":"string",
+                         "value":"Tutorial_Level"
+                        }, 
                         {
                          "name":"__anchorX",
                          "type":"int",
@@ -158,6 +176,11 @@
                  "name":"Level_Transition",
                  "properties":[
                         {
+                         "name":"Level",
+                         "type":"string",
+                         "value":"Tutorial_Level"
+                        }, 
+                        {
                          "name":"__anchorX",
                          "type":"int",
                          "value":208
@@ -190,6 +213,11 @@
                  "name":"Level_Transition",
                  "properties":[
                         {
+                         "name":"Level",
+                         "type":"string",
+                         "value":"Tutorial_Level"
+                        }, 
+                        {
                          "name":"__anchorX",
                          "type":"int",
                          "value":240
@@ -221,6 +249,11 @@
                  "id":6,
                  "name":"Level_Transition",
                  "properties":[
+                        {
+                         "name":"Level",
+                         "type":"string",
+                         "value":"Tutorial_Level"
+                        }, 
                         {
                          "name":"__anchorX",
                          "type":"int",

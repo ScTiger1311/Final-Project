@@ -88,11 +88,13 @@ class Play extends Phaser.Scene
         */
         // reset level function
         if(Phaser.Input.Keyboard.JustDown(this.keys.r)){
+            this.music.stop();
             this.scene.restart();
         }
         //Failsafe code
-        if(this.player.y > game.config.width * 1.5) {
-            this.player.reset();
+        if(this.player.y > game.config.height + 48) {
+            this.music.stop();
+            this.scene.restart();
         }
 
         if(Phaser.Input.Keyboard.JustDown(this.keys.plus)) {
@@ -165,6 +167,10 @@ class Play extends Phaser.Scene
             this.enemyGroup.add(obj);
             this.enemynumber++;
         });
+
+        //test enemy
+        let obj = new Obstacle(this, 200, 250, this.enemynumber);
+        this.enemyGroup.add(obj);
 
         // creating transition object
         this.levelend = this.currentLevel.createFromObjects("Object", {

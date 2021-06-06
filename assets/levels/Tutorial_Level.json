@@ -1,5 +1,13 @@
 { "backgroundcolor":"#696a79",
  "compressionlevel":0,
+ "editorsettings":
+    {
+     "export":
+        {
+         "format":"json",
+         "target":"Tutorial_Level.json"
+        }
+    },
  "height":25,
  "infinite":false,
  "layers":[
@@ -117,14 +125,19 @@
                  "type":"",
                  "visible":true,
                  "width":16,
-                 "x":94,
-                 "y":72
+                 "x":95.9722167873215,
+                 "y":81.2036783408335
                 }, 
                 {
                  "height":16,
                  "id":3,
                  "name":"Level_Transition",
                  "properties":[
+                        {
+                         "name":"Level",
+                         "type":"string",
+                         "value":"Level1"
+                        }, 
                         {
                          "name":"__anchorX",
                          "type":"int",
@@ -158,6 +171,11 @@
                  "name":"Level_Transition",
                  "properties":[
                         {
+                         "name":"Level",
+                         "type":"string",
+                         "value":"Level1"
+                        }, 
+                        {
                          "name":"__anchorX",
                          "type":"int",
                          "value":0
@@ -190,6 +208,11 @@
                  "name":"Level_Transition",
                  "properties":[
                         {
+                         "name":"Level",
+                         "type":"string",
+                         "value":"Level1"
+                        }, 
+                        {
                          "name":"__anchorX",
                          "type":"int",
                          "value":0
@@ -221,6 +244,11 @@
                  "id":6,
                  "name":"Level_Transition",
                  "properties":[
+                        {
+                         "name":"Level",
+                         "type":"string",
+                         "value":"Level1"
+                        }, 
                         {
                          "name":"__anchorX",
                          "type":"int",
