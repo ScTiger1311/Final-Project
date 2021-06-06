@@ -132,7 +132,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.boostModifier = 2.3;
 
         //wall cling/jump values
-        this.wallDismountDelay = 175
+        this.wallDismountDelay = 60;
         this.wallDismountVelocity = 150;
         this.wallClingCoeff = .35; //35% normal gravity on a wall
         this.wallJumpTime = 150;
