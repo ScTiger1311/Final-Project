@@ -90,7 +90,6 @@ class Play extends Phaser.Scene
         if(Phaser.Input.Keyboard.JustDown(this.keys.r)){
             this.music.stop();
             this.scene.restart();
-            // this.scene.start('Play', "Level1");
         }
         //Failsafe code
         // if(this.player.y > game.config.height + 48) {
