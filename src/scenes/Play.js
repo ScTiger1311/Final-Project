@@ -75,12 +75,14 @@ class Play extends Phaser.Scene
         */
         // reset level function
         if(Phaser.Input.Keyboard.JustDown(this.keys.r)){
+            this.music.stop();
             this.scene.restart();
             // need to pass data in this^
         }
         //Failsafe code
-        if(this.player.y > game.config.width * 1.5) {
-            this.player.reset();
+        if(this.player.y > game.config.height + 48) {
+            this.music.stop();
+            this.scene.restart();
         }
 
         if(Phaser.Input.Keyboard.JustDown(this.keys.plus)) {
