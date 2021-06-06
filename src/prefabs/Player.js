@@ -461,12 +461,11 @@ class Player extends Phaser.Physics.Arcade.Sprite
         enter(scene, player) {
             player.playerDebug("Enter HurtState");
             player.body.setVelocity(0);
-            player.anims.play(`walk-${player.direction}`);
-            player.anims.stop();
     
             // set recovery timer
             scene.time.delayedCall(player.hurtTimer, () => {
-                this.stateMachine.transition('idle');
+                scene.music.stop();                  // feel free to remove if need be but prevents music from overlapping
+                scene.scene.restart();
             });
         }
     }
