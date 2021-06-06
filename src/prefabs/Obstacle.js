@@ -31,6 +31,8 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
         // phys settings
         this.body.immovable = true;
         this.body.allowGravity = false;
+        this.body.setSize
+        this.setCircle(this.width/4, this.width/4, this.height/4)
         
         // Handling when enemy is alive
         scene.physics.add.overlap(scene.player, this, ()=>{
@@ -66,9 +68,6 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
     }
 
     update(scene){
-        // if(Phaser.Input.Keyboard.JustDown(scene.keys.x) && !this.dead){
-        //     this.kill(scene);   
-        // }
         if(this.body.touching.none){
             this.touching = false;
             this.overlapping = false;
