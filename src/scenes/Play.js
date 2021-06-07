@@ -61,7 +61,6 @@ class Play extends Phaser.Scene
             case 'Tutorial':
             default:
                 this.currentLevel = this.level2_map;
-                //this.currentLevel = this.tutorial_level_map;
                 break;
         }
 
