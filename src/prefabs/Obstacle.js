@@ -6,11 +6,11 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
         scene.add.existing(this);           // add to scene
         scene.physics.add.existing(this);   // add to physics world
         
-        // this.tint = 0x0b1f34;
         this.num = number;                  // obstacles are numbered to sort alive/dead colliders
         this.dead = false;
         this.overlapping = false;           // helps control dead collision checks
         this.touching = false;              // helps control alive collision checks
+        this.floatSpeed = -25
 
         // creating animations
         scene.anims.create({
@@ -50,6 +50,10 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
         }).name = `aliveCollider${this.num}`;
 
     }
+
+    setGhostEvent() {
+
+    }
     
     // Function kills the enemy, changes the collider to overlap
     kill(scene){
@@ -57,13 +61,16 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
         scene.physics.world.colliders.getActive().find(function(i){
             return i.name == `aliveCollider${this.num}`;
         }, this).destroy();
-        scene.physics.add.overlap(scene.player, this, ()=>{
-            if(!this.overlapping && scene.playerFSM.state == "attack"){
-                this.overlapping = true;
-                scene.player.boostQueued = true;
-                this.destroy()
-            }
-        }).name = 'boostCollide';
+        scene.time.delayedCall(500, () => {        
+            this.scene.physics.add.overlap(this.scene.player, this, ()=>{
+                if(!this.overlapping && this.scene.playerFSM.state == "attack"){
+                    this.overlapping = true;
+                    this.scene.player.boostQueued = true;
+                    console.log("Destroy enemy")
+                    this.destroy()
+                }
+            }).name = 'boostCollide';
+        })
         this.dead = true;
     }
 
@@ -71,6 +78,9 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
         if(this.body.touching.none){
             this.touching = false;
             this.overlapping = false;
+        }
+        if(this.dead) {
+            this.body.velocity.y = this.floatSpeed
         }
     }
 }
