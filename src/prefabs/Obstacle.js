@@ -67,13 +67,14 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
         scene.physics.world.colliders.getActive().find(function(i){
             return i.name == `aliveCollider${this.num}`;
         }, this).destroy();
+        scene.player.canAttack = true;
+        scene.player.attackTimerActive = false;
+        scene.player.trailEmitter.setTint(0x00ffff)
         scene.time.delayedCall(500, () => {        
             this.scene.physics.add.overlap(this.scene.player, this, ()=>{
                 if(!this.overlapping && this.scene.playerFSM.state == "attack"){
                     this.overlapping = true;
                     this.scene.player.boostQueued = true;
-                    scene.player.canAttack = true;
-                    scene.player.attackTimerActive = false;
                     console.log("Destroy enemy")
                     this.destroy()
                 }

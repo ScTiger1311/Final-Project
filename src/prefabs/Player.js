@@ -77,17 +77,6 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
         });
 
-        //Setup particles and emitters
-        this.dustParticle = scene.add.particles('DustParticle')
-        this.walkEmitter = this.dustParticle.createEmitter({
-            x: this.x,
-            y: this.y,
-            gravityX: Phaser.Math.Between(-5, 5),
-            gravityY: 2,
-            lifespan: 850
-        })
-        this.walkEmitter.startFollow(this)
-
         //Setup mouse input
         scene.input.on('pointerdown', (pointer) => {
             if(this.canAttack && !this.attackTimerActive)
@@ -116,6 +105,77 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.rightDetector.body.setSize(3, this.body.height * this.wDHeightScaler);
         this.rightDetector.body.onOverlap = true;
         this.rightDetector.setDebugBodyColor(0xff0000)
+
+        //Setup particles and emitters and values
+        this.followPlayerCoeff = .4
+        this.jumpParticleNum = 35
+        this.landParticleNum = 12
+
+        this.leftWallEmitZone = new Phaser.Geom.Rectangle(this.leftDetector.body.x, this.leftDetector.y, this.leftDetector.body.width, this.leftDetector.body.height)
+        this.rightWallEmitZone = new Phaser.Geom.Rectangle(this.leftDetector.x, this.leftDetector.y, this.leftDetector.body.width, this.leftDetector.body.height)
+        this.centerEmitSquare = new Phaser.Geom.Rectangle(this.x, this.x, 5, 5)
+
+        this.emitCircleFeet = new Phaser.Geom.Circle(this.body.position.x + this.body.width/2,
+                                                 this.body.position.y + this.body.height,
+                                                 4)
+
+        this.explodeRectFeet = new Phaser.Geom.Rectangle(this.body.position.x,
+                                                     this.body.position.y + this.body.height - 5,
+                                                     this.body.width * 2,
+                                                     8)
+        this.dustParticle = scene.add.particles('DustParticle')
+        this.trailEmitter = this.dustParticle.createEmitter({
+            emitZone: {type: 'random', source: this.centerEmitSquare },
+            frequency: 22,
+            tint: 0x00ffff,
+            speedY: { start: -2, end: 0, steps: 15, ease: 'Power3' },
+            speedX: {min:-2, max:2},
+            scale: { start: 1, end: .8, ease: 'Power1' },
+            lifespan: 5000,
+            on: false
+        })
+        this.walkEmitter = this.dustParticle.createEmitter({
+            emitZone: {type: 'random', source: this.emitCircleFeet },
+            frequency: 20,
+            gravityX: Phaser.Math.Between(-10, 10),
+            speedY: { start: -17, end: 0, steps: 15, ease: 'Power3' },
+            scale: { start: 1, end: .7, ease: 'Power1' },
+            lifespan: 850,
+            on: false
+        })
+        this.landEmitter = this.dustParticle.createEmitter({
+            emitZone: {type: 'random', source: this.explodeRectFeet },
+            frequency: -1,
+            gravityX: Phaser.Math.Between(-30, 30),
+            speedY: { start: -24, end: 3, steps: 5, ease: 'Power2' },
+            scale: { start: 1, end: .7, ease: 'Power1' },
+            lifespan: 850,
+            on: false
+        })
+        this.wallClingEmitter = this.dustParticle.createEmitter({
+            frequency: 13,
+            gravityX: Phaser.Math.Between(-5, 5),
+            speedY: { start: -17, end: 0, steps: 15, ease: 'Power3' },
+            scale: { start: 1, end: .7, ease: 'Power1' },
+            lifespan: 650,
+            on: false
+        })
+        //This callback is to base the particle velocity on how far they are from the player's center
+        this.jumpCallback = function (particle, emitter) {
+            particle.velocityY = Math.abs((particle.x < this.explodeRectFeet.x + this.explodeRectFeet.width/2 ?
+                this.explodeRectFeet.x : this.explodeRectFeet.x + this.explodeRectFeet.width) - particle.x) * Phaser.Math.Between(-.5, -4)
+        }
+        this.jumpEmitter = this.dustParticle.createEmitter({
+            emitZone: {type: 'random', source: this.explodeRectFeet },
+            frequency: -1,
+            emitCallbackScope: this,
+            emitCallback: this.jumpCallback,
+            //speedY: { start: -35, end: 10, steps: 20, ease: 'Power3' },
+            scale: { start: 1, end: .7, ease: 'Power1' },
+            lifespan: {min: 500, max: 800},
+            on: false
+        })
+        //this.walkEmitter.startFollow(this.body, this.body.width/2, this.body.height)
         
         //Setup control values
         //Highest velocity the player can ever attain
@@ -160,7 +220,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.wallJumpVelocity = new Phaser.Math.Vector2(2050, -225);
 
         //Debug items
-        this.debugOn = true;
+        this.debugOn = false;
         this.debugGraphics = scene.add.graphics();
 
         //Temp values
@@ -187,6 +247,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
         //Tracking values
         this.deltaY = 0;
         this.lastY = this.y;
+        this.deltaX = 0;
+        this.lastX = this.x;
         this.wallInVelocity = 0;
         this.comingOffWall = false;
         this.attackQueued = false;
@@ -219,7 +281,40 @@ class Player extends Phaser.Physics.Arcade.Sprite
             this.debugGraphics.strokeLineShape(this.topRightRay);
             this.debugGraphics.strokeLineShape(this.bottomRightRay);
             this.debugGraphics.strokeCircleShape(this.debugCircle);
+            this.debugGraphics.strokeCircleShape(this.emitCircleFeet);
+            this.debugGraphics.strokeRectShape(this.explodeRectFeet);
+            this.debugGraphics.strokeRectShape(this.leftWallEmitZone);
+            this.debugGraphics.strokeRectShape(this.rightWallEmitZone);
+            this.debugGraphics.strokeRectShape(this.centerEmitSquare);
         }
+    }
+
+    playWallClingParticle(direction) {
+        if(direction > 0) {
+            this.wallClingEmitter.setEmitZone({source: this.rightWallEmitZone})
+        }
+        else {
+            this.wallClingEmitter.setEmitZone({source: this.leftWallEmitZone})
+        }
+        this.wallClingEmitter.setSpeedX({start: 15 * -direction, end: 1 * -direction , steps: 5, ease: 'Power3'}  )
+        this.wallClingEmitter.on = true
+    }
+
+    playJumpParticle(direction = Math.sign(this.body.velocity.x), walljump = false) {
+        this.oldRadius = this.emitCircleFeet.radius
+        this.wallIntensity = 1;
+        if(direction == 0)
+            direction = .000001
+        if(walljump) {
+            this.wallIntensity = 3;
+            this.emitCircleFeet.radius *= 3.5
+            this.jumpEmitter.setEmitZone({source: this.emitCircleFeet})
+        }
+        //Set particles, give dynamic momentum
+        this.jumpEmitter.setSpeedX({ start: (Math.abs(this.body.velocity.x) > 25 ? this.body.velocity.x : 25 * direction) * this.followPlayerCoeff * this.wallIntensity, end: 0, steps: 15, ease: 'Power3' } )
+        this.jumpEmitter.explode(this.jumpParticleNum)
+        this.jumpEmitter.setEmitZone({source: this.explodeRectFeet})
+        this.emitCircleFeet.radius = this.oldRadius
     }
 
     reset() {
@@ -232,6 +327,11 @@ class Player extends Phaser.Physics.Arcade.Sprite
     update(time, delta)
     {
         let deltaMultiplier = (delta/16.66667); //for refresh rate indepence.
+
+        //Calculate deltaX
+        this.deltaX = this.x - this.lastX;
+        this.lastX = this.x
+
 
         //Position debugging geometry
         this.topLeftRay = new Phaser.Geom.Line(
@@ -261,6 +361,19 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.leftDetector.setDebugBodyColor(0xffff00)
         this.rightDetector.setDebugBodyColor(0xffff00)
 
+        //Position emitters
+        this.emitCircleFeet.x = this.body.position.x + this.body.width/2
+        this.emitCircleFeet.y = this.body.position.y + this.body.height
+        this.explodeRectFeet.x = this.body.position.x - this.body.width/2
+        this.explodeRectFeet.y = this.body.position.y + this.body.height - this.explodeRectFeet.height
+        this.rightWallEmitZone.x = this.rightDetector.body.x
+        this.rightWallEmitZone.y = this.rightDetector.body.y
+        this.leftWallEmitZone.x = this.leftDetector.body.x
+        this.leftWallEmitZone.y = this.leftDetector.body.y
+        this.centerEmitSquare.x = this.x - this.centerEmitSquare.width/2
+        this.centerEmitSquare.y = this.y - this.centerEmitSquare.height/2 - 4
+
+
         this.scene.physics.overlap(this.leftDetector, this.scene.env, ()=>
         {
             this.overlapLeft = true
@@ -280,6 +393,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         enter(scene, player) {
             player.playerDebug("Enter IdleState");
             player.play("idle")
+            player.trailEmitter.on = false
             player.stop()
         }
     
@@ -294,18 +408,23 @@ class Player extends Phaser.Physics.Arcade.Sprite
             if(Phaser.Input.Keyboard.JustDown(space)) {
                 player.playerJump.play(); //Play jump audio
                 player.play("jump") //Play jump animation
+                //Set particles, give dynamic momentum
+                player.trailEmitter.on = true
+                player.playJumpParticle()
                 this.stateMachine.transition('inair');
                 return;
             }
     
             // transition to move if pressing a movement key
             if(left.isDown || right.isDown || a.isDown || d.isDown) {
+                player.trailEmitter.on = true
                 this.stateMachine.transition('walk');
                 return;
             }
 
             //Handle attack interrupt
             if(player.attackQueued && player.canAttack) {
+                player.trailEmitter.on = true
                 this.stateMachine.transition('attack')
                 return;
             }
@@ -314,6 +433,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             if(!player.body.blocked.down) {
                 player.play("jump") //Play jump animation from middle
                 player.anims.setProgress(.35)
+                player.trailEmitter.on = true
                 this.stateMachine.transition('inair')
                 return
             }
@@ -347,6 +467,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 player.body.maxVelocity.y = player.maxMovementVelocity.y
                 player.playerDebug("Set y to maxMove")
             }
+            player.walkEmitter.on = true;
             player.play("run")
         }
 
@@ -367,7 +488,9 @@ class Player extends Phaser.Physics.Arcade.Sprite
             if(Phaser.Input.Keyboard.JustDown(space)) {
                 player.playerJump.play(); //Play jump audio
                 player.play("jump") //Play jump animation
+                player.playJumpParticle()
                 //player.body.setAccelerationX(0);
+                player.walkEmitter.on = false;
                 this.stateMachine.transition('inair');
                 return;
             }
@@ -375,6 +498,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             // transition to idle if not pressing movement keys
             if(!(left.isDown || right.isDown || a.isDown || d.isDown)) {
                 player.body.setAccelerationX(0);
+                player.walkEmitter.on = false;
                 this.stateMachine.transition('idle');
                 return;
             }
@@ -393,6 +517,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
             //Handle attack interrupt
             if(player.attackQueued && player.canAttack) {
+                player.walkEmitter.on = false;
                 this.stateMachine.transition('attack')
                 return;
             }
@@ -401,6 +526,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             if(!player.body.blocked.down) {
                 player.play("jump") //Play jump animation from middle
                 player.anims.setProgress(.35)
+                player.walkEmitter.on = false;
                 this.stateMachine.transition('inair')
                 return
             }
@@ -411,6 +537,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         enter (scene, player) {
             player.playerDebug("Enter AttackState");
             player.play("attack")
+            player.trailEmitter.setTint(0xdddddd)
 
             player.body.maxVelocity.set(player.maxAttackVelocity.x, player.maxAttackVelocity.y)
             player.attackQueued = false;
@@ -445,7 +572,11 @@ class Player extends Phaser.Physics.Arcade.Sprite
                     player.body.setAllowGravity(true)
                     player.body.setVelocity(player.body.velocity.x * player.attackDamping, player.body.velocity.y * player.attackDamping)
                     player.attackTimerActive = true
-                    scene.time.delayedCall(player.attackCooldown, () => {player.attackTimerActive = false})
+                    scene.time.delayedCall(player.attackCooldown, () => {
+                        player.attackTimerActive = false
+                        if(player.canAttack)
+                            player.trailEmitter.setTint(0x00ffff)
+                    })
                     player.angle = 0;
                     player.play("jump") //Play jump animation from middle
                     player.anims.setProgress(.35)
@@ -541,6 +672,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
             player.play("wallcling")
             this.direction = player.overlapRight ? 1 : -1
             player.setFlipX(this.direction > 0 ? 1 : 0)
+            player.playWallClingParticle(this.direction)
+
             //this.transitionStarted = false;
             player.comingOffWall = false;
             player.setGravityY(player.downGravity * player.wallClingCoeff)
@@ -568,6 +701,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 player.comingOffWall = true;
                 player.play("jump")
                 player.setGravityY(player.downGravity)
+                player.wallClingEmitter.on = false
                 this.stateMachine.transition('inair')
                 // scene.time.delayedCall(10, () => {
                 //     if(this.stateMachine.state == 'wallcling') {
@@ -581,7 +715,9 @@ class Player extends Phaser.Physics.Arcade.Sprite
             if(Phaser.Input.Keyboard.JustDown(space)){
                 player.comingOffWall = true;
                 player.play("jump") //Play jump animation from middle
+                player.playJumpParticle(-this.direction, true)
                 player.anims.setProgress(.35)
+                player.wallClingEmitter.on = false
                 this.stateMachine.transition('walljump')
                 return;
             }
@@ -589,6 +725,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             //Handle attack interrupt
             if(player.attackQueued && player.canAttack) {
                 player.setGravityY(player.downGravity)
+                player.wallClingEmitter.on = false
                 this.stateMachine.transition('attack')
                 return;
             }
@@ -596,8 +733,12 @@ class Player extends Phaser.Physics.Arcade.Sprite
             //Handles player hitting the ground
             if(player.body.blocked.down) {
                 player.canAttack = true;
+                if(!player.attackTimerActive)
+                    player.trailEmitter.setTint(0x00ffff)
+
                 player.playerLand.play();
                 player.setGravityY(player.downGravity)
+                player.wallClingEmitter.on = false
                 this.stateMachine.transition('walk')
                 return
             }
@@ -728,15 +869,19 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 player.playerLand.play();
                 player.comingOffWall = false;
                 player.canAttack = true;
+                if(!player.attackTimerActive)
+                    player.trailEmitter.setTint(0x00ffff)
                 //if holding a key go to walk otherwise go to idle
                 if (left.isDown || a.isDown || right.isDown || d.isDown) {
                     player.playerDebug("Exit InAirState");
                     player.playerDebug("curVel: " + player.body.velocity.x + ", " + player.body.velocity.y +
                     "\ncurMax: " + player.body.maxVelocity.x + ", " +  player.body.maxVelocity.y +
                     "\nmaxMove: " + player.maxMovementVelocity.x + ", " + player.maxMovementVelocity.y)
+                    player.landEmitter.explode(player.landParticleNum)
                     this.stateMachine.transition('walk');
                 }
                 else {
+                    player.landEmitter.explode(player.landParticleNum)
                     this.stateMachine.transition('idle');
                 }
 
