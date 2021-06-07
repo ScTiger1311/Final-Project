@@ -22,6 +22,7 @@ class Play extends Phaser.Scene
         this.load.audio("music_minorTheme", "./assets/music/Spirit Flow Music_Minor.mp3");
         this.load.tilemapTiledJSON("TestLevel", "./assets/levels/Tutorial_Level.json");
         this.load.tilemapTiledJSON("Level1", "./assets/levels/Level_1.json");
+        this.load.tilemapTiledJSON("Level2", "./assets/levels/Level_2.json");
         this.load.image("DustParticle", "./assets/single_sprites/DustParticle.png")
     }
 
@@ -50,11 +51,15 @@ class Play extends Phaser.Scene
         // setting up level maps
         this.tutorial_level_map = this.add.tilemap("TestLevel")
         this.level1_map = this.add.tilemap("Level1");
+        this.level2_map = this.add.tilemap("Level2");
         
         //use this variable if you are checking map related things.
         switch(this.levelName){
             case 'Level1':
                 this.currentLevel = this.level1_map;
+                break;
+            case 'Level2':
+                this.currentLevel = this.level2_map;
                 break;
             case 'Tutorial':
             default:
