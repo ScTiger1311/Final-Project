@@ -89,7 +89,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         //Setup physics config
         this.body.useDrag;
         this.body.setSize(16, 30, true) //Size in pixels of hitbox  
-        this.body.setOffset(this.width/2 - this.body.width/2, this.body.height/2)
+        this.body.setOffset(this.width/2 - this.body.width/2, this.body.height/2 + 2)
         this.body.setDragX(2500); //This is used as the damping value
         this.body.bounceX = 5000
 
