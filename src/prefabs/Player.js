@@ -77,6 +77,17 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
         });
 
+        //Setup particles and emitters
+        this.dustParticle = scene.add.particles('DustParticle')
+        this.walkEmitter = this.dustParticle.createEmitter({
+            x: this.x,
+            y: this.y,
+            gravityX: Phaser.Math.Between(-5, 5),
+            gravityY: 2,
+            lifespan: 850
+        })
+        this.walkEmitter.startFollow(this)
+
         //Setup mouse input
         scene.input.on('pointerdown', (pointer) => {
             if(this.canAttack && !this.attackTimerActive)
