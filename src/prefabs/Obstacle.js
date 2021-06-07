@@ -53,9 +53,6 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
 
     }
 
-    setGhostEvent() {
-
-    }
     
     // Function kills the enemy, changes the collider to overlap
     kill(scene){
@@ -75,6 +72,9 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
                 if(!this.overlapping && this.scene.playerFSM.state == "attack"){
                     this.overlapping = true;
                     this.scene.player.boostQueued = true;
+                    scene.player.canAttack = true;
+                    scene.player.attackTimerActive = false;
+                    scene.player.trailEmitter.setTint(0x00ffff)
                     console.log("Destroy enemy")
                     this.destroy()
                 }

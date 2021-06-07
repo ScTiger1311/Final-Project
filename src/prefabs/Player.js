@@ -126,7 +126,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.dustParticle = scene.add.particles('DustParticle')
         this.trailEmitter = this.dustParticle.createEmitter({
             emitZone: {type: 'random', source: this.centerEmitSquare },
-            frequency: 22,
+            frequency: 40,
             tint: 0x00ffff,
             speedY: { start: -2, end: 0, steps: 15, ease: 'Power3' },
             speedX: {min:-2, max:2},
