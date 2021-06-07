@@ -11,7 +11,7 @@ let config =
     zoom: 2,
     antialias: false,
     pixelArt: true,
-    scene: [Menu, Play, Credits],
+    scene: [Menu, Play, Credits, PauseMenu],
     physics:{
         default: 'arcade',
         arcade: {

@@ -41,7 +41,10 @@ class Play extends Phaser.Scene
             loop:true,
             volume: 0.06,
         });
-        this.music.play();
+        // play music, prevent double playing
+        if(!this.music.isPlaying){
+            this.music.play();
+        }
 
         // setting up level maps
         this.tutorial_level_map = this.add.tilemap("TestLevel")
@@ -73,9 +76,10 @@ class Play extends Phaser.Scene
             'right': Phaser.Input.Keyboard.KeyCodes.RIGHT,
             'space': Phaser.Input.Keyboard.KeyCodes.SPACE,
             'r': Phaser.Input.Keyboard. KeyCodes.R,
+            'esc': Phaser.Input.Keyboard.KeyCodes.ESC,
         });
 
-        this.loadLevel(this.curentLevel);
+        this.loadLevel(this.curentLevel);   // loading level if not already loaded
     }
 
     update(time, delta)
@@ -101,10 +105,14 @@ class Play extends Phaser.Scene
             this.player.debugOn = !this.player.debugOn;
             console.log("PlayerDebug = " + this.player.debugOn);
         }
-        //This doesn't work
-        if(Phaser.Input.Keyboard.JustDown(this.keys.minus)) {
-            this.currentLevel.setLayer
+        // pause menu
+        if(Phaser.Input.Keyboard.JustDown(this.keys.esc)){
+            this.music.setVolume(0.03);
+            this.scene.pause();
+            this.scene.launch('PauseMenu');
+
         }
+        
         this.platformerCamera.update(time, delta);
         this.playerFSM.step();
         this.player.update();
