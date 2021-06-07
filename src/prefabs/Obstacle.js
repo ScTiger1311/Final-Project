@@ -61,6 +61,9 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
     kill(scene){
         this.tint = 0xff0000
         this.stoppingPoint = this.y - this.stoppingPointDist;
+        scene.player.canAttack = true;
+        scene.player.attackTimerActive = false;
+
         scene.physics.world.colliders.getActive().find(function(i){
             return i.name == `aliveCollider${this.num}`;
         }, this).destroy();
@@ -69,6 +72,8 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
                 if(!this.overlapping && this.scene.playerFSM.state == "attack"){
                     this.overlapping = true;
                     this.scene.player.boostQueued = true;
+                    scene.player.canAttack = true;
+                    scene.player.attackTimerActive = false;
                     console.log("Destroy enemy")
                     this.destroy()
                 }
