@@ -30,6 +30,22 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
         });
         this.play('flight');
 
+        // creating animations
+        scene.anims.create({
+            key: 'ghost',
+            frames: this.anims.generateFrameNames('EnvironmentAtlas',
+            {
+                prefix: 'Enemy_Ghost',
+                start: 1,
+                end: 7,
+                zeroPad: 4,
+            }),
+            frameRate: 12,
+            repeat: -1,
+
+        });
+
+
         // phys settings
         this.body.immovable = true;
         this.body.allowGravity = false;
@@ -53,13 +69,10 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
 
     }
 
-    setGhostEvent() {
-
-    }
     
     // Function kills the enemy, changes the collider to overlap
     kill(scene){
-        this.tint = 0xff0000
+        this.play('ghost')
         this.stoppingPoint = this.y - this.stoppingPointDist;
         scene.player.canAttack = true;
         scene.player.attackTimerActive = false;
@@ -75,6 +88,9 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
                 if(!this.overlapping && this.scene.playerFSM.state == "attack"){
                     this.overlapping = true;
                     this.scene.player.boostQueued = true;
+                    scene.player.canAttack = true;
+                    scene.player.attackTimerActive = false;
+                    scene.player.trailEmitter.setTint(0x00ffff)
                     console.log("Destroy enemy")
                     this.destroy()
                 }
