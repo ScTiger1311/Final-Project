@@ -34,7 +34,7 @@
          "name":"Platform_values",
          "opacity":1,
          "type":"tilelayer",
-         "visible":false,
+         "visible":true,
          "width":73,
          "x":0,
          "y":0
@@ -372,326 +372,6 @@
                         {
                          "name":"__anchorX",
                          "type":"int",
-                         "value":400
-                        }, 
-                        {
-                         "name":"__anchorY",
-                         "type":"int",
-                         "value":576
-                        }, 
-                        {
-                         "name":"__cx",
-                         "type":"int",
-                         "value":25
-                        }, 
-                        {
-                         "name":"__cy",
-                         "type":"int",
-                         "value":36
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":16,
-                 "x":400,
-                 "y":576
-                }, 
-                {
-                 "height":16,
-                 "id":11,
-                 "name":"Fire_Left",
-                 "properties":[
-                        {
-                         "name":"__anchorX",
-                         "type":"int",
-                         "value":400
-                        }, 
-                        {
-                         "name":"__anchorY",
-                         "type":"int",
-                         "value":592
-                        }, 
-                        {
-                         "name":"__cx",
-                         "type":"int",
-                         "value":25
-                        }, 
-                        {
-                         "name":"__cy",
-                         "type":"int",
-                         "value":37
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":16,
-                 "x":400,
-                 "y":592
-                }, 
-                {
-                 "height":16,
-                 "id":12,
-                 "name":"Fire_Left",
-                 "properties":[
-                        {
-                         "name":"__anchorX",
-                         "type":"int",
-                         "value":400
-                        }, 
-                        {
-                         "name":"__anchorY",
-                         "type":"int",
-                         "value":608
-                        }, 
-                        {
-                         "name":"__cx",
-                         "type":"int",
-                         "value":25
-                        }, 
-                        {
-                         "name":"__cy",
-                         "type":"int",
-                         "value":38
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":16,
-                 "x":400,
-                 "y":608
-                }, 
-                {
-                 "height":16,
-                 "id":13,
-                 "name":"Fire_Left",
-                 "properties":[
-                        {
-                         "name":"__anchorX",
-                         "type":"int",
-                         "value":400
-                        }, 
-                        {
-                         "name":"__anchorY",
-                         "type":"int",
-                         "value":624
-                        }, 
-                        {
-                         "name":"__cx",
-                         "type":"int",
-                         "value":25
-                        }, 
-                        {
-                         "name":"__cy",
-                         "type":"int",
-                         "value":39
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":16,
-                 "x":400,
-                 "y":624
-                }, 
-                {
-                 "height":16,
-                 "id":14,
-                 "name":"Fire_Left",
-                 "properties":[
-                        {
-                         "name":"__anchorX",
-                         "type":"int",
-                         "value":400
-                        }, 
-                        {
-                         "name":"__anchorY",
-                         "type":"int",
-                         "value":640
-                        }, 
-                        {
-                         "name":"__cx",
-                         "type":"int",
-                         "value":25
-                        }, 
-                        {
-                         "name":"__cy",
-                         "type":"int",
-                         "value":40
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":16,
-                 "x":400,
-                 "y":640
-                }, 
-                {
-                 "height":16,
-                 "id":15,
-                 "name":"Fire_Right",
-                 "properties":[
-                        {
-                         "name":"__anchorX",
-                         "type":"int",
-                         "value":560
-                        }, 
-                        {
-                         "name":"__anchorY",
-                         "type":"int",
-                         "value":576
-                        }, 
-                        {
-                         "name":"__cx",
-                         "type":"int",
-                         "value":35
-                        }, 
-                        {
-                         "name":"__cy",
-                         "type":"int",
-                         "value":36
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":16,
-                 "x":560,
-                 "y":576
-                }, 
-                {
-                 "height":16,
-                 "id":16,
-                 "name":"Fire_Right",
-                 "properties":[
-                        {
-                         "name":"__anchorX",
-                         "type":"int",
-                         "value":560
-                        }, 
-                        {
-                         "name":"__anchorY",
-                         "type":"int",
-                         "value":592
-                        }, 
-                        {
-                         "name":"__cx",
-                         "type":"int",
-                         "value":35
-                        }, 
-                        {
-                         "name":"__cy",
-                         "type":"int",
-                         "value":37
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":16,
-                 "x":560,
-                 "y":592
-                }, 
-                {
-                 "height":16,
-                 "id":17,
-                 "name":"Fire_Right",
-                 "properties":[
-                        {
-                         "name":"__anchorX",
-                         "type":"int",
-                         "value":560
-                        }, 
-                        {
-                         "name":"__anchorY",
-                         "type":"int",
-                         "value":608
-                        }, 
-                        {
-                         "name":"__cx",
-                         "type":"int",
-                         "value":35
-                        }, 
-                        {
-                         "name":"__cy",
-                         "type":"int",
-                         "value":38
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":16,
-                 "x":560,
-                 "y":608
-                }, 
-                {
-                 "height":16,
-                 "id":18,
-                 "name":"Fire_Right",
-                 "properties":[
-                        {
-                         "name":"__anchorX",
-                         "type":"int",
-                         "value":560
-                        }, 
-                        {
-                         "name":"__anchorY",
-                         "type":"int",
-                         "value":624
-                        }, 
-                        {
-                         "name":"__cx",
-                         "type":"int",
-                         "value":35
-                        }, 
-                        {
-                         "name":"__cy",
-                         "type":"int",
-                         "value":39
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":16,
-                 "x":560,
-                 "y":624
-                }, 
-                {
-                 "height":16,
-                 "id":19,
-                 "name":"Fire_Right",
-                 "properties":[
-                        {
-                         "name":"__anchorX",
-                         "type":"int",
-                         "value":560
-                        }, 
-                        {
-                         "name":"__anchorY",
-                         "type":"int",
-                         "value":640
-                        }, 
-                        {
-                         "name":"__cx",
-                         "type":"int",
-                         "value":35
-                        }, 
-                        {
-                         "name":"__cy",
-                         "type":"int",
-                         "value":40
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":16,
-                 "x":560,
-                 "y":640
-                }, 
-                {
-                 "height":16,
-                 "id":20,
-                 "name":"Fire_Left",
-                 "properties":[
-                        {
-                         "name":"__anchorX",
-                         "type":"int",
                          "value":752
                         }, 
                         {
@@ -718,7 +398,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":21,
+                 "id":11,
                  "name":"Fire_Left",
                  "properties":[
                         {
@@ -750,7 +430,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":22,
+                 "id":12,
                  "name":"Fire_Left",
                  "properties":[
                         {
@@ -782,7 +462,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":23,
+                 "id":13,
                  "name":"Fire_Left",
                  "properties":[
                         {
@@ -814,7 +494,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":24,
+                 "id":14,
                  "name":"Enemy",
                  "properties":[
                         {
@@ -846,7 +526,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":25,
+                 "id":15,
                  "name":"Fire_Left",
                  "properties":[
                         {
@@ -878,7 +558,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":26,
+                 "id":16,
                  "name":"Fire_Left",
                  "properties":[
                         {
@@ -910,7 +590,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":27,
+                 "id":17,
                  "name":"Fire_Right",
                  "properties":[
                         {
@@ -942,7 +622,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":28,
+                 "id":18,
                  "name":"Fire_Right",
                  "properties":[
                         {
@@ -974,7 +654,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":29,
+                 "id":19,
                  "name":"Fire_Right",
                  "properties":[
                         {
@@ -1006,7 +686,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":30,
+                 "id":20,
                  "name":"Fire_Right",
                  "properties":[
                         {
@@ -1038,7 +718,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":31,
+                 "id":21,
                  "name":"Fire_Right",
                  "properties":[
                         {
@@ -1070,7 +750,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":32,
+                 "id":22,
                  "name":"Fire_Right",
                  "properties":[
                         {
@@ -1102,7 +782,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":33,
+                 "id":23,
                  "name":"Fire_Right",
                  "properties":[
                         {
@@ -1134,7 +814,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":34,
+                 "id":24,
                  "name":"Fire_Right",
                  "properties":[
                         {
@@ -1166,7 +846,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":35,
+                 "id":25,
                  "name":"Fire_Right",
                  "properties":[
                         {
@@ -1198,7 +878,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":36,
+                 "id":26,
                  "name":"Fire_Right",
                  "properties":[
                         {
@@ -1230,7 +910,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":37,
+                 "id":27,
                  "name":"Fire_Right",
                  "properties":[
                         {
@@ -1262,7 +942,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":38,
+                 "id":28,
                  "name":"Enemy",
                  "properties":[
                         {
@@ -1291,6 +971,326 @@
                  "width":16,
                  "x":1008,
                  "y":320
+                }, 
+                {
+                 "height":16,
+                 "id":29,
+                 "name":"Fire_Right",
+                 "properties":[
+                        {
+                         "name":"__anchorX",
+                         "type":"int",
+                         "value":400
+                        }, 
+                        {
+                         "name":"__anchorY",
+                         "type":"int",
+                         "value":576
+                        }, 
+                        {
+                         "name":"__cx",
+                         "type":"int",
+                         "value":25
+                        }, 
+                        {
+                         "name":"__cy",
+                         "type":"int",
+                         "value":36
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":400,
+                 "y":576
+                }, 
+                {
+                 "height":16,
+                 "id":30,
+                 "name":"Fire_Right",
+                 "properties":[
+                        {
+                         "name":"__anchorX",
+                         "type":"int",
+                         "value":400
+                        }, 
+                        {
+                         "name":"__anchorY",
+                         "type":"int",
+                         "value":592
+                        }, 
+                        {
+                         "name":"__cx",
+                         "type":"int",
+                         "value":25
+                        }, 
+                        {
+                         "name":"__cy",
+                         "type":"int",
+                         "value":37
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":400,
+                 "y":592
+                }, 
+                {
+                 "height":16,
+                 "id":31,
+                 "name":"Fire_Right",
+                 "properties":[
+                        {
+                         "name":"__anchorX",
+                         "type":"int",
+                         "value":400
+                        }, 
+                        {
+                         "name":"__anchorY",
+                         "type":"int",
+                         "value":608
+                        }, 
+                        {
+                         "name":"__cx",
+                         "type":"int",
+                         "value":25
+                        }, 
+                        {
+                         "name":"__cy",
+                         "type":"int",
+                         "value":38
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":400,
+                 "y":608
+                }, 
+                {
+                 "height":16,
+                 "id":32,
+                 "name":"Fire_Right",
+                 "properties":[
+                        {
+                         "name":"__anchorX",
+                         "type":"int",
+                         "value":400
+                        }, 
+                        {
+                         "name":"__anchorY",
+                         "type":"int",
+                         "value":624
+                        }, 
+                        {
+                         "name":"__cx",
+                         "type":"int",
+                         "value":25
+                        }, 
+                        {
+                         "name":"__cy",
+                         "type":"int",
+                         "value":39
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":400,
+                 "y":624
+                }, 
+                {
+                 "height":16,
+                 "id":33,
+                 "name":"Fire_Right",
+                 "properties":[
+                        {
+                         "name":"__anchorX",
+                         "type":"int",
+                         "value":400
+                        }, 
+                        {
+                         "name":"__anchorY",
+                         "type":"int",
+                         "value":640
+                        }, 
+                        {
+                         "name":"__cx",
+                         "type":"int",
+                         "value":25
+                        }, 
+                        {
+                         "name":"__cy",
+                         "type":"int",
+                         "value":40
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":400,
+                 "y":640
+                }, 
+                {
+                 "height":16,
+                 "id":34,
+                 "name":"Fire_Left",
+                 "properties":[
+                        {
+                         "name":"__anchorX",
+                         "type":"int",
+                         "value":560
+                        }, 
+                        {
+                         "name":"__anchorY",
+                         "type":"int",
+                         "value":640
+                        }, 
+                        {
+                         "name":"__cx",
+                         "type":"int",
+                         "value":35
+                        }, 
+                        {
+                         "name":"__cy",
+                         "type":"int",
+                         "value":40
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":560,
+                 "y":640
+                }, 
+                {
+                 "height":16,
+                 "id":35,
+                 "name":"Fire_Left",
+                 "properties":[
+                        {
+                         "name":"__anchorX",
+                         "type":"int",
+                         "value":560
+                        }, 
+                        {
+                         "name":"__anchorY",
+                         "type":"int",
+                         "value":624
+                        }, 
+                        {
+                         "name":"__cx",
+                         "type":"int",
+                         "value":35
+                        }, 
+                        {
+                         "name":"__cy",
+                         "type":"int",
+                         "value":39
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":560,
+                 "y":624
+                }, 
+                {
+                 "height":16,
+                 "id":36,
+                 "name":"Fire_Left",
+                 "properties":[
+                        {
+                         "name":"__anchorX",
+                         "type":"int",
+                         "value":560
+                        }, 
+                        {
+                         "name":"__anchorY",
+                         "type":"int",
+                         "value":608
+                        }, 
+                        {
+                         "name":"__cx",
+                         "type":"int",
+                         "value":35
+                        }, 
+                        {
+                         "name":"__cy",
+                         "type":"int",
+                         "value":38
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":560,
+                 "y":608
+                }, 
+                {
+                 "height":16,
+                 "id":37,
+                 "name":"Fire_Left",
+                 "properties":[
+                        {
+                         "name":"__anchorX",
+                         "type":"int",
+                         "value":560
+                        }, 
+                        {
+                         "name":"__anchorY",
+                         "type":"int",
+                         "value":592
+                        }, 
+                        {
+                         "name":"__cx",
+                         "type":"int",
+                         "value":35
+                        }, 
+                        {
+                         "name":"__cy",
+                         "type":"int",
+                         "value":37
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":560,
+                 "y":592
+                }, 
+                {
+                 "height":16,
+                 "id":38,
+                 "name":"Fire_Left",
+                 "properties":[
+                        {
+                         "name":"__anchorX",
+                         "type":"int",
+                         "value":560
+                        }, 
+                        {
+                         "name":"__anchorY",
+                         "type":"int",
+                         "value":576
+                        }, 
+                        {
+                         "name":"__cx",
+                         "type":"int",
+                         "value":35
+                        }, 
+                        {
+                         "name":"__cy",
+                         "type":"int",
+                         "value":36
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":560,
+                 "y":576
                 }],
          "opacity":1,
          "type":"objectgroup",

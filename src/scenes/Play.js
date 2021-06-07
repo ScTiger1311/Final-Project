@@ -58,9 +58,12 @@ class Play extends Phaser.Scene
             case 'Level1':
                 this.currentLevel = this.level1_map;
                 break;
+            case 'Level2':
+                this.currentLevel = this.level2_map;
+                break;
             case 'Tutorial':
             default:
-                this.currentLevel = this.level2_map;
+                this.currentLevel = this.tutorial_level_map;
                 break;
         }
 
