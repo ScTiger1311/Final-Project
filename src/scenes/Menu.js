@@ -30,7 +30,7 @@ class Menu extends Phaser.Scene {
 
         if (this.keys.left.isDown == true || this.keys.right.isDown == true) {
             //easyMode
-            this.scene.start('Play');
+            this.scene.start('Play', 'Tutorial');
 
         }
     }
