@@ -164,13 +164,12 @@ class Play extends Phaser.Scene
         this.physics.add.collider(this.player, this.Platform_Layer);
         //this.physics.add.collider(this.player, this.Test_Layer);
 
-        // Setting up enemies
+        // Setting up enemies 🦇
         this.enemynumber = 1;
         let enemyObjects = this.currentLevel.filterObjects("Object", obj => obj.name == 'Enemy');
         this.enemyGroup = this.add.group({
             runChildUpdate: true
         });
-        // set up group here
         enemyObjects.map((element) =>{
             let obj = new Obstacle(this, element.x, element.y, this.enemynumber);
             this.enemyGroup.add(obj);
@@ -181,14 +180,36 @@ class Play extends Phaser.Scene
          let obj = new Obstacle(this, 200, 250, this.enemynumber);
          this.enemyGroup.add(obj);
 
-        // creating transition object(s)
+        // setting up 🔥
+        let fireList = this.currentLevel.filterObjects("Object", obj => obj.name == 'Fire_Left');
+        this.fire = this.add.group();
+        fireList.map((element) => {
+            let obj = new Fire(this, element.x, element.y, 'left').setOrigin(0,0);
+            this.fire.add(obj);
+        })
+        fireList = this.currentLevel.filterObjects("Object", obj => obj.name == 'Fire_Right');
+        fireList.map((element) => {
+            let obj = new Fire(this, element.x, element.y, 'right').setOrigin(0,1);
+            this.fire.add(obj);
+        })
+        fireList = this.currentLevel.filterObjects("Object", obj => obj.name == 'Fire_Up');
+        fireList.map((element) => {
+            let obj = new Fire(this, element.x, element.y, 'up').setOrigin(0,0);
+            this.fire.add(obj);
+        })
+        fireList = this.currentLevel.filterObjects("Object", obj => obj.name == 'Fire_Down');
+        fireList.map((element) => {
+            let obj = new Fire(this, element.x, element.y, 'down').setOrigin(0,0);
+            this.fire.add(obj);
+        })
+        // creating level transition zone 🚪
         this.levelend = this.physics.add.group({immovable: true, moves: false});
         this.levelend.addMultiple(this.currentLevel.createFromObjects("Object",{
             name: "Level_Transition",
         }));
         this.nextLevel = this.levelend.getChildren()[0].data.list.Level;    // geting name of level to switch to
         this.physics.add.collider(this.player, this.levelend, () =>{
-            this.music.stop();   // feel free to remove if need be but prevents music from overlapping
+            this.music.stop();
             this.scene.restart(this.nextLevel);
             console.log("Changed level.");
         });
