@@ -6,6 +6,7 @@ class Fire extends Phaser.Physics.Arcade.Sprite
         scene.physics.add.existing(this);   // add to physics world
 
         this.body.setSize(this.width/4, this.height/4, false);
+        // this.body.setOffset(0,0);
 
         scene.anims.create({
             key: 'flame',

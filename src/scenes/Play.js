@@ -172,7 +172,7 @@ class Play extends Phaser.Scene
             runChildUpdate: true
         });
         enemyObjects.map((element) =>{
-            let obj = new Obstacle(this, element.x, element.y, this.enemynumber);
+            let obj = new Obstacle(this, element.x, element.y, this.enemynumber).setOrigin(0.33, 0.33);
             this.enemyGroup.add(obj);
             this.enemynumber++;
         });
@@ -185,12 +185,14 @@ class Play extends Phaser.Scene
         let fireList = this.currentLevel.filterObjects("Object", obj => obj.name == 'Fire_Left');
         this.fire = this.add.group();
         fireList.map((element) => {
-            let obj = new Fire(this, element.x, element.y, 'left').setOrigin(0,0);
+            let obj = new Fire(this, element.x, element.y, 'left').setOrigin(0, 0);
+            obj.body.setOffset(0, -16);
             this.fire.add(obj);
         })
         fireList = this.currentLevel.filterObjects("Object", obj => obj.name == 'Fire_Right');
         fireList.map((element) => {
             let obj = new Fire(this, element.x, element.y, 'right').setOrigin(0,1);
+            obj.body.setOffset(0,16);
             this.fire.add(obj);
         })
         fireList = this.currentLevel.filterObjects("Object", obj => obj.name == 'Fire_Up');
