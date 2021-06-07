@@ -11,11 +11,18 @@ class PauseMenu extends Phaser.Scene{
             this.scene.scene.sleep();
             });
             
-        this.restartButton = new Button(this, "button", 400, 200, function(){
+        this.restartButton = new Button(this, "button", 300, 200, function(){
             var playing = this.scene.scene.get('Play');
             playing.music.stop();
             playing.scene.restart();
             this.scene.scene.sleep();
         })
+        this.menuButton = new Button(this, "button", 400, 200, function(){
+            var playing = this.scene.scene.get('Play');
+            playing.music.stop();
+            playing.scene.stop();
+            this.scene.scene.start('Menu');
+            this.scene.scene.sleep();
+        } )
     }
 }
