@@ -1689,7 +1689,7 @@
                         {
                          "name":"__anchorY",
                          "type":"int",
-                         "value":360
+                         "value":344
                         }, 
                         {
                          "name":"__cx",
@@ -1699,14 +1699,14 @@
                         {
                          "name":"__cy",
                          "type":"int",
-                         "value":22
+                         "value":21
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":16,
                  "x":528,
-                 "y":352
+                 "y":336
                 }, 
                 {
                  "height":16,
@@ -1839,102 +1839,6 @@
                 {
                  "height":16,
                  "id":56,
-                 "name":"Fire_Left",
-                 "properties":[
-                        {
-                         "name":"__anchorX",
-                         "type":"int",
-                         "value":768
-                        }, 
-                        {
-                         "name":"__anchorY",
-                         "type":"int",
-                         "value":432
-                        }, 
-                        {
-                         "name":"__cx",
-                         "type":"int",
-                         "value":48
-                        }, 
-                        {
-                         "name":"__cy",
-                         "type":"int",
-                         "value":27
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":16,
-                 "x":768,
-                 "y":432
-                }, 
-                {
-                 "height":16,
-                 "id":57,
-                 "name":"Fire_Left",
-                 "properties":[
-                        {
-                         "name":"__anchorX",
-                         "type":"int",
-                         "value":768
-                        }, 
-                        {
-                         "name":"__anchorY",
-                         "type":"int",
-                         "value":416
-                        }, 
-                        {
-                         "name":"__cx",
-                         "type":"int",
-                         "value":48
-                        }, 
-                        {
-                         "name":"__cy",
-                         "type":"int",
-                         "value":26
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":16,
-                 "x":768,
-                 "y":416
-                }, 
-                {
-                 "height":16,
-                 "id":58,
-                 "name":"Fire_Left",
-                 "properties":[
-                        {
-                         "name":"__anchorX",
-                         "type":"int",
-                         "value":768
-                        }, 
-                        {
-                         "name":"__anchorY",
-                         "type":"int",
-                         "value":400
-                        }, 
-                        {
-                         "name":"__cx",
-                         "type":"int",
-                         "value":48
-                        }, 
-                        {
-                         "name":"__cy",
-                         "type":"int",
-                         "value":25
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":16,
-                 "x":768,
-                 "y":400
-                }, 
-                {
-                 "height":16,
-                 "id":59,
                  "name":"Fire_Right",
                  "properties":[
                         {
@@ -1966,7 +1870,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":60,
+                 "id":57,
                  "name":"Fire_Right",
                  "properties":[
                         {
@@ -1998,7 +1902,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":61,
+                 "id":58,
                  "name":"Fire_Right",
                  "properties":[
                         {
@@ -2030,7 +1934,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":62,
+                 "id":59,
                  "name":"Fire_Right",
                  "properties":[
                         {
@@ -2062,103 +1966,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":63,
-                 "name":"Fire_Right",
-                 "properties":[
-                        {
-                         "name":"__anchorX",
-                         "type":"int",
-                         "value":672
-                        }, 
-                        {
-                         "name":"__anchorY",
-                         "type":"int",
-                         "value":432
-                        }, 
-                        {
-                         "name":"__cx",
-                         "type":"int",
-                         "value":42
-                        }, 
-                        {
-                         "name":"__cy",
-                         "type":"int",
-                         "value":27
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":16,
-                 "x":672,
-                 "y":432
-                }, 
-                {
-                 "height":16,
-                 "id":64,
-                 "name":"Fire_Right",
-                 "properties":[
-                        {
-                         "name":"__anchorX",
-                         "type":"int",
-                         "value":672
-                        }, 
-                        {
-                         "name":"__anchorY",
-                         "type":"int",
-                         "value":416
-                        }, 
-                        {
-                         "name":"__cx",
-                         "type":"int",
-                         "value":42
-                        }, 
-                        {
-                         "name":"__cy",
-                         "type":"int",
-                         "value":26
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":16,
-                 "x":672,
-                 "y":416
-                }, 
-                {
-                 "height":16,
-                 "id":65,
-                 "name":"Fire_Right",
-                 "properties":[
-                        {
-                         "name":"__anchorX",
-                         "type":"int",
-                         "value":672
-                        }, 
-                        {
-                         "name":"__anchorY",
-                         "type":"int",
-                         "value":400
-                        }, 
-                        {
-                         "name":"__cx",
-                         "type":"int",
-                         "value":42
-                        }, 
-                        {
-                         "name":"__cy",
-                         "type":"int",
-                         "value":25
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":16,
-                 "x":672,
-                 "y":400
-                }, 
-                {
-                 "height":16,
-                 "id":66,
+                 "id":60,
                  "name":"Enemy",
                  "properties":[
                         {
@@ -2190,7 +1998,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":67,
+                 "id":61,
                  "name":"Enemy",
                  "properties":[
                         {
@@ -2222,7 +2030,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":68,
+                 "id":62,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -2254,7 +2062,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":69,
+                 "id":63,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -2286,7 +2094,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":70,
+                 "id":64,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -2318,7 +2126,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":71,
+                 "id":65,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -2350,7 +2158,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":72,
+                 "id":66,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -2382,7 +2190,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":73,
+                 "id":67,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -2414,7 +2222,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":74,
+                 "id":68,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -2446,7 +2254,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":75,
+                 "id":69,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -2478,7 +2286,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":76,
+                 "id":70,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -2510,7 +2318,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":77,
+                 "id":71,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -2542,7 +2350,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":78,
+                 "id":72,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -2574,7 +2382,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":79,
+                 "id":73,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -2606,7 +2414,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":80,
+                 "id":74,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -2638,7 +2446,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":81,
+                 "id":75,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -2670,7 +2478,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":82,
+                 "id":76,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -2702,7 +2510,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":83,
+                 "id":77,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -2734,7 +2542,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":84,
+                 "id":78,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -2766,7 +2574,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":85,
+                 "id":79,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -2798,7 +2606,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":86,
+                 "id":80,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -2830,7 +2638,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":87,
+                 "id":81,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -2862,7 +2670,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":88,
+                 "id":82,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -2894,7 +2702,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":89,
+                 "id":83,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -2926,7 +2734,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":90,
+                 "id":84,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -2958,7 +2766,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":91,
+                 "id":85,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -2990,7 +2798,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":92,
+                 "id":86,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3022,7 +2830,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":93,
+                 "id":87,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3054,7 +2862,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":94,
+                 "id":88,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3086,7 +2894,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":95,
+                 "id":89,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3118,7 +2926,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":96,
+                 "id":90,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3150,7 +2958,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":97,
+                 "id":91,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3182,7 +2990,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":98,
+                 "id":92,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3214,7 +3022,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":99,
+                 "id":93,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3246,7 +3054,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":100,
+                 "id":94,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3278,7 +3086,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":101,
+                 "id":95,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3310,7 +3118,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":102,
+                 "id":96,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3342,7 +3150,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":103,
+                 "id":97,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3374,7 +3182,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":104,
+                 "id":98,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3406,7 +3214,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":105,
+                 "id":99,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3438,7 +3246,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":106,
+                 "id":100,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3470,7 +3278,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":107,
+                 "id":101,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3502,7 +3310,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":108,
+                 "id":102,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3534,7 +3342,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":109,
+                 "id":103,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3566,7 +3374,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":110,
+                 "id":104,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3598,7 +3406,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":111,
+                 "id":105,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3630,7 +3438,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":112,
+                 "id":106,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3662,7 +3470,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":113,
+                 "id":107,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3694,7 +3502,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":114,
+                 "id":108,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3726,7 +3534,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":115,
+                 "id":109,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3758,7 +3566,7 @@
                 }, 
                 {
                  "height":16,
-                 "id":116,
+                 "id":110,
                  "name":"Fire_Up",
                  "properties":[
                         {
@@ -3795,7 +3603,7 @@
          "y":0
         }],
  "nextlayerid":6,
- "nextobjectid":117,
+ "nextobjectid":111,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.6.0",
