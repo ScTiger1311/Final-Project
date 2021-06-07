@@ -106,12 +106,12 @@ class PlatformerCamera extends Phaser.Cameras.Scene2D.BaseCamera
         }
         if(this.scrollYOffsetCurr < 0 + this.camera.height/2 + this.scene.currentLevel.tileHeight)//top
         {
-            console.log("3");
+            //console.log("3");
             this.scrollYOffsetCurr = this.camera.height/2 + this.scene.currentLevel.tileHeight;
         }
         else if(this.scrollYOffsetCurr > this.tilemapHeight - this.camera.height/2 - this.scene.currentLevel.tileHeight)//bottom
         {
-            console.log("4");
+            //console.log("4");
             this.scrollYOffsetCurr = this.tilemapHeight - this.camera.height/2 - this.scene.currentLevel.tileHeight;
         }
     

@@ -26,6 +26,6 @@ class Menu extends Phaser.Scene {
     }
 
     update(time, delta) {
-        let deltaMultiplier = (delta / 16.66667); //for refresh rate indepence.
+        let deltaMultiplier = (delta / 16.66667); //for refresh rate indepence
     }
 }

@@ -5,9 +5,14 @@ class Play extends Phaser.Scene
        super("Play"); 
     }
 
+    init(data){
+        this.levelName = data;
+    }
+
     preload()
     {
         this.load.atlas("PlayerAtlas", "./assets/Animations/Player_Atlas.png", "./assets/Animations/Player_Atlas.json");
+        this.load.atlas("EnvironmentAtlas", "./assets/Animations/Environment_Atlas.png","./assets/Animations/Environment_Atlas.json");
         this.load.image("PinkSquareSprite", "./assets/single_sprites/pink_square.png");
         this.load.image("OrangeRectSprite", "./assets/single_sprites/orange_rect.png");
         this.load.image("StoneTilesetImage", "./assets/levels/StoneBrick_Tileset.png");
@@ -17,6 +22,7 @@ class Play extends Phaser.Scene
         this.load.audio("music_minorTheme", "./assets/music/Spirit Flow Music_Minor.mp3");
         this.load.tilemapTiledJSON("TestLevel", "./assets/levels/Tutorial_Level.json");
         this.load.tilemapTiledJSON("Level1", "./assets/levels/Level_1.json");
+        this.load.image("DustParticle", "./assets/single_sprites/DustParticle.png")
     }
 
     create()
@@ -36,12 +42,25 @@ class Play extends Phaser.Scene
             loop:true,
             volume: 0.06,
         });
-        this.music.play();
+        // play music, prevent double playing
+        if(!this.music.isPlaying){
+            this.music.play();
+        }
 
+        // setting up level maps
         this.tutorial_level_map = this.add.tilemap("TestLevel")
         this.level1_map = this.add.tilemap("Level1");
+        
         //use this variable if you are checking map related things.
-        this.currentLevel = this.level1_map;
+        switch(this.levelName){
+            case 'Level1':
+                this.currentLevel = this.level1_map;
+                break;
+            case 'Tutorial':
+            default:
+                this.currentLevel = this.tutorial_level_map;
+                break;
+        }
 
         this.cameraMain = this.cameras.main;
 
@@ -58,10 +77,11 @@ class Play extends Phaser.Scene
             'down':  Phaser.Input.Keyboard.KeyCodes.DOWN,
             'right': Phaser.Input.Keyboard.KeyCodes.RIGHT,
             'space': Phaser.Input.Keyboard.KeyCodes.SPACE,
-            'x': Phaser.Input.Keyboard. KeyCodes.X,
+            'r': Phaser.Input.Keyboard. KeyCodes.R,
+            'esc': Phaser.Input.Keyboard.KeyCodes.ESC,
         });
 
-        this.loadLevel(this.curentLevel);
+        this.loadLevel(this.curentLevel);   // loading level if not already loaded
     }
 
     update(time, delta)
@@ -72,37 +92,39 @@ class Play extends Phaser.Scene
         That way they don't speed up on high refresh rate displays. Ask Ethan for more help/info
         if you are unsure.
         */
-
+        // reset level function
+        if(Phaser.Input.Keyboard.JustDown(this.keys.r)){
+            this.music.stop();
+            this.scene.restart();
+        }
         //Failsafe code
-       if(this.player.y > game.config.width * 1.5) {
-            this.player.reset();
-       }
-        
+        if(this.player.y > this.currentLevel.heightInPixels) {
+            this.music.stop();
+            this.scene.restart();
+        }
 
         if(Phaser.Input.Keyboard.JustDown(this.keys.plus)) {
             this.player.debugOn = !this.player.debugOn;
             console.log("PlayerDebug = " + this.player.debugOn);
         }
-        //This doesn't work
-        if(Phaser.Input.Keyboard.JustDown(this.keys.minus)) {
-            this.currentLevel.setLayer
+        // pause menu
+        if(Phaser.Input.Keyboard.JustDown(this.keys.esc)){
+            this.music.setVolume(0.03);
+            this.scene.pause();
+            this.scene.launch('PauseMenu');
+
         }
+        
         this.platformerCamera.update(time, delta);
         this.playerFSM.step();
         this.player.update();
-        this.enemy.update(this);
         this.player.drawDebug();
     }
 
-    loadLevel( levelName )
+    loadLevel()
     {
-        this.playerSpawn = this.currentLevel.findObject("Object", obj => obj.name === "Player_Spawn")
-        this.player = new Player(this, this.playerSpawn.x, this.playerSpawn.y);
-        this.platformerCamera = new PlatformerCamera(this, this.player, this.cameraMain);
-
         const stoneTileset = this.currentLevel.addTilesetImage("StoneBrick", "StoneTilesetImage")
-
-        
+        this.Platform_Layer = this.currentLevel.createLayer("Background", stoneTileset, 0, 0);
         this.Platform_Layer = this.currentLevel.createLayer("Platform", stoneTileset, 0, 0);
         
         this.env = this.add.group();
@@ -124,6 +146,10 @@ class Play extends Phaser.Scene
         this.Platform_Layer.setCollisionByProperty({
             Collides: true 
         });
+
+        this.playerSpawn = this.currentLevel.findObject("Object", obj => obj.name === "Player_Spawn")
+        this.player = new Player(this, this.playerSpawn.x, this.playerSpawn.y);
+        this.platformerCamera = new PlatformerCamera(this, this.player, this.cameraMain);
            
         this.playerFSM = new StateMachine('idle', {
             idle: new IdleState(),
@@ -139,8 +165,56 @@ class Play extends Phaser.Scene
         this.physics.add.collider(this.player, this.Platform_Layer);
         //this.physics.add.collider(this.player, this.Test_Layer);
 
-        // temp singular enemy object
-        this.enemy = new Obstacle(this, game.config.width/3, game.config.height*.82, "OrangeRectSprite");
-        this.enemy.setScale(.75);
+        // Setting up enemies 🦇
+        this.enemynumber = 1;
+        let enemyObjects = this.currentLevel.filterObjects("Object", obj => obj.name == 'Enemy');
+        this.enemyGroup = this.add.group({
+            runChildUpdate: true
+        });
+        enemyObjects.map((element) =>{
+            let obj = new Obstacle(this, element.x, element.y, this.enemynumber).setOrigin(0.33, 0.33);
+            this.enemyGroup.add(obj);
+            this.enemynumber++;
+        });
+
+        //test enemy
+         //let obj = new Obstacle(this, 200, 250, this.enemynumber);
+         //this.enemyGroup.add(obj);
+
+        // setting up 🔥
+        let fireList = this.currentLevel.filterObjects("Object", obj => obj.name == 'Fire_Left');
+        this.fire = this.add.group();
+        fireList.map((element) => {
+            let obj = new Fire(this, element.x, element.y, 'left').setOrigin(0, 0);
+            obj.body.setOffset(0, -16);
+            this.fire.add(obj);
+        })
+        fireList = this.currentLevel.filterObjects("Object", obj => obj.name == 'Fire_Right');
+        fireList.map((element) => {
+            let obj = new Fire(this, element.x, element.y, 'right').setOrigin(0,1);
+            obj.body.setOffset(0,16);
+            this.fire.add(obj);
+        })
+        fireList = this.currentLevel.filterObjects("Object", obj => obj.name == 'Fire_Up');
+        fireList.map((element) => {
+            let obj = new Fire(this, element.x, element.y, 'up').setOrigin(0,0);
+            this.fire.add(obj);
+        })
+        fireList = this.currentLevel.filterObjects("Object", obj => obj.name == 'Fire_Down');
+        fireList.map((element) => {
+            let obj = new Fire(this, element.x, element.y, 'down').setOrigin(0,0);
+            this.fire.add(obj);
+        })
+        // creating level transition zone 🚪
+        this.levelend = this.physics.add.group({immovable: true, moves: false});
+        this.levelend.addMultiple(this.currentLevel.createFromObjects("Object",{
+            name: "Level_Transition",
+        }));
+        this.nextLevel = this.levelend.getChildren()[0].data.list.Level;    // geting name of level to switch to
+        this.physics.add.collider(this.player, this.levelend, () =>{
+            this.music.stop();
+            this.scene.restart(this.nextLevel);
+            console.log("Changed level.");
+        });
     }
 }
