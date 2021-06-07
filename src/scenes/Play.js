@@ -178,8 +178,8 @@ class Play extends Phaser.Scene
         });
 
         //test enemy
-         let obj = new Obstacle(this, 200, 250, this.enemynumber);
-         this.enemyGroup.add(obj);
+         //let obj = new Obstacle(this, 200, 250, this.enemynumber);
+         //this.enemyGroup.add(obj);
 
         // creating transition object(s)
         this.levelend = this.physics.add.group({immovable: true, moves: false});
