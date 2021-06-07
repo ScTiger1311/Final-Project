@@ -109,6 +109,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         //Setup particles and emitters and values
         this.followPlayerCoeff = .4
         this.jumpParticleNum = 35
+        this.landParticleNum = 12
 
         this.leftWallEmitZone = new Phaser.Geom.Rectangle(this.leftDetector.body.x, this.leftDetector.y, this.leftDetector.body.width, this.leftDetector.body.height)
         this.rightWallEmitZone = new Phaser.Geom.Rectangle(this.leftDetector.x, this.leftDetector.y, this.leftDetector.body.width, this.leftDetector.body.height)
@@ -127,6 +128,15 @@ class Player extends Phaser.Physics.Arcade.Sprite
             frequency: 20,
             gravityX: Phaser.Math.Between(-10, 10),
             speedY: { start: -17, end: 0, steps: 15, ease: 'Power3' },
+            scale: { start: 1, end: .7, ease: 'Power1' },
+            lifespan: 850,
+            on: false
+        })
+        this.landEmitter = this.dustParticle.createEmitter({
+            emitZone: {type: 'random', source: this.explodeRectFeet },
+            frequency: -1,
+            gravityX: Phaser.Math.Between(-30, 30),
+            speedY: { start: -24, end: 3, steps: 5, ease: 'Power2' },
             scale: { start: 1, end: .7, ease: 'Power1' },
             lifespan: 850,
             on: false
@@ -837,9 +847,11 @@ class Player extends Phaser.Physics.Arcade.Sprite
                     player.playerDebug("curVel: " + player.body.velocity.x + ", " + player.body.velocity.y +
                     "\ncurMax: " + player.body.maxVelocity.x + ", " +  player.body.maxVelocity.y +
                     "\nmaxMove: " + player.maxMovementVelocity.x + ", " + player.maxMovementVelocity.y)
+                    player.landEmitter.explode(player.landParticleNum)
                     this.stateMachine.transition('walk');
                 }
                 else {
+                    player.landEmitter.explode(player.landParticleNum)
                     this.stateMachine.transition('idle');
                 }
 
