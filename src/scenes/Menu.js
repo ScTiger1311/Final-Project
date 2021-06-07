@@ -27,11 +27,5 @@ class Menu extends Phaser.Scene {
 
     update(time, delta) {
         let deltaMultiplier = (delta / 16.66667); //for refresh rate indepence.
-
-        if (this.keys.left.isDown == true || this.keys.right.isDown == true) {
-            //easyMode
-            this.scene.start('Play');
-
-        }
     }
 }
