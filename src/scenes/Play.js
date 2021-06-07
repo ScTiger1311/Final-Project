@@ -186,9 +186,10 @@ class Play extends Phaser.Scene
             name: "Level_Transition",
         }));
         this.nextLevel = this.levelend.getChildren()[0].data.list.Level;    // geting name of level to switch to
-        this.physics.add.overlap(this.player, this.levelend, () =>{
-            this.music.stop();                  // feel free to remove if need be but prevents music from overlapping
+        this.physics.add.collider(this.player, this.levelend, () =>{
+            this.music.stop();   // feel free to remove if need be but prevents music from overlapping
             this.scene.restart(this.nextLevel);
+            console.log("Changed level.");
         });
     }
 }
