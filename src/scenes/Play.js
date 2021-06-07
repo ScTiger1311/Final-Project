@@ -22,6 +22,7 @@ class Play extends Phaser.Scene
         this.load.audio("music_minorTheme", "./assets/music/Spirit Flow Music_Minor.mp3");
         this.load.tilemapTiledJSON("TestLevel", "./assets/levels/Tutorial_Level.json");
         this.load.tilemapTiledJSON("Level1", "./assets/levels/Level_1.json");
+        this.load.image("DustParticle", "./assets/single_sprites/DustParticle.png")
     }
 
     create()
@@ -177,8 +178,8 @@ class Play extends Phaser.Scene
         });
 
         //test enemy
-        // let obj = new Obstacle(this, 200, 250, this.enemynumber);
-        // this.enemyGroup.add(obj);
+         let obj = new Obstacle(this, 200, 250, this.enemynumber);
+         this.enemyGroup.add(obj);
 
         // creating transition object(s)
         this.levelend = this.physics.add.group({immovable: true, moves: false});

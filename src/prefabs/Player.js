@@ -77,6 +77,17 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
         });
 
+        //Setup particles and emitters
+        this.dustParticle = scene.add.particles('DustParticle')
+        this.walkEmitter = this.dustParticle.createEmitter({
+            x: this.x,
+            y: this.y,
+            gravityX: Phaser.Math.Between(-5, 5),
+            gravityY: 2,
+            lifespan: 850
+        })
+        this.walkEmitter.startFollow(this)
+
         //Setup mouse input
         scene.input.on('pointerdown', (pointer) => {
             if(this.canAttack && !this.attackTimerActive)
@@ -89,7 +100,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         //Setup physics config
         this.body.useDrag;
         this.body.setSize(16, 30, true) //Size in pixels of hitbox  
-        this.body.setOffset(this.width/2 - this.body.width/2, this.body.height/2)
+        this.body.setOffset(this.width/2 - this.body.width/2, this.body.height/2 + 2)
         this.body.setDragX(2500); //This is used as the damping value
         this.body.bounceX = 5000
 

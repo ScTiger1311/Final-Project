@@ -6,11 +6,13 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
         scene.add.existing(this);           // add to scene
         scene.physics.add.existing(this);   // add to physics world
         
-        // this.tint = 0x0b1f34;
         this.num = number;                  // obstacles are numbered to sort alive/dead colliders
         this.dead = false;
         this.overlapping = false;           // helps control dead collision checks
         this.touching = false;              // helps control alive collision checks
+        this.floatSpeed = -35 //Don't put this higher than 200, it will miss it's target
+        this.stoppingPointDist = 50 //Stop 150 pixels above this point when dead
+        this.stoppingPoint = 0
 
         // creating animations
         scene.anims.create({
@@ -50,20 +52,33 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
         }).name = `aliveCollider${this.num}`;
 
     }
+
+    setGhostEvent() {
+
+    }
     
     // Function kills the enemy, changes the collider to overlap
     kill(scene){
         this.tint = 0xff0000
+        this.stoppingPoint = this.y - this.stoppingPointDist;
+        scene.player.canAttack = true;
+        scene.player.attackTimerActive = false;
+
         scene.physics.world.colliders.getActive().find(function(i){
             return i.name == `aliveCollider${this.num}`;
         }, this).destroy();
-        scene.physics.add.overlap(scene.player, this, ()=>{
-            if(!this.overlapping && scene.playerFSM.state == "attack"){
-                this.overlapping = true;
-                scene.player.boostQueued = true;
-                this.destroy()
-            }
-        }).name = 'boostCollide';
+        scene.time.delayedCall(500, () => {        
+            this.scene.physics.add.overlap(this.scene.player, this, ()=>{
+                if(!this.overlapping && this.scene.playerFSM.state == "attack"){
+                    this.overlapping = true;
+                    this.scene.player.boostQueued = true;
+                    scene.player.canAttack = true;
+                    scene.player.attackTimerActive = false;
+                    console.log("Destroy enemy")
+                    this.destroy()
+                }
+            }).name = 'boostCollide';
+        })
         this.dead = true;
     }
 
@@ -72,5 +87,13 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
             this.touching = false;
             this.overlapping = false;
         }
+        if(this.dead && Math.abs(this.y - this.stoppingPoint) > 1) {
+            this.body.velocity.y = this.floatSpeed
+        }
+        else {
+            this.body.velocity.y = 0
+        }
+        // if (this.dead)
+        //     this.y = this.stoppingPoint
     }
 }
