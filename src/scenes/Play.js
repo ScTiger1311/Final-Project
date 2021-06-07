@@ -97,7 +97,7 @@ class Play extends Phaser.Scene
             this.scene.restart();
         }
         //Failsafe code
-        if(this.player.y > this.currentLevel.heightInPixels + 48) {
+        if(this.player.y > this.currentLevel.heightInPixels) {
             this.music.stop();
             this.scene.restart();
         }
