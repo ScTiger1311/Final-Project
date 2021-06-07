@@ -10,8 +10,8 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
         this.dead = false;
         this.overlapping = false;           // helps control dead collision checks
         this.touching = false;              // helps control alive collision checks
-        this.floatSpeed = -35 //Don't put this higher than 200, it will miss it's target
-        this.stoppingPointDist = 50 //Stop 150 pixels above this point when dead
+        this.floatSpeed = -199 //Don't put this higher than 200, it will miss it's target
+        this.stoppingPointDist = 160 //Stop 150 pixels above this point when dead
         this.stoppingPoint = 0
 
         // creating animations
