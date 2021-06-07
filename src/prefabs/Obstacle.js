@@ -10,7 +10,9 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
         this.dead = false;
         this.overlapping = false;           // helps control dead collision checks
         this.touching = false;              // helps control alive collision checks
-        this.floatSpeed = -25
+        this.floatSpeed = -35 //Don't put this higher than 200, it will miss it's target
+        this.stoppingPointDist = 50 //Stop 150 pixels above this point when dead
+        this.stoppingPoint = 0
 
         // creating animations
         scene.anims.create({
@@ -58,6 +60,7 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
     // Function kills the enemy, changes the collider to overlap
     kill(scene){
         this.tint = 0xff0000
+        this.stoppingPoint = this.y - this.stoppingPointDist;
         scene.physics.world.colliders.getActive().find(function(i){
             return i.name == `aliveCollider${this.num}`;
         }, this).destroy();
@@ -79,8 +82,13 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
             this.touching = false;
             this.overlapping = false;
         }
-        if(this.dead) {
+        if(this.dead && Math.abs(this.y - this.stoppingPoint) > 1) {
             this.body.velocity.y = this.floatSpeed
         }
+        else {
+            this.body.velocity.y = 0
+        }
+        // if (this.dead)
+        //     this.y = this.stoppingPoint
     }
 }
