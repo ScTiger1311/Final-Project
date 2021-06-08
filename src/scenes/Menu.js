@@ -4,10 +4,12 @@ class Menu extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image("menu_image", "./assets/single_sprites/Test_Menu.png");
+        this.load.image("menu_image", "./assets/single_sprites/Menu.png");
 
         //3 frames, named button_neutral, button_hover, button_down
         this.load.atlas("button", "./assets/spritesheets/button_spritesheet.png", "./assets/spritesheets/button_spritesheet.json");
+        this.load.atlas("play", "./assets/spritesheets/Play_Atlas.png", "./assets/spritesheets/Play_Atlas.json");
+        this.load.atlas("credits", "./assets/spritesheets/Credits_Atlas.png", "./assets/spritesheets/Credits_Atlas.json");
 
     }
 
@@ -21,8 +23,8 @@ class Menu extends Phaser.Scene {
             jump: 'SPACE'
         });
         //its cursed but you have to use this.scene.scene.start() >:O https://stackoverflow.com/questions/55264077/phaser-3-clickable-sprite-cant-start-scene
-        this.startButton = new Button(this, "button", 100, 200, function(){this.scene.scene.start("Play");});
-        this.creditsButton = new Button(this, "button", 200, 200, function(){this.scene.scene.start("Credits");});
+        this.startButton = new Button(this, "play", 200, 150, function(){this.scene.scene.start("Play");});
+        this.creditsButton = new Button(this, "credits", 224, 260, function(){this.scene.scene.start("Credits");});
     }
 
     update(time, delta) {
