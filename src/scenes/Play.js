@@ -17,6 +17,7 @@ class Play extends Phaser.Scene
         this.load.image("OrangeRectSprite", "./assets/single_sprites/orange_rect.png");
         this.load.image("StoneTilesetImage", "./assets/levels/StoneBrick_Tileset.png");
         this.load.audio("jumpFx", "./assets/sounds/fx/Jump.wav");
+        this.load.audio("slideFx", "./assets/sounds/fx/slide.wav");
         this.load.audio("landFx", "./assets/sounds/fx/Land.wav");
         this.load.audio("music_majorTheme", "./assets/music/Spirit Flow Music_Major.mp3");
         this.load.audio("music_minorTheme", "./assets/music/Spirit Flow Music_Minor.mp3");
@@ -125,13 +126,11 @@ class Play extends Phaser.Scene
         */
         // reset level function
         if(Phaser.Input.Keyboard.JustDown(this.keys.r)){
-            this.music.stop();
-            this.scene.restart();
+            this.restartLevel();
         }
         //Failsafe code
         if(this.player.y > this.currentLevel.heightInPixels) {
-            this.music.stop();
-            this.scene.restart();
+            this.restartLevel()
         }
 
         if(Phaser.Input.Keyboard.JustDown(this.keys.plus)) {
@@ -150,6 +149,14 @@ class Play extends Phaser.Scene
         this.playerFSM.step();
         this.player.update();
         this.player.drawDebug();
+    }
+
+    restartLevel(level = null) {
+        console.log("Restart w/ fn")
+        //this.sound.stopAll()
+        this.player.playerSlide.stop()
+        this.music.stop();
+        this.scene.restart(level);
     }
 
     loadLevel()
@@ -242,7 +249,7 @@ class Play extends Phaser.Scene
         this.nextLevel = this.levelend.getChildren()[0].data.list.Level;    // geting name of level to switch to
         this.physics.add.collider(this.player, this.levelend, () =>{
             this.music.stop();
-            this.scene.restart(this.nextLevel);
+            this.restartLevel(this.nextLevel);
             console.log("Changed level.");
         });
     }
