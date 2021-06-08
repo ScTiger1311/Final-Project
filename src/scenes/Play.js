@@ -23,6 +23,12 @@ class Play extends Phaser.Scene
         this.load.tilemapTiledJSON("TestLevel", "./assets/levels/Tutorial_Level.json");
         this.load.tilemapTiledJSON("Level1", "./assets/levels/Level_1.json");
         this.load.tilemapTiledJSON("Level2", "./assets/levels/Level_2.json");
+        this.load.tilemapTiledJSON("Level3", "./assets/levels/Level_3.json");
+        this.load.tilemapTiledJSON("Level4", "./assets/levels/Level_4.json");
+        this.load.tilemapTiledJSON("Level5", "./assets/levels/Level_5.json");
+        this.load.tilemapTiledJSON("Level6", "./assets/levels/Level_6.json");
+        this.load.tilemapTiledJSON("Level7", "./assets/levels/Level_7.json");
+        this.load.tilemapTiledJSON("Level8", "./assets/levels/Level_8.json");
         this.load.image("DustParticle", "./assets/single_sprites/DustParticle.png")
     }
 
@@ -52,18 +58,39 @@ class Play extends Phaser.Scene
         this.tutorial_level_map = this.add.tilemap("TestLevel")
         this.level1_map = this.add.tilemap("Level1");
         this.level2_map = this.add.tilemap("Level2");
+        this.level3_map = this.add.tilemap("Level3");
+        this.level4_map = this.add.tilemap("Level4");
+        this.level5_map = this.add.tilemap("Level5");
+        this.level6_map = this.add.tilemap("Level6");
+        this.level7_map = this.add.tilemap("Level7");
+        this.level8_map = this.add.tilemap("Level8");
         
         //changing current map based on level
         switch(this.levelName){
-            case 'Level1':
-                this.currentLevel = this.level1_map;
-                break;
             case 'Level2':
                 this.currentLevel = this.level2_map;
                 break;
-            case 'Tutorial':
+            case 'Level3':
+                this.currentLevel = this.level3_map;
+                break;
+            case 'Level4':
+                this.currentLevel = this.level4_map;
+                break;
+            case 'Level5':
+                this.currentLevel = this.level5_map;
+                break;
+            case 'Level6':
+                this.currentLevel = this.level6_map;
+                break;
+            case 'Level7':
+                this.currentLevel = this.level7_map;
+                break;
+            case 'Level8':
+                this.currentLevel = this.level8_map;
+                break;
+            case 'Level1':
             default:
-                this.currentLevel = this.tutorial_level_map;
+                this.currentLevel = this.level1_map;
                 break;
         }
         this.cameraMain = this.cameras.main;
