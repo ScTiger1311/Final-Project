@@ -126,6 +126,8 @@ class Play extends Phaser.Scene
 
     restartLevel(level = null) {
         console.log("Restart w/ fn")
+        //this.sound.stopAll()
+        this.player.playerSlide.stop()
         this.music.stop();
         this.scene.restart(level);
     }

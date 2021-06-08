@@ -267,6 +267,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         })
         this.playerSlide = scene.sound.add("slideFx", {
             volume: .4,
+            loop: true,
         })
     }
 
@@ -648,7 +649,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             // set recovery timer
             scene.time.delayedCall(player.hurtTimer, () => {
                 scene.music.stop();                  // feel free to remove if need be but prevents music from overlapping
-                scene.scene.restart();
+                scene.restartLevel();
             });
         }
     }
@@ -679,7 +680,6 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
             //this.transitionStarted = false;
             player.playerSlide.play();
-            player.playerSlide.on('complete', ()=>{player.playerSlide.play()})
             player.comingOffWall = false;
             player.setGravityY(player.downGravity * player.wallClingCoeff)
         }
