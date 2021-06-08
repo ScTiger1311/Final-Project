@@ -5,7 +5,7 @@ class Fire extends Phaser.Physics.Arcade.Sprite
         scene.add.existing(this);           // add to scene
         scene.physics.add.existing(this);   // add to physics world
 
-        this.body.setSize(this.width/4, this.height/4, false);
+        // this.body.setSize(this.width/4, this.height/4, false);
         // this.body.setOffset(0,0);
 
         scene.anims.create({
@@ -35,6 +35,7 @@ class Fire extends Phaser.Physics.Arcade.Sprite
         });
         switch(direction){
             case 'left':
+<<<<<<< Updated upstream
                 this.play('flameside');
                 this.setFlip(true, false);
                 break;
@@ -47,6 +48,23 @@ class Fire extends Phaser.Physics.Arcade.Sprite
             case 'down':
                 this.setFlip(false, true);
                 this.play('flame');
+=======
+                this.angle = 270;
+                this.body.setSize(this.width/7, this.height/4, false);
+                break;
+            case 'right':
+                this.angle = 90;
+                this.body.setSize(this.width/7, this.height/4, false);
+                break;
+            case 'up':
+                this.body.setSize(this.width/4, this.height/7, false);
+                this.body.setOffset(0, 8);
+                break;
+            case 'down':
+                this.setFlip(false, true);
+                this.body.setSize(this.width/4, this.height/7, false);
+
+>>>>>>> Stashed changes
                 break;
         }
         // this.play('flame');
