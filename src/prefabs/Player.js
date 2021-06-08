@@ -260,10 +260,13 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
         //Player fx
         this.playerJump = scene.sound.add("jumpFx", {
-            volume: .8,
+            volume: .6,
         })
         this.playerLand = scene.sound.add("landFx", {
             volume: .8,
+        })
+        this.playerSlide = scene.sound.add("slideFx", {
+            volume: .4,
         })
     }
 
@@ -675,6 +678,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
             player.playWallClingParticle(this.direction)
 
             //this.transitionStarted = false;
+            player.playerSlide.play();
+            player.playerSlide.on('complete', ()=>{player.playerSlide.play()})
             player.comingOffWall = false;
             player.setGravityY(player.downGravity * player.wallClingCoeff)
         }
@@ -702,6 +707,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 player.play("jump")
                 player.setGravityY(player.downGravity)
                 player.wallClingEmitter.on = false
+                player.playerSlide.stop();
                 this.stateMachine.transition('inair')
                 // scene.time.delayedCall(10, () => {
                 //     if(this.stateMachine.state == 'wallcling') {
@@ -718,6 +724,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 player.playJumpParticle(-this.direction, true)
                 player.anims.setProgress(.35)
                 player.wallClingEmitter.on = false
+                player.playerSlide.stop();
+                player.playerJump.play(); //Play jump audio
                 this.stateMachine.transition('walljump')
                 return;
             }
@@ -726,6 +734,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             if(player.attackQueued && player.canAttack) {
                 player.setGravityY(player.downGravity)
                 player.wallClingEmitter.on = false
+                player.playerSlide.stop();
                 this.stateMachine.transition('attack')
                 return;
             }
@@ -737,6 +746,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
                     player.trailEmitter.setTint(0x00ffff)
 
                 player.playerLand.play();
+                player.playerSlide.stop();
                 player.setGravityY(player.downGravity)
                 player.wallClingEmitter.on = false
                 this.stateMachine.transition('walk')
