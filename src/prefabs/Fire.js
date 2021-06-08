@@ -5,9 +5,6 @@ class Fire extends Phaser.Physics.Arcade.Sprite
         scene.add.existing(this);           // add to scene
         scene.physics.add.existing(this);   // add to physics world
 
-        // this.body.setSize(this.width/4, this.height/4, false);
-        // this.body.setOffset(0,0);
-
         scene.anims.create({
             key: 'flame',
             frames: this.anims.generateFrameNames('EnvironmentAtlas',
@@ -35,39 +32,26 @@ class Fire extends Phaser.Physics.Arcade.Sprite
         });
         switch(direction){
             case 'left':
-<<<<<<< Updated upstream
                 this.play('flameside');
                 this.setFlip(true, false);
+                this.body.setSize(this.width/3, this.height)
+                this.body.setOffset(10,0)
                 break;
             case 'right':
                 this.play('flameside');
+                this.body.setSize(this.width/3, this.height, false);
                 break;
             case 'up':
                 this.play('flame');
+                this.body.setSize(this.width, this.height/3);
+                this.body.setOffset(0,10);
                 break;
             case 'down':
-                this.setFlip(false, true);
                 this.play('flame');
-=======
-                this.angle = 270;
-                this.body.setSize(this.width/7, this.height/4, false);
-                break;
-            case 'right':
-                this.angle = 90;
-                this.body.setSize(this.width/7, this.height/4, false);
-                break;
-            case 'up':
-                this.body.setSize(this.width/4, this.height/7, false);
-                this.body.setOffset(0, 8);
-                break;
-            case 'down':
                 this.setFlip(false, true);
-                this.body.setSize(this.width/4, this.height/7, false);
-
->>>>>>> Stashed changes
+                this.body.setSize(this.width, this.height/3, false);
                 break;
         }
-        // this.play('flame');
 
         scene.physics.add.collider(scene.player, this, () => {
             if(scene.playerFSM.state != "hurt") {

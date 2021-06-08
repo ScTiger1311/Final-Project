@@ -53,7 +53,7 @@ class Play extends Phaser.Scene
         this.level1_map = this.add.tilemap("Level1");
         this.level2_map = this.add.tilemap("Level2");
         
-        //use this variable if you are checking map related things.
+        //changing current map based on level
         switch(this.levelName){
             case 'Level1':
                 this.currentLevel = this.level1_map;
@@ -66,7 +66,6 @@ class Play extends Phaser.Scene
                 this.currentLevel = this.tutorial_level_map;
                 break;
         }
-
         this.cameraMain = this.cameras.main;
 
         //Setup keys for whole game
