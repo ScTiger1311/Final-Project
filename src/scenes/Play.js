@@ -190,14 +190,12 @@ class Play extends Phaser.Scene
         let fireList = this.currentLevel.filterObjects("Object", obj => obj.name == 'Fire_Left');
         this.fire = this.add.group();
         fireList.map((element) => {
-            let obj = new Fire(this, element.x, element.y, 'left').setOrigin(0, 0);
-            obj.body.setOffset(0, -16);
+            let obj = new Fire(this, element.x, element.y, 'left').setOrigin(0,0);
             this.fire.add(obj);
         })
         fireList = this.currentLevel.filterObjects("Object", obj => obj.name == 'Fire_Right');
         fireList.map((element) => {
-            let obj = new Fire(this, element.x, element.y, 'right').setOrigin(0,1);
-            obj.body.setOffset(0,16);
+            let obj = new Fire(this, element.x, element.y, 'right').setOrigin(0,0);
             this.fire.add(obj);
         })
         fireList = this.currentLevel.filterObjects("Object", obj => obj.name == 'Fire_Up');

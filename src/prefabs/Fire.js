@@ -21,20 +21,35 @@ class Fire extends Phaser.Physics.Arcade.Sprite
             repeat: -1,
 
         });
+        scene.anims.create({
+            key: 'flameside',
+            frames: this.anims.generateFrameNames('EnvironmentAtlas',
+            {
+                prefix: 'Fire_Side',
+                start:1,
+                end: 7,
+                zeroPad: 4,
+            }),
+            frameRate: 12,
+            repeat: -1,
+        });
         switch(direction){
             case 'left':
-                this.angle = 270;
+                this.play('flameside');
+                this.setFlip(true, false);
                 break;
             case 'right':
-                this.angle = 90;
+                this.play('flameside');
                 break;
             case 'up':
+                this.play('flame');
                 break;
             case 'down':
                 this.setFlip(false, true);
+                this.play('flame');
                 break;
         }
-        this.play('flame');
+        // this.play('flame');
 
         scene.physics.add.collider(scene.player, this, () => {
             if(scene.playerFSM.state != "hurt") {
