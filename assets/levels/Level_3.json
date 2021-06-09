@@ -133,7 +133,7 @@
                         {
                          "name":"__anchorX",
                          "type":"int",
-                         "value":208
+                         "value":256
                         }, 
                         {
                          "name":"__anchorY",
@@ -143,7 +143,7 @@
                         {
                          "name":"__cx",
                          "type":"int",
-                         "value":13
+                         "value":16
                         }, 
                         {
                          "name":"__cy",
@@ -154,7 +154,7 @@
                  "type":"",
                  "visible":true,
                  "width":16,
-                 "x":208,
+                 "x":256,
                  "y":416
                 }, 
                 {
@@ -170,29 +170,29 @@
                         {
                          "name":"__anchorX",
                          "type":"int",
-                         "value":192
+                         "value":224
                         }, 
                         {
                          "name":"__anchorY",
                          "type":"int",
-                         "value":400
+                         "value":448
                         }, 
                         {
                          "name":"__cx",
                          "type":"int",
-                         "value":12
+                         "value":14
                         }, 
                         {
                          "name":"__cy",
                          "type":"int",
-                         "value":25
+                         "value":28
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":16,
-                 "x":192,
-                 "y":400
+                 "x":224,
+                 "y":448
                 }, 
                 {
                  "height":16,
