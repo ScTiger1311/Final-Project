@@ -107,7 +107,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.rightDetector.setDebugBodyColor(0xff0000)
 
         //Setup particles and emitters and values
-        this.followPlayerCoeff = .4
+        this.followPlayerCoeff = .2
         this.jumpParticleNum = 35
         this.landParticleNum = 12
 
@@ -121,8 +121,8 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
         this.explodeRectFeet = new Phaser.Geom.Rectangle(this.body.position.x,
                                                      this.body.position.y + this.body.height - 5,
-                                                     this.body.width * 2,
-                                                     8)
+                                                     this.body.width,
+                                                     2)
         this.dustParticle = scene.add.particles('DustParticle')
         this.trailEmitter = this.dustParticle.createEmitter({
             emitZone: {type: 'random', source: this.centerEmitSquare },
@@ -136,7 +136,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         })
         this.walkEmitter = this.dustParticle.createEmitter({
             emitZone: {type: 'random', source: this.emitCircleFeet },
-            frequency: 20,
+            frequency: 333.33,
             gravityX: Phaser.Math.Between(-10, 10),
             speedY: { start: -17, end: 0, steps: 15, ease: 'Power3' },
             scale: { start: 1, end: .7, ease: 'Power1' },
@@ -146,10 +146,10 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.landEmitter = this.dustParticle.createEmitter({
             emitZone: {type: 'random', source: this.explodeRectFeet },
             frequency: -1,
-            gravityX: Phaser.Math.Between(-30, 30),
-            speedY: { start: -24, end: 3, steps: 5, ease: 'Power2' },
+            speedX: { start: -4, end: -1, steps: 5, ease: 'Power2' },
+            speedY: { start: -12, end: -1, steps: 5, ease: 'Power2' },
             scale: { start: 1, end: .7, ease: 'Power1' },
-            lifespan: 850,
+            lifespan: 750,
             on: false
         })
         this.wallClingEmitter = this.dustParticle.createEmitter({
@@ -254,6 +254,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.attackQueued = false;
         this.boostQueued = false;
         this.canAttack = true;
+        this.attackAngle = null
         this.attackTimerActive = false;
         this.overlapLeft = false;
         this.overlapRight = false;
@@ -368,7 +369,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         //Position emitters
         this.emitCircleFeet.x = this.body.position.x + this.body.width/2
         this.emitCircleFeet.y = this.body.position.y + this.body.height
-        this.explodeRectFeet.x = this.body.position.x - this.body.width/2
+        this.explodeRectFeet.x = this.body.position.x
         this.explodeRectFeet.y = this.body.position.y + this.body.height - this.explodeRectFeet.height
         this.rightWallEmitZone.x = this.rightDetector.body.x
         this.rightWallEmitZone.y = this.rightDetector.body.y
@@ -413,7 +414,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 player.playerJump.play(); //Play jump audio
                 player.play("jump") //Play jump animation
                 //Set particles, give dynamic momentum
-                player.trailEmitter.on = true
+                //player.trailEmitter.on = true
                 player.playJumpParticle()
                 this.stateMachine.transition('inair');
                 return;
@@ -421,14 +422,14 @@ class Player extends Phaser.Physics.Arcade.Sprite
     
             // transition to move if pressing a movement key
             if(left.isDown || right.isDown || a.isDown || d.isDown) {
-                player.trailEmitter.on = true
+                //player.trailEmitter.on = true
                 this.stateMachine.transition('walk');
                 return;
             }
 
             //Handle attack interrupt
             if(player.attackQueued && player.canAttack) {
-                player.trailEmitter.on = true
+               //player.trailEmitter.on = true
                 this.stateMachine.transition('attack')
                 return;
             }
@@ -437,7 +438,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             if(!player.body.blocked.down) {
                 player.play("jump") //Play jump animation from middle
                 player.anims.setProgress(.35)
-                player.trailEmitter.on = true
+                //player.trailEmitter.on = true
                 this.stateMachine.transition('inair')
                 return
             }
@@ -551,7 +552,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
             this.velocityDir = new Phaser.Math.Vector2(0,0);
             this.attackSpeed = player.baseAttackSpeed > this.inVelocity.length() ? player.baseAttackSpeed : this.inVelocity.length(),
-            this.attackAngle = Phaser.Math.Angle.Between(
+            player.attackAngle = this.attackAngle = Phaser.Math.Angle.Between(
                 player.x,
                 player.y,
                 scene.input.mousePointer.worldX,
@@ -648,7 +649,6 @@ class Player extends Phaser.Physics.Arcade.Sprite
     
             // set recovery timer
             scene.time.delayedCall(player.hurtTimer, () => {
-                scene.music.stop();                  // feel free to remove if need be but prevents music from overlapping
                 scene.restartLevel();
             });
         }
@@ -749,6 +749,9 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 player.playerSlide.stop();
                 player.setGravityY(player.downGravity)
                 player.wallClingEmitter.on = false
+                scene.time.delayedCall(10, () => {
+                    player.landEmitter.explode(player.landParticleNum/3)
+                })
                 this.stateMachine.transition('walk')
                 return
             }
@@ -887,11 +890,15 @@ class Player extends Phaser.Physics.Arcade.Sprite
                     player.playerDebug("curVel: " + player.body.velocity.x + ", " + player.body.velocity.y +
                     "\ncurMax: " + player.body.maxVelocity.x + ", " +  player.body.maxVelocity.y +
                     "\nmaxMove: " + player.maxMovementVelocity.x + ", " + player.maxMovementVelocity.y)
-                    player.landEmitter.explode(player.landParticleNum)
+                    scene.time.delayedCall(10, () => {
+                        player.landEmitter.explode(player.landParticleNum)
+                    })
                     this.stateMachine.transition('walk');
                 }
                 else {
-                    player.landEmitter.explode(player.landParticleNum)
+                    scene.time.delayedCall(10, () => {
+                        player.landEmitter.explode(player.landParticleNum)
+                    })
                     this.stateMachine.transition('idle');
                 }
 

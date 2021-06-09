@@ -45,7 +45,7 @@ class Play extends Phaser.Scene
         });
         this.music.play();
         */ 
-        this.music = this.sound.add("music_minorTheme", 
+        this.music = this.sound.add("music_minorTheme",
         {
             loop:true,
             volume: 0.06,
@@ -216,8 +216,8 @@ class Play extends Phaser.Scene
         });
 
         //test enemy
-         //let obj = new Obstacle(this, 200, 250, this.enemynumber);
-         //this.enemyGroup.add(obj);
+         let obj = new Obstacle(this, 200, 250, this.enemynumber);
+         this.enemyGroup.add(obj);
 
         // setting up 🔥
         let fireList = this.currentLevel.filterObjects("Object", obj => obj.name == 'Fire_Left');

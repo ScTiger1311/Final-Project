@@ -51,10 +51,46 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
         this.body.allowGravity = false;
         this.body.setSize
         this.setCircle(this.width/4, this.width/4, this.height/4)
+
+        //Setup particles
+        this.firstHitNum = 200;
+        this.hitParticle = scene.add.particles('DustParticle');
+        this.centerEmitCircle = new Phaser.Geom.Circle(this.x, this.y, 34)
+
+        this.hitCallback = function (particle, emitter) {
+            //console.log("X: " + scene.player.body.velocity.x + " Y: " + scene.player.body.velocity.y)
+            emitter.setSpeedX({ start: Phaser.Math.Between(scene.player.body.velocity.x * .15, scene.player.body.velocity.x * .25),
+                                    //* (this.centerEmitCircle.x - particle.x) * .03,
+                                end: 0, 
+                                steps: 20, 
+                                ease: 'Bounce' 
+                            })
+            emitter.setSpeedY({ start: Phaser.Math.Between(scene.player.body.velocity.y * .2, scene.player.body.velocity.y * .3),
+                                    //* (this.centerEmitCircle.y - particle.y) * .05,
+                                end: 0, 
+                                steps: 20, 
+                                ease: 'Bounce'
+            })
+        }
+
+        this.firstHitEmitter = this.hitParticle.createEmitter({
+            emitZone: {type: 'random', source: this.centerEmitCircle },
+            frequency: -1,
+            gravityY: 250,
+            emitCallbackScope: this,
+            emitCallback: this.hitCallback,
+            tint: { start: 0xff44ff, end: 0x00ffff, ease: 'Circ.easeInOut'},
+            // speedX: scene.player.body.velocity.x,
+            // speedY: scene.player.body.velocity.y,
+            scale: { start: 1.5, end: .7, ease: 'Power3' },
+            lifespan: {min: 500, max: 950},
+            on: false
+        })
         
         // Handling when enemy is alive
         scene.physics.add.overlap(scene.player, this, ()=>{
             if(scene.playerFSM.state == "attack") {
+                this.playHitParticles()
                 this.kill(scene);
                 console.log("KillEnemy");
             }
@@ -69,7 +105,26 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
 
     }
 
-    
+    playHitParticles() {
+        this.firstHitEmitter.explode(this.firstHitNum)
+        //Creat gravity well and move it with the player for a bit
+        this.hitGravity = this.hitParticle.createGravityWell({
+            x: this.scene.player.x,
+            y: this.scene.player.y,
+            power: .65,
+            epsilon: 120,
+        })
+        this.gravityTimer = this.scene.time.addEvent({
+            delay: 10,
+            callback: ()=>{
+                this.hitGravity.x = this.scene.player.x;
+                this.hitGravity.y = this.scene.player.y;
+                console.log("x: " + this.scene.player.x + " y: " + this.scene.player.y)
+            },
+            repeat: 50
+        })
+    }
+
     // Function kills the enemy, changes the collider to overlap
     kill(scene){
         this.play('ghost')
