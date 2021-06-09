@@ -116,11 +116,12 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
         })
         this.gravityTimer = this.scene.time.addEvent({
             delay: 10,
+            callbackScope: this,
             callback: ()=>{
                 this.hitGravity.x = this.scene.player.x;
                 this.hitGravity.y = this.scene.player.y;
                 console.log("x: " + this.scene.player.x + " y: " + this.scene.player.y)
-            },
+            },            
             repeat: 50
         })
     }

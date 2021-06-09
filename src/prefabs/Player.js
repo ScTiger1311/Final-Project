@@ -116,7 +116,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.centerEmitSquare = new Phaser.Geom.Rectangle(this.x, this.x, 5, 5)
 
         this.emitCircleFeet = new Phaser.Geom.Circle(this.body.position.x + this.body.width/2,
-                                                 this.body.position.y + this.body.height,
+                                                 this.body.position.y + this.body.height -2,
                                                  4)
 
         this.explodeRectFeet = new Phaser.Geom.Rectangle(this.body.position.x,
@@ -776,13 +776,16 @@ class Player extends Phaser.Physics.Arcade.Sprite
         }
 
         execute(scene, player) {
+            const { space } = scene.keys;
             //player.body.setVelocity(0);
             player.body.setAllowGravity(false)
             player.setAcceleration(0);
 
             //Give velocity towards mouse
             // Velocity is whatever is higher, a dthe atatck speed, or the players current speed
-            player.body.velocity.set(player.wallJumpVelocity.x * -this.direction, player.wallJumpVelocity.y);
+            if(Phaser.Input.Keyboard.DownDuration(space, 200)) {
+                player.body.velocity.set(player.wallJumpVelocity.x * -this.direction, player.wallJumpVelocity.y);
+            }
             
         }
     }
@@ -857,7 +860,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
             //Slightly less control in the air
             //Transition to wall cling if pressed against wall
             if(left.isDown || a.isDown) {
-                player.body.setAccelerationX(-player.MoveAcceleration * .3);
+                player.body.setAccelerationX(-player.MoveAcceleration * .8);
                 player.setFlipX(true)
                 if(player.overlapLeft) {
                     player.body.setAccelerationX(0);
@@ -866,7 +869,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
                 }
             }
             else if(right.isDown || d.isDown) {
-                player.body.setAccelerationX(player.MoveAcceleration * .3);
+                player.body.setAccelerationX(player.MoveAcceleration * .8);
                 player.setFlipX(false)                 
                 if(player.overlapRight) {
                     player.body.setAccelerationX(0);
