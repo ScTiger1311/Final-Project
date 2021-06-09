@@ -249,29 +249,29 @@
                         {
                          "name":"__anchorX",
                          "type":"int",
-                         "value":64
+                         "value":112
                         }, 
                         {
                          "name":"__anchorY",
                          "type":"int",
-                         "value":256
+                         "value":240
                         }, 
                         {
                          "name":"__cx",
                          "type":"int",
-                         "value":4
+                         "value":7
                         }, 
                         {
                          "name":"__cy",
                          "type":"int",
-                         "value":16
+                         "value":15
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":16,
-                 "x":64,
-                 "y":256
+                 "x":112,
+                 "y":240
                 }, 
                 {
                  "height":16,
@@ -286,29 +286,29 @@
                         {
                          "name":"__anchorX",
                          "type":"int",
-                         "value":224
+                         "value":256
                         }, 
                         {
                          "name":"__anchorY",
                          "type":"int",
-                         "value":224
+                         "value":208
                         }, 
                         {
                          "name":"__cx",
                          "type":"int",
-                         "value":14
+                         "value":16
                         }, 
                         {
                          "name":"__cy",
                          "type":"int",
-                         "value":14
+                         "value":13
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":16,
-                 "x":224,
-                 "y":224
+                 "x":256,
+                 "y":208
                 }],
          "opacity":1,
          "type":"objectgroup",

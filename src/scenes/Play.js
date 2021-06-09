@@ -30,7 +30,13 @@ class Play extends Phaser.Scene
         this.load.tilemapTiledJSON("Level6", "./assets/levels/Level_6.json");
         this.load.tilemapTiledJSON("Level7", "./assets/levels/Level_7.json");
         this.load.tilemapTiledJSON("Level8", "./assets/levels/Level_8.json");
-        this.load.image("DustParticle", "./assets/single_sprites/DustParticle.png")
+        this.load.image("DustParticle", "./assets/single_sprites/DustParticle.png");
+        this.load.image("Jump", "./assets/single_sprites/Jump.png");
+        this.load.image("wasd", "./assets/single_sprites/wasd.png");
+        this.load.image("Left_Click", "./assets/single_sprites/Left_Click.png");
+        this.load.image("Arrow", "./assets/single_sprites/Arrow.png");
+        this.load.image("Dash", "./assets/single_sprites/Dash.png");
+
     }
 
     create()
@@ -252,5 +258,14 @@ class Play extends Phaser.Scene
             this.restartLevel(this.nextLevel);
             console.log("Changed level.");
         });
+        // set up tutorial objects ↗
+        this.tutorialObj = this.add.group();
+        let objList = this.currentLevel.filterObjects("Object", obj => obj.name == 'Tutorial_Text');
+        objList.map((element) => {
+            let obj = new Tutorial(this, element.x, element.y, element.properties[0].value);
+            // console.log(element.properties[0].value);
+            this.tutorialObj.add(obj);
+        });
+        
     }
 }
