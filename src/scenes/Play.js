@@ -36,6 +36,12 @@ class Play extends Phaser.Scene
         this.load.image("Left_Click", "./assets/single_sprites/Left_Click.png");
         this.load.image("Arrow", "./assets/single_sprites/Arrow.png");
         this.load.image("Dash", "./assets/single_sprites/Dash.png");
+        this.load.spritesheet("HitParticle", "./assets/spritesheets/hitParticle_spritesheet.png", {
+            frameWidth: 4,
+            frameHeight: 4,
+            startFrame: 0,
+            endFrame: 21
+        });
 
     }
 

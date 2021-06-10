@@ -44,6 +44,17 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
             repeat: -1,
 
         });
+        anim = scene.anims.create({
+            key: 'hitFade',
+            frames: scene.anims.generateFrameNumbers("HitParticle",{
+                start: 0,
+                end: 21,
+                first:0
+            }),
+            frameRate: 33,
+        })
+        player = scene.player
+
 
 
         // phys settings
@@ -53,37 +64,40 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
         this.setCircle(this.width/4, this.width/4, this.height/4)
 
         //Setup particles
-        this.firstHitNum = 200;
-        this.hitParticle = scene.add.particles('DustParticle');
-        this.centerEmitCircle = new Phaser.Geom.Circle(this.x, this.y, 34)
+        this.firstHitNum = 65;
+        this.hitParticle = scene.add.particles('HitParticle');
+        this.centerEmitCircle = new Phaser.Geom.Circle(this.x, this.y, 20)
 
         this.hitCallback = function (particle, emitter) {
             //console.log("X: " + scene.player.body.velocity.x + " Y: " + scene.player.body.velocity.y)
-            emitter.setSpeedX({ start: Phaser.Math.Between(scene.player.body.velocity.x * .15, scene.player.body.velocity.x * .25),
+            emitter.setSpeedX({ start: Phaser.Math.Between(scene.player.body.velocity.x * .2, scene.player.body.velocity.x * .78),
                                     //* (this.centerEmitCircle.x - particle.x) * .03,
                                 end: 0, 
-                                steps: 20, 
+                                steps: 10, 
                                 ease: 'Bounce' 
                             })
-            emitter.setSpeedY({ start: Phaser.Math.Between(scene.player.body.velocity.y * .2, scene.player.body.velocity.y * .3),
+            emitter.setSpeedY({ start: Phaser.Math.Between(scene.player.body.velocity.y * .2, scene.player.body.velocity.y * .78),
                                     //* (this.centerEmitCircle.y - particle.y) * .05,
                                 end: 0, 
-                                steps: 20, 
+                                steps: 10, 
                                 ease: 'Bounce'
             })
+
         }
 
         this.firstHitEmitter = this.hitParticle.createEmitter({
             emitZone: {type: 'random', source: this.centerEmitCircle },
             frequency: -1,
+            frame: 0,
             gravityY: 250,
             emitCallbackScope: this,
             emitCallback: this.hitCallback,
-            tint: { start: 0xff44ff, end: 0x00ffff, ease: 'Circ.easeInOut'},
+            // tint: { start: 0xff44ff, end: 0x00ffff, ease: 'Circ.easeInOut'},
             // speedX: scene.player.body.velocity.x,
             // speedY: scene.player.body.velocity.y,
-            scale: { start: 1.5, end: .7, ease: 'Power3' },
-            lifespan: {min: 500, max: 950},
+            scale: { start: 1.5, end: .8, ease: 'Power1' },
+            lifespan: {min: 600, max: 1250},
+            particleClass: AnimatedParticle,
             on: false
         })
         
@@ -111,8 +125,8 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
         this.hitGravity = this.hitParticle.createGravityWell({
             x: this.scene.player.x,
             y: this.scene.player.y,
-            power: .65,
-            epsilon: 120,
+            power: 14,
+            epsilon: 300,
         })
         this.gravityTimer = this.scene.time.addEvent({
             delay: 10,
@@ -120,9 +134,9 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
             callback: ()=>{
                 this.hitGravity.x = this.scene.player.x;
                 this.hitGravity.y = this.scene.player.y;
-                console.log("x: " + this.scene.player.x + " y: " + this.scene.player.y)
+                //console.log("x: " + this.scene.player.x + " y: " + this.scene.player.y)
             },            
-            repeat: 50
+            repeat: 40
         })
     }
 
@@ -168,5 +182,46 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite
         }
         // if (this.dead)
         //     this.y = this.stoppingPoint
+    }
+}
+
+//From http://labs.phaser.io/edit.html?src=src%5Cgame%20objects%5Cparticle%20emitter%5Ccustom%20particles.js
+let anim;
+let player;
+class AnimatedParticle extends Phaser.GameObjects.Particles.Particle
+{
+    constructor (emitter)
+    {
+        super(emitter);
+
+        this.t = 0;
+        this.i = 0;
+        this.distToPlayer = Phaser.Math.Distance.Between(this.x, this.y, player.x, player.y)
+    }
+
+    update (delta, step, processors)
+    {
+        var result = super.update(delta, step, processors);
+
+        this.t += delta;
+
+        if (this.t >= anim.msPerFrame)
+        {
+            this.i++;
+
+            if (this.i > 17)
+            {
+                this.i = 0;
+            }
+
+            if(this.i < anim.frames.length)
+                this.frame = anim.frames[this.i].frame;
+
+            this.t -= anim.msPerFrame;
+        }
+
+        this.lifeCurrent -= (this.distToPlayer/Phaser.Math.Distance.Between(this.x, this.y, player.x, player.y)) * .83
+
+        return result;
     }
 }
